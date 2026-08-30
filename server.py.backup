@@ -47,7 +47,7 @@ if os.environ.get("CLOUDINARY_URL"):
     cloudinary.config(secure=True)
 
 sys.path.insert(0, str(AUTOMOD))
-from skin_catalog_scanner import find_latest_version, find_resource_versions, scan  # noqa: E402
+from skin_catalog_scanner import find_latest_version, scan  # noqa: E402
 from build_runner import build_skin as run_build  # noqa: E402
 
 app = FastAPI(title="NGOCC Skin System API", version="1.0.0")
