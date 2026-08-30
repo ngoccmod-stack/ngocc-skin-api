@@ -76,9 +76,31 @@ def build_skin(skin_id: str, resources_version: Optional[str] = None) -> tuple[P
         # Patch case-sensitive filename assumptions and enable one-shot web build.
         py=work/'Skin.py'; text=py.read_text(encoding='utf-8')
         marker='from pathlib import Path\n'
+        # CASEFIX và khối WEB_BUILD_MODE được kiểm tra ĐỘC LẬP với nhau: Skin.py có thể
+        # đã được vá WEB_BUILD_MODE từ trước (ví dụ do chỉnh tay) nhưng vẫn thiếu CASEFIX,
+        # nên không được để việc "đã có WEB_BUILD_MODE" làm bỏ qua luôn việc vá CASEFIX.
+        if '_ci_existing_path' not in text:
+            text=text.replace(marker, marker+CASEFIX+'\n', 1)
         if 'WEB_BUILD_MODE = os.environ.get' not in text:
-            ins='''from pathlib import Path\n'''+CASEFIX+'\n'+'resources_path = "Resources"\n\nWEB_BUILD_MODE = os.environ.get("NGOCC_WEB_BUILD", "").lower() in {"1", "true", "yes"}\nWEB_BUILD_ID = os.environ.get("NGOCC_WEB_BUILD_ID", "").strip()\nWEB_BUILD_NAME = os.environ.get("NGOCC_WEB_BUILD_NAME", "").strip() or (WEB_BUILD_ID + " [DiaoChan]")\nif WEB_BUILD_MODE:\n    import builtins as _bm\n    def _ngocc_input(prompt=""):\n        p = str(prompt).lower()\n        if "other function" in p: return "n"\n        if "cách thức nhập id" in p: return "1"\n        if "id skin" in p: return WEB_BUILD_ID\n        if "enter skin pack name" in p: return WEB_BUILD_NAME.replace(" [DiaoChan]", "")\n        if "mod component" in p: return "3"\n        if "special: 54402" in p: return "n"\n        if "thông báo hạ nakroth" in p and "use skin producer" in p: return "2"\n        if "thông báo hạ:" in p: return "1"\n        return "n"\n    _bm.input = _ngocc_input\n'''
-            text=text.replace(marker, ins, 1)
+            ins=('resources_path = "Resources"\n\n'
+                 'WEB_BUILD_MODE = os.environ.get("NGOCC_WEB_BUILD", "").lower() in {"1", "true", "yes"}\n'
+                 'WEB_BUILD_ID = os.environ.get("NGOCC_WEB_BUILD_ID", "").strip()\n'
+                 'WEB_BUILD_NAME = os.environ.get("NGOCC_WEB_BUILD_NAME", "").strip() or (WEB_BUILD_ID + " [DiaoChan]")\n'
+                 'if WEB_BUILD_MODE:\n'
+                 '    import builtins as _bm\n'
+                 '    def _ngocc_input(prompt=""):\n'
+                 '        p = str(prompt).lower()\n'
+                 '        if "other function" in p: return "n"\n'
+                 '        if "cách thức nhập id" in p: return "1"\n'
+                 '        if "id skin" in p: return WEB_BUILD_ID\n'
+                 '        if "enter skin pack name" in p: return WEB_BUILD_NAME.replace(" [DiaoChan]", "")\n'
+                 '        if "mod component" in p: return "3"\n'
+                 '        if "special: 54402" in p: return "n"\n'
+                 '        if "thông báo hạ nakroth" in p and "use skin producer" in p: return "2"\n'
+                 '        if "thông báo hạ:" in p: return "1"\n'
+                 '        return "n"\n'
+                 '    _bm.input = _ngocc_input\n')
+            text=text.replace(marker, marker+ins, 1)
         if 'if WEB_BUILD_MODE:\n        break' not in text:
             text=text.replace('    print("\\033[1;97m[\\033[1;92m•\\033[1;97m] Done Mod")\n', '    print("\\033[1;97m[\\033[1;92m•\\033[1;97m] Done Mod")\n    if WEB_BUILD_MODE:\n        break\n', 1)
         py.write_text(text,encoding='utf-8')
