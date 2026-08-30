@@ -9,6 +9,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import threading
 import unicodedata
 import zipfile
 import uuid
@@ -513,6 +514,113 @@ def scan_catalog():
         pass
     save_json(ACTIVE, {"version": version_dir.name, "scannedAt": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat()})
     return {"ok": True, **catalog_data}
+
+
+SCAN_LOCK = threading.Lock()
+SCAN_STATE: dict[str, Any] = {"running": False, "progress": "", "error": "", "done": False, "result": None}
+
+
+def _set_scan_state(**kw):
+    with SCAN_LOCK:
+        SCAN_STATE.update(kw)
+
+
+def _run_scan_job():
+    """Chạy toàn bộ logic quét Garena + Resources trong 1 luồng nền,
+    để request HTTP ban đầu trả lời ngay lập tức và không bị Render/trình
+    duyệt cắt kết nối giữa chừng khi quét lâu."""
+    _set_scan_state(running=True, progress="Đang kiểm tra Resources...", error="", done=False, result=None)
+    try:
+        ensure_local_resources_from_cloud()
+        version_dir = find_latest_version(RESOURCES)
+    except Exception as e:
+        _set_scan_state(running=False, done=True, error=str(e))
+        return
+
+    _set_scan_state(progress="Đang đọc dữ liệu Resources (AutoMod)...")
+    try:
+        auto_data = scan(RESOURCES, keep_unresolved=False)
+    except Exception as e:
+        _set_scan_state(running=False, done=True, error=f"Lỗi đọc Resources: {e}")
+        return
+
+    try:
+        _set_scan_state(progress="Đang tải danh sách tướng từ Garena...")
+        main_html = fetch_with_fallback(GARNA_MAIN)
+        heroes = extract_hero_links(main_html)
+        garena_names = {norm(h.get('heroName', '')) for h in heroes}
+        auto_data['heroes'] = [h for h in auto_data.get('heroes', []) if norm(h.get('heroName', '')) in garena_names]
+        auto_data['records'] = [r for r in auto_data.get('records', []) if norm(r.get('heroName', '')) in garena_names]
+        enriched: list[dict[str, Any]] = []
+        total = len(heroes)
+        counter = {"n": 0}
+
+        def one(h):
+            try:
+                hi, skins = extract_hero_page(absurl(GARNA_MAIN, f"/hoc-vien/tuong-skin/d/{h['slug']}/"), h["heroName"])
+                item = dict(h)
+                item["heroImage"] = item.get("heroImage") or hi
+                item["_skins"] = skins
+                return item
+            except Exception as e:
+                item = dict(h)
+                item["_skins"] = []
+                item["scanError"] = str(e)
+                return item
+            finally:
+                counter["n"] += 1
+                _set_scan_state(progress=f"Đang quét skin từng tướng... ({counter['n']}/{total})")
+
+        with ThreadPoolExecutor(max_workers=8) as ex:
+            futures = [ex.submit(one, h) for h in heroes]
+            for fut in as_completed(futures):
+                enriched.append(fut.result())
+        enriched.sort(key=lambda x: norm(x.get('heroName', '')))
+        catalog_data = merge_catalog(auto_data, enriched)
+    except Exception as e:
+        catalog_data = {
+            "schemaVersion": 2,
+            "resourcesVersion": auto_data.get("resourcesVersion", version_dir.name),
+            "generatedAt": auto_data.get("generatedAt", ""),
+            "heroCount": len(auto_data.get("heroes", [])),
+            "skinCount": sum(len(h.get("skins", [])) for h in auto_data.get("heroes", [])),
+            "garenaScanError": str(e),
+            "heroes": [
+                {**h, "heroImage": "", "garenaSlug": "", "skins": [
+                    {**s, "skinImage": ""} for s in h.get("skins", [])
+                ]} for h in auto_data.get("heroes", [])
+            ],
+        }
+
+    _set_scan_state(progress="Đang lưu catalog...")
+    save_json(CATALOG, catalog_data)
+    try:
+        persist_catalog_to_cloud(catalog_data)
+    except Exception:
+        pass
+    save_json(ACTIVE, {"version": version_dir.name, "scannedAt": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat()})
+    _set_scan_state(running=False, done=True, progress="Hoàn tất", error="", result=catalog_data)
+
+
+@app.post("/api/scan/start")
+def scan_start():
+    with SCAN_LOCK:
+        if SCAN_STATE.get("running"):
+            return {"ok": True, "alreadyRunning": True}
+    t = threading.Thread(target=_run_scan_job, daemon=True)
+    t.start()
+    return {"ok": True, "started": True}
+
+
+@app.get("/api/scan/status")
+def scan_status():
+    with SCAN_LOCK:
+        state = dict(SCAN_STATE)
+    result = state.pop("result", None)
+    out = {"ok": True, **state}
+    if state.get("done") and not state.get("error") and result:
+        out.update(result)
+    return out
 
 
 @app.post("/api/check")
