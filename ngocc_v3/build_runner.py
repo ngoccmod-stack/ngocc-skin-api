@@ -1,0 +1,101 @@
+from __future__ import annotations
+import json, os, shutil, subprocess, tempfile, zipfile
+from pathlib import Path
+from typing import Optional
+
+ROOT = Path(__file__).resolve().parent
+AUTOMOD = ROOT / 'automod'
+RESOURCES = ROOT / 'Resources'
+BUILDS = ROOT / 'builds'
+BUILDS.mkdir(parents=True, exist_ok=True)
+
+CASEFIX = r'''
+import builtins as _builtins
+from pathlib import Path as _Path
+_real_open = _builtins.open
+
+def _ci_existing_path(path):
+    try: p = _Path(path)
+    except TypeError: return path
+    if p.exists(): return path
+    try:
+        if p.is_absolute():
+            cur = _Path(p.anchor); parts = p.parts[1:]
+        else:
+            cur = _Path.cwd(); parts = p.parts
+        for part in parts:
+            if not cur.exists() or not cur.is_dir(): return path
+            exact = cur / part
+            if exact.exists(): cur = exact; continue
+            ms = [x for x in cur.iterdir() if x.name.casefold() == part.casefold()]
+            if len(ms) != 1: return path
+            cur = ms[0]
+        return str(cur)
+    except Exception: return path
+
+def open(*args, **kwargs):
+    mode = kwargs.get('mode', args[1] if len(args) > 1 else 'r') if args else kwargs.get('mode','r')
+    if args and isinstance(mode, str) and ('r' in mode or '+' in mode):
+        args = (_ci_existing_path(args[0]),) + args[1:]
+    elif 'file' in kwargs and isinstance(mode,str) and ('r' in mode or '+' in mode):
+        kwargs['file'] = _ci_existing_path(kwargs['file'])
+    return _real_open(*args, **kwargs)
+_builtins.open = open
+'''
+
+
+def find_active_version() -> Optional[str]:
+    versions=[]
+    for p in RESOURCES.iterdir() if RESOURCES.is_dir() else []:
+        if p.is_dir() and (p/'Databin/Client/Actor/heroSkin.bytes').is_file() and (p/'Languages/VN_Garena_VN').is_dir():
+            versions.append(p)
+    if not versions: return None
+    import re
+    def k(p):
+        out=[]
+        for x in re.findall(r'\d+|[A-Za-z]+',p.name): out.append((0,int(x)) if x.isdigit() else (1,x.lower()))
+        return out
+    return sorted(versions,key=k)[-1].name
+
+
+def build_skin(skin_id: str, resources_version: Optional[str] = None) -> tuple[Path, str]:
+    version = resources_version or find_active_version()
+    if not version: raise RuntimeError('Chưa có Resources hợp lệ.')
+    source = RESOURCES / version
+    if not (source/'Databin/Client/Actor/heroSkin.bytes').is_file():
+        raise RuntimeError(f'Resources {version} không hợp lệ.')
+    with tempfile.TemporaryDirectory(prefix='ngocc_build_') as td:
+        work=Path(td)
+        (work/'Resources').mkdir()
+        # Full resource tree is required by the existing AutoMod builder. Use a normal copy
+        # so all writes made by Skin.py stay isolated from the master Resources.
+        shutil.copytree(source, work/'Resources'/version, dirs_exist_ok=True)
+        shutil.copytree(AUTOMOD/'FILES_CODE', work/'FILES_CODE', dirs_exist_ok=True)
+        shutil.copytree(AUTOMOD/'FIX_SKIN', work/'FIX_SKIN', dirs_exist_ok=True)
+        shutil.copy2(AUTOMOD/'Skin.py', work/'Skin.py')
+        # Patch case-sensitive filename assumptions and enable one-shot web build.
+        py=work/'Skin.py'; text=py.read_text(encoding='utf-8')
+        marker='from pathlib import Path\n'
+        if 'WEB_BUILD_MODE = os.environ.get' not in text:
+            ins='''from pathlib import Path\n'''+CASEFIX+'\n'+'resources_path = "Resources"\n\nWEB_BUILD_MODE = os.environ.get("NGOCC_WEB_BUILD", "").lower() in {"1", "true", "yes"}\nWEB_BUILD_ID = os.environ.get("NGOCC_WEB_BUILD_ID", "").strip()\nWEB_BUILD_NAME = os.environ.get("NGOCC_WEB_BUILD_NAME", "").strip() or (WEB_BUILD_ID + " [DiaoChan]")\nif WEB_BUILD_MODE:\n    import builtins as _bm\n    def _ngocc_input(prompt=""):\n        p = str(prompt).lower()\n        if "other function" in p: return "n"\n        if "cách thức nhập id" in p: return "1"\n        if "id skin" in p: return WEB_BUILD_ID\n        if "enter skin pack name" in p: return WEB_BUILD_NAME.replace(" [DiaoChan]", "")\n        if "mod component" in p: return "3"\n        if "special: 54402" in p: return "n"\n        if "thông báo hạ nakroth" in p and "use skin producer" in p: return "2"\n        if "thông báo hạ:" in p: return "1"\n        return "n"\n    _bm.input = _ngocc_input\n'''
+            text=text.replace(marker, ins, 1)
+        if 'if WEB_BUILD_MODE:\n        break' not in text:
+            text=text.replace('    print("\\033[1;97m[\\033[1;92m•\\033[1;97m] Done Mod")\n', '    print("\\033[1;97m[\\033[1;92m•\\033[1;97m] Done Mod")\n    if WEB_BUILD_MODE:\n        break\n', 1)
+        py.write_text(text,encoding='utf-8')
+        env=os.environ.copy(); env.update(NGOCC_WEB_BUILD='1',NGOCC_WEB_BUILD_ID=str(skin_id),NGOCC_WEB_BUILD_NAME=f'{skin_id} [DiaoChan]',TERM='xterm')
+        cp=subprocess.run([os.environ.get('PYTHON','python3'),'Skin.py'], cwd=work, env=env, text=True, capture_output=True, timeout=900)
+        if cp.returncode != 0:
+            # The patched one-shot builder completes before EOF only if an unexpected error occurs.
+            raise RuntimeError((cp.stderr or cp.stdout)[-8000:])
+        roots=[p for p in (work/'FILES_MOD').iterdir() if p.is_dir()] if (work/'FILES_MOD').exists() else []
+        if not roots: raise RuntimeError('AutoMod không tạo được thư mục output.')
+        root=roots[0]
+        android=root/'Android/files'
+        if not android.is_dir(): raise RuntimeError('AutoMod không tạo Android/files output.')
+        out=BUILDS/f'{skin_id}_{version}.zip'
+        tmp=out.with_suffix('.tmp')
+        with zipfile.ZipFile(tmp,'w',zipfile.ZIP_DEFLATED) as z:
+            for f in android.rglob('*'):
+                if f.is_file(): z.write(f, f.relative_to(android).as_posix())
+        tmp.replace(out)
+        return out, version

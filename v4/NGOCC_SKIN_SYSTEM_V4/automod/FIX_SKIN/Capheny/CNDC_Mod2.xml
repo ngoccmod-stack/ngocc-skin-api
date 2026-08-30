@@ -1,0 +1,3 @@
+<int name="frameRate" value="120" refParamName="" useRefParam="false" />
+        <bool name="bUseTargetSkinEffect" value="true" refParamName="" useRefParam="false"/>
+        <String name="resourceName"

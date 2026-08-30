@@ -1,0 +1,3 @@
+        <int name="skinId" value="13011" refParamName="" useRefParam="false" />>
+        <<bool name="bEqual" value="false" refParamName="" useRefParam="false" />>
+        <bool name="bSkipLogicCheck" value="true" refParamName="" useRefParam="false" />

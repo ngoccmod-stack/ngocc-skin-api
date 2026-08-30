@@ -1,0 +1,55 @@
+
+    <Track trackName="SetObjectDirectionTick0" eventType="SetObjectDirectionTick" guid="cd9fc83b-cec9-4414-b884-00fe7c6c8e82" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+        <Event eventName="SetObjectDirectionTick" time="0.000" isDuration="false" guid="8a15b50f-d8c7-4479-a6fb-ab20aa6aefae">
+        <TemplateObject name="targetId" id="0" objectName="self" isTemp="false" refParamName="" useRefParam="false" />
+        <int name="rotationY" value="198" refParamName="" useRefParam="false" />
+      </Event>
+    </Track>
+    <Track trackName="SetObjectDirectionTick0" eventType="SetObjectDirectionTick" guid="efb4fcc6-58ae-4313-be89-4c39a7a42798" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+        <Event eventName="SetObjectDirectionTick" time="7.000" isDuration="false" guid="b72c4e01-16b7-4c8b-9b0b-b0ef3ffa571b">
+        <TemplateObject name="targetId" id="3" objectName="攻击者" isTemp="false" refParamName="" useRefParam="false" />
+      </Event>
+    </Track>
+    <Track trackName="TriggerParticleTick" eventType="TriggerParticleTick" guid="[DIAOCHAN/KIRINMOD]" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+        <Event eventName="TriggerParticleTick" time="7.000" isDuration="false" guid="f7df0085-7f43-4a62-8d4c-1318238ba3ce">
+        <TemplateObject name="targetId" id="-1" objectName="None" isTemp="false" refParamName="" useRefParam="false" />
+        <TemplateObject name="objectSpaceId" id="0" objectName="self" isTemp="false" refParamName="" useRefParam="false" />
+        <String name="resourceName" value="Prefab_Skill_Effects/Component_Effects/13311/13311_5/huijidi_01" refParamName="" useRefParam="true" />
+      </Event>
+    </Track>
+    <Track trackName="TriggerParticleTick" eventType="TriggerParticle" guid="[DIAOCHAN/KIRINMOD]" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+        <Event eventName="TriggerParticle" time="0.000" length="7.000" isDuration="true" guid="6057cb60-5062-42e9-a6cd-09c8e9e7eb05">
+        <TemplateObject name="targetId" id="0" objectName="self" isTemp="false" refParamName="" useRefParam="false" />
+        <TemplateObject name="objectSpaceId" id="0" objectName="self" isTemp="false" refParamName="" useRefParam="false" />
+        <String name="resourceName" value="Prefab_Skill_Effects/Component_Effects/13311/13311_5/huicheng_tongyong_01" refParamName="" useRefParam="true" />
+        <Vector3 name="bindPosOffset" x="0.000" y="-0.300" z="0.000" refParamName="" useRefParam="false" />
+      </Event>
+    </Track>
+    <Track trackName="[BUFF_TRACKNAME]Home" eventType="PlayAnimDuration" guid="664523ad-bc5e-4796-94a7-003b758fb8c4" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+      <Event eventName="PlayAnimDuration" time="0.000" length="7.000" isDuration="true" guid="ff3c2242-829b-4cfd-aaad-8e70a5e03ba2">
+        <TemplateObject name="targetId" id="0" objectName="self" isTemp="false" refParamName="" useRefParam="false" />
+        <String name="clipName" value="13311/Awaken/Home" refParamName="" useRefParam="false" />
+        <int name="layer" value="2" refParamName="" useRefParam="false" />
+      </Event>
+    </Track>
+    <Track trackName="[BUFF_TRACKNAME]Gohome" eventType="PlayAnimDuration" guid="972d1382-031a-4c10-8eeb-d10b3fc76f47" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+        <Event eventName="PlayAnimDuration" time="7.000" length="1.500" isDuration="true" guid="620b137f-72fa-4602-a653-72ae85944d33">
+        <TemplateObject name="targetId" id="0" objectName="self" isTemp="false" refParamName="" useRefParam="false" />
+        <String name="clipName" value="13311/Awaken/Gohome" refParamName="" useRefParam="false" />
+        <int name="layer" value="2" refParamName="" useRefParam="false" />
+      </Event>
+    </Track>
+    <Track trackName="StopTracks0" eventType="StopTracks" guid="[DIAOCHAN/KIRINMOD]" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+      <Event eventName="StopTracks" time="0.000" isDuration="false" guid="[DIAOCHAN/KIRINMOD]">
+        <Array name="trackIds" refParamName="" useRefParam="false" type="TrackObject">
+          <TrackObject id="11" guid="95cf43e1-a94a-4b6d-a10e-079af17b888c" />
+          <TrackObject id="12" guid="cb944be3-2bf1-4b56-a5da-6676a85f329c" />
+          <TrackObject id="18" guid="b9729512-4050-459e-9644-dc609c2a3a1f" />
+          <TrackObject id="19" guid="28dbc769-e471-407e-8108-9012ecf910d8" />
+          <TrackObject id="20" guid="b9729512-4050-459e-9644-dc609c2a3a1f" />
+        </Array>
+        <bool name="alsoStopNotStartedTrack" value="true" refParamName="" useRefParam="false" />
+      </Event>
+    </Track>
+  </Action>
+</Project>

@@ -1,0 +1,7 @@
+fastapi>=0.110,<1
+uvicorn[standard]>=0.29,<1
+python-multipart>=0.0.9,<1
+requests>=2.31,<3
+beautifulsoup4>=4.12,<5
+pyzstd>=0.15,<1
+cloudinary>=1.44,<2

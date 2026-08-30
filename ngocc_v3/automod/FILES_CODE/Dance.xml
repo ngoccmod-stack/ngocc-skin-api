@@ -1,0 +1,2774 @@
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d3c0607-cf74-4eb7-b5b6-c97fd526b3c4"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.300"
+        isDuration="true"
+        guid="0bd503cb-2325-475c-b9d8-7468470869f4">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="11107/Atk1"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.133"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="dbda8a92-cd5b-48fd-b0ca-fbf8ea141da0"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.300"
+        isDuration="true"
+        guid="a85839b6-024e-46a8-8a4e-a2981cba9be4">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="攻击者"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="11107/Atk2"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.133"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="df17f773-4e4d-4d3c-9b6f-366dbd734821"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.100"
+        isDuration="true"
+        guid="90b20139-313a-447f-a190-c0e1229af67f">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="11107/Atk3"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.133"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.133"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d3c0607-cf74-4eb7-b5b6-c97fd526b3c4"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.300"
+        isDuration="true"
+        guid="9aec4c68-86a7-44f3-a779-9c4a7150a509">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="攻击者"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="11107/Atk1"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.200"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.167"
+        isDuration="true"
+        guid="1f0f48a2-078b-4fac-a7f9-010ea6bb202b">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="11107/Spell1"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.200"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.200"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="0225ff70-5944-4c17-870e-381ded5def03"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.200"
+        isDuration="true"
+        guid="d76aa025-34ff-432e-b358-dcae66fc688a">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="11107/Spell2"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.133"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.133"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="036b40ff-08d6-415a-9d97-97e0942d2aee"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.200"
+        isDuration="true"
+        guid="3bfd4b65-851c-4ed1-8238-85aea28a2adc">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="11107/Spell2"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.133"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.133"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="036b40ff-08d6-415a-9d97-97e0942d2aee"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.500"
+        isDuration="true"
+        guid="4b1a5155-01ba-4946-b638-0a98f351fe04">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="11107/Spell3"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.200"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.200"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="2.000"
+        isDuration="true"
+        guid="d64b7cb8-cb58-4373-9084-59025853db1d">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Atk1"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="2.000"
+        isDuration="true"
+        guid="657b872c-0d41-47e1-96da-cc76cd6de0b8">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Atk2"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="2.000"
+        isDuration="true"
+        guid="bc2cbe9d-586a-4a35-aab6-9f124ad4d050">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Atk3"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="2.000"
+        isDuration="true"
+        guid="1af35518-0376-4cbe-bf55-6bbb4532980c">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Atk4"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="2.000"
+        isDuration="true"
+        guid="c3f3542b-f0b3-4f34-996e-02b013c3fcac">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Atk5"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.250"
+        isDuration="true"
+        guid="08c659a3-d60a-4edd-b1c8-83aea0a726e9">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Spell1-1"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.200"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.250"
+        isDuration="true"
+        guid="21763a5b-902f-4fa2-91fb-5da22c0a84a3">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Spell1-2"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.200"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.250"
+        isDuration="true"
+        guid="fba7ffcd-17cf-4459-92d2-d7515cf794b6">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Spell1-3"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.133"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.200"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="bf3961ed-97ed-4cbd-9d35-f3ecb021eb46"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="0.600"
+        isDuration="true"
+        guid="72f61726-4dbe-47f6-831f-7e4820019ff6">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Spell2-2"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.200"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="false"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="0.750"
+        isDuration="true"
+        guid="229b0e22-c52b-44a3-a9e7-bd3ba3461820">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Spell2-1"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="bf3961ed-97ed-4cbd-9d35-f3ecb021eb46"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="0.600"
+        isDuration="true"
+        guid="f5d97c63-fe65-4bd2-9629-fdc1d4118371">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Spell2-2"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.200"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="b67606da-8189-4c6e-93f5-5c96576f98e3"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="0.500"
+        isDuration="true"
+        guid="e226e00a-b41b-4b6d-8bd7-20c18c727c06">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Spell2-2"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="0.800"
+        isDuration="true"
+        guid="fc6daa01-f0d7-4a90-b0f0-06edec7dad43">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Spell3"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.300"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimationTick0"
+    eventType="PlayAnimationTick"
+    guid="6c6f287e-412d-4011-a513-b2727f068c3a"
+    enabled="true"
+    refParamName=""
+    useRefParam="false"
+    r="0.083"
+    g="1.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimationTick"
+        time="0.000"
+        isDuration="false">
+        <TemplateObject
+            name="targetId"
+            objectName="self"
+            id="0"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="Dance05_T2"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.150"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="playSpeed"
+            value="1.000"
+            refParamName=""
+            useRefParam="false" />
+        <int
+            name="layer"
+            value="3"
+            refParamName=""
+            useRefParam="false" />
+        <int
+            name="subLayer"
+            value="0"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="loop"
+            value="false"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="false"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="alwaysAnimate"
+            value="false"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bNoTimeScale"
+            value="false"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bCanNotBeCulled"
+            value="false"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimationTick0"
+    eventType="PlayAnimationTick"
+    guid="6c6f287e-412d-4011-a513-b2727f068c3a"
+    enabled="true"
+    refParamName=""
+    useRefParam="false"
+    r="0.083"
+    g="1.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimationTick"
+        time="0.000"
+        isDuration="false">
+        <TemplateObject
+            name="targetId"
+            objectName="self"
+            id="0"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="Dance03_T2"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.150"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="playSpeed"
+            value="1.000"
+            refParamName=""
+            useRefParam="false" />
+        <int
+            name="layer"
+            value="3"
+            refParamName=""
+            useRefParam="false" />
+        <int
+            name="subLayer"
+            value="0"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="loop"
+            value="false"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="false"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="alwaysAnimate"
+            value="false"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bNoTimeScale"
+            value="false"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bCanNotBeCulled"
+            value="false"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Trac
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.200"
+        isDuration="true"
+        guid="d2e7e0c2-7295-4069-b978-37929829b407">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="12304/Atk1"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.200"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Trac
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.200"
+        isDuration="true"
+        guid="799e558d-9567-4205-a53b-0f805d857c44">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="12304/Atk2"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.200"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Trac
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.200"
+        isDuration="true"
+        guid="db71428e-dbc4-40a3-92b3-09c580405773">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="12304/Atk3"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.200"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Trac
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.200"
+        isDuration="true"
+        guid="8e90e974-1f06-40d2-a756-a2a6ead29afb">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="12304/Atk1"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.200"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Trac
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.200"
+        isDuration="true"
+        guid="75c47057-4d6f-4aea-a016-5dc3af17c163">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="12304/Atk2"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.200"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Trac
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.200"
+        isDuration="true"
+        guid="d234adf7-567d-44b8-9cd6-c0fbf9070afd">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="12304/Atk3"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Trac
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="aea0a916-e3f8-4524-b464-307e531ce3ae"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.000"
+        isDuration="true"
+        guid="263bf0ca-ba40-4551-9801-a7da2b408688">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="12304/Spell1"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Trac
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="aea0a916-e3f8-4524-b464-307e531ce3ae"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.000"
+        isDuration="true"
+        guid="c8292568-6fdc-4a3c-b303-41793fbcb646">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="12304/Spell1"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.200"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Trac
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.000"
+        isDuration="true"
+        guid="a0dc248d-a29d-4868-87c3-208ae6909649">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="12304/Spell2"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.200"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Trac
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="3.250"
+        isDuration="true"
+        guid="45b26be0-1f89-4437-835b-886793a596a0">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="12304/Spell3"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bDontReplaceSameAnim"
+            value="false"
+            refParamName=""
+            useRefParam="false" />
+        <int
+            name="layer"
+            value="1"
+            refParamName=""
+            useRefParam="false" />
+        <int
+            name="subLayer"
+            value="0"
+            refParamName=""
+            useRefParam="false" />
+        <int
+            name="animatorOverrideLayer"
+            value="-1"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bLoop"
+            value="false"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bUseFadeOutTime"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="fadeOutTime"
+            value="0.200"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="startTime"
+            value="0.000"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="endTime"
+            value="99999.000"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="false"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="alwaysAnimate"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="multiDirectRunMode"
+            value="false"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bKeepOldSpeed"
+            value="false"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bCanNotBeCulled"
+            value="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="beginClipName"
+            value=""
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bPlayBeginClipName"
+            value="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="endClipName"
+            value=""
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bPlayEndClipName"
+            value="false"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bForcePlay"
+            value="false"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="animSpeedRate"
+            value="1.000"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="bMoveSpell"
+            value="false"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="2e47cab8-fafa-4fd1-bb9d-3f141bd224f3"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.000"
+        isDuration="true"
+        guid="d3ad1ebb-8a42-42f2-9378-b0bb3485fa68">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="15704/Atk1"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="22f65bd9-196a-4a72-98ae-d1a2c875f316"
+    enabled="false"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="0.700"
+        isDuration="true"
+        guid="1128bcd1-109f-4e51-8311-d0f0779fb3bc">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="15704/Spell1_2"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="2e47cab8-fafa-4fd1-bb9d-3f141bd224f3"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.000"
+        isDuration="true"
+        guid="857dbfbd-a621-474c-836d-38962479953d">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="15704/Atk3"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="2bfbfa41-16c0-42a6-b58b-6ca93af98739"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.050"
+        isDuration="true"
+        guid="7c5cff58-5409-424b-9d66-ca7caab9bb7b">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="15704/Atk3"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="e13ba2a7-c0a6-43d0-afa8-725a43831d8c"
+    enabled="false"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="0.700"
+        isDuration="true"
+        guid="0477a8a2-c5dc-480e-b26e-f23962c34212">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="15704/Spell1_2"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="2e47cab8-fafa-4fd1-bb9d-3f141bd224f3"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.000"
+        isDuration="true"
+        guid="311974cd-9f9c-410c-b4b8-ca95f3cd5376">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="15704/Atk4"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration3"
+    eventType="PlayAnimDuration"
+    guid="c194785e-8155-4ff0-a435-bd3b27bd05a4"
+    enabled="false"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="0.700"
+        isDuration="true"
+        guid="7be0474a-54de-44f7-9c50-a6f3813e5dd3">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="15704/Spell1_2"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="f4a216f7-1821-470e-b3bd-7e53a41fb290"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.300"
+        isDuration="true"
+        guid="faeb36b4-61a4-419e-b1e5-3f83816e5358">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="15704/Spell2"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="088ab119-8a6c-4d52-ab74-9a8537751cec"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="0.700"
+        isDuration="true"
+        guid="d57fab76-25a9-4586-8046-1bb2d25f1660">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="15704/Spell1_2"
+            refParamName=""
+            useRefParam="false" />
+        <int
+            name="layer"
+            value="2"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="c66d55b5-00fc-4ce3-9cbb-a32d5043b799"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.167"
+        isDuration="true"
+        guid="ba0b391f-b0e3-48c9-814c-bb9d1f7d9dc7">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="15704/Spell1_1_2"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="0.900"
+        isDuration="true"
+        guid="7a2e27ca-4a10-41ee-b7e1-953b00813f34">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="15704/Spell1_1"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration1"
+    eventType="PlayAnimDuration"
+    guid="ab53fb18-3db6-46eb-ba0e-74abd5686c95"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="0.700"
+        isDuration="true"
+        guid="5ceb822d-c40f-4b49-97e6-df99b5ba9acf">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="15704/Spell1_2"
+            refParamName=""
+            useRefParam="false" />
+        <int
+            name="layer"
+            value="2"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="aea0a916-e3f8-4524-b464-307e531ce3ae"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.600"
+        isDuration="true"
+        guid="388cdb3f-3829-4b59-b2fa-fa765dcb7029">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="15704/Spell3"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+        <bool
+            name="applyActionSpeed"
+            value="true"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration2"
+    eventType="PlayAnimDuration"
+    guid="a8103b9a-c151-4d39-beec-57abd0e5edc2"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.000"
+    b="0.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="0.700"
+        isDuration="true"
+        guid="af929b0f-0eaf-46f9-a8d1-6ecfe3d139b4">
+        <TemplateObject
+            name="targetId"
+            id="0"
+            objectName="self"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="15704/Spell1_2"
+            refParamName=""
+            useRefParam="false" />
+        <int
+            name="layer"
+            value="2"
+            refParamName=""
+            useRefParam="false" />
+        <float
+            name="crossFadeTime"
+            value="0.100"
+            refParamName=""
+            useRefParam="false" />
+      </Event>
+    </Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    refParamName=""
+    useRefParam="false"
+    r="0.000"
+    g="0.650"
+    b="1.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="2.000"
+        isDuration="true">
+        <TemplateObject
+            name="targetId"
+            objectName="self"
+            id="0"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Atk1"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.650"
+    b="1.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="2.000"
+        isDuration="true">
+        <TemplateObject
+            name="targetId"
+            objectName="self"
+            id="0"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Atk2"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.650"
+    b="1.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="2.000"
+        isDuration="true">
+        <TemplateObject
+            name="targetId"
+            objectName="self"
+            id="0"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Atk3"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    refParamName=""
+    useRefParam="false"
+    r="0.000"
+    g="0.650"
+    b="1.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="2.000"
+        isDuration="true">
+        <TemplateObject
+            name="targetId"
+            objectName="self"
+            id="0"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Atk4"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.650"
+    b="1.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="2.000"
+        isDuration="true">
+        <TemplateObject
+            name="targetId"
+            objectName="self"
+            id="0"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Atk5"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    refParamName=""
+    useRefParam="false"
+    r="0.000"
+    g="0.650"
+    b="1.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.250"
+        isDuration="true">
+        <TemplateObject
+            name="targetId"
+            objectName="self"
+            id="0"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Spell1-1"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="bf3961ed-97ed-4cbd-9d35-f3ecb021eb46"
+    enabled="true"
+    refParamName=""
+    useRefParam="false"
+    r="0.000"
+    g="0.217"
+    b="1.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="0.600"
+        isDuration="true">
+        <TemplateObject
+            name="targetId"
+            objectName="self"
+            id="0"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Spell2-2"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="b67606da-8189-4c6e-93f5-5c96576f98e3"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.117"
+    g="0.000"
+    b="1.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="0.500"
+        isDuration="true">
+        <TemplateObject
+            name="targetId"
+            objectName="self"
+            id="0"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Spell2-2"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    refParamName=""
+    useRefParam="false"
+    r="0.000"
+    g="0.650"
+    b="1.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.250"
+        isDuration="true">
+        <TemplateObject
+            name="targetId"
+            objectName="self"
+            id="0"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Spell1-2"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    refParamName=""
+    useRefParam="false"
+    r="0.000"
+    g="0.650"
+    b="1.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="1.250"
+        isDuration="true">
+        <TemplateObject
+            name="targetId"
+            objectName="self"
+            id="0"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Spell1-3"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="bf3961ed-97ed-4cbd-9d35-f3ecb021eb46"
+    enabled="true"
+    useRefParam="false"
+    refParamName=""
+    r="0.000"
+    g="0.217"
+    b="1.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="0.600"
+        isDuration="true">
+        <TemplateObject
+            name="targetId"
+            objectName="self"
+            id="0"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Spell2-2"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="false"
+    refParamName=""
+    useRefParam="false"
+    r="1.000"
+    g="0.000"
+    b="0.967"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="0.750"
+        isDuration="true">
+        <TemplateObject
+            name="targetId"
+            objectName="self"
+            id="0"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Spell2-1"
+            refParamName=""
+            useRefParam="false" />
+    </Event>
+</Track>
+<Track
+    trackName="PlayAnimDuration0"
+    eventType="PlayAnimDuration"
+    guid="9d243092-f160-4189-a9da-f132595032c9"
+    enabled="true"
+    refParamName=""
+    useRefParam="false"
+    r="0.000"
+    g="0.650"
+    b="1.000"
+    execOnForceStopped="false"
+    execOnActionCompleted="false"
+    stopAfterLastEvent="true">
+    <Event
+        eventName="PlayAnimDuration"
+        time="0.000"
+        length="0.800"
+        isDuration="true">
+        <TemplateObject
+            name="targetId"
+            objectName="self"
+            id="0"
+            isTemp="false"
+            refParamName=""
+            useRefParam="false" />
+        <String
+            name="clipName"
+            value="51504/Spell3"
+            refParamName=""
+            useRefParam="false" />
+      </Event>
+    </Track>
+  </Action>

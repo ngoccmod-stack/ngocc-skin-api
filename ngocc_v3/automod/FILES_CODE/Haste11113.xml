@@ -1,0 +1,12 @@
+11113/JiaSu_tongyong_01" refParamName="" useRefParam="false" />
+            <Vector3 name="bindPosOffset" x="0.000" y="0.700" z="-0.600" refParamName="" useRefParam="false" />    
+          </Event>    
+        </Track>    
+        <Track trackName="SpawnBulletTick0" eventType="SpawnBulletTick" guid="c606b328-f45f-4c98-98f0-a47bbf3cfdf1" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">    
+          <Condition id="0" guid="KIRINMOD_111_SunShangXiang" status="true"/>    
+          <Event eventName="SpawnBulletTick" time="0.000" isDuration="false" guid="1d78d4fc-9b19-494a-a7b8-4fc9af915d2f">    
+            <TemplateObject name="targetId" id="0" objectName="self" isTemp="false" refParamName="" useRefParam="false" />    
+            <String name="ActionName" value="Prefab_Characters/Prefab_Hero/111_SunShangXiang/skill/11113_Haste" refParamName="" useRefParam="false" />    
+            <bool name="bDeadRemove" value="true" refParamName="" useRefParam="false" />    
+            <int name="bulletUpperLimit" value="1" refParamName="" useRefParam="false" />    
+            <bool name="bAbort" value="true" refParamName="" useRefParam="false" />'
