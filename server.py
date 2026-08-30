@@ -1,0 +1,2 @@
+from automod.resource_manager import find_resource_versions
+
