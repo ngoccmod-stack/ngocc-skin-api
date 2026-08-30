@@ -35,16 +35,8 @@ CATALOG = DATA / "skin_catalog.json"
 ACTIVE = DATA / "active_resources.json"
 RESOURCE_MANIFEST = DATA / "resources_manifest.json"
 CLOUDINARY_FOLDER = os.environ.get("NGOCC_CLOUDINARY_FOLDER", "ngocc_resources").strip("/")
-def _clean_env(v: str) -> str:
-    # Loại bỏ các ký tự Unicode vô hình (LRM/RLM/zero-width/BOM...) hay bị dính
-    # khi copy-paste trên điện thoại, vì chúng làm hỏng HTTP header (latin-1 only).
-    if not v:
-        return v
-    v = re.sub(r'[\u200b-\u200f\u202a-\u202e\u2060\ufeff]', '', v)
-    return v.strip()
-
-GITHUB_TOKEN = _clean_env(os.environ.get("GITHUB_TOKEN", ""))
-GITHUB_REPO = _clean_env(os.environ.get("GITHUB_REPO", "ngoccmod-stack/ngocc-skin-api"))
+GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "").strip()
+GITHUB_REPO = os.environ.get("GITHUB_REPO", "ngoccmod-stack/ngocc-skin-api").strip()
 CHUNK_DIR = UPLOADS / "resource_chunks"
 CHUNK_DIR.mkdir(parents=True, exist_ok=True)
 
