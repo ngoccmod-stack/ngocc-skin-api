@@ -1,2 +1,1 @@
-from automod.resource_manager import find_resource_versions
-
+from automod.skin_catalog_scanner import find_resource_versions
