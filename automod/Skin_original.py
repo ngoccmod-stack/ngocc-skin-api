@@ -465,7 +465,7 @@ def giai(a):
         try:
             if opt in ("-c", "--compress"):
                 zstd_mode = "compress"
-                output_blob = bytearray(pyzstd.compress(input_blob, ZSTD_LEVEL, pyzstd.ZstdDict(ZSTD_DICT, True)))
+                output_blob = bytearray(pyzstd.compress(input_blob, ZSTD_LEVEL, pyzstd.ZstdDict(ZSTD_DICT, is_raw=True)))
                 output_blob[0:0] = len(input_blob).to_bytes(4, byteorder="little", signed=False)
                 output_blob[0:0] = b"\x22\x4a\x00\xef"
                 new = random.randbytes(0)
@@ -473,7 +473,7 @@ def giai(a):
             elif opt in ("-d", "--decompress"):
                 input_blob = input_blob[input_blob.find(b"\x28\xb5\x2f\xfd"):]
                 zstd_mode = "decompress"
-                output_blob = pyzstd.decompress(input_blob, pyzstd.ZstdDict(ZSTD_DICT, True))
+                output_blob = pyzstd.decompress(input_blob, pyzstd.ZstdDict(ZSTD_DICT, is_raw=True))
             output_path = args
             with open(output_path, "wb") as output_file:
                 output_file.write(output_blob)

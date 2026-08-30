@@ -58,7 +58,7 @@ def decompress_custom_blob(data: bytes, zstd_dict: Path) -> bytes:
 
     try:
         import pyzstd  # type: ignore
-        return pyzstd.decompress(frame, pyzstd.ZstdDict(zstd_dict.read_bytes(), True))
+        return pyzstd.decompress(frame, pyzstd.ZstdDict(zstd_dict.read_bytes(), is_raw=True))
     except ImportError:
         with tempfile.TemporaryDirectory() as td:
             td = Path(td)
