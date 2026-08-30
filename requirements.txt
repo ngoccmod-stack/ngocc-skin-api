@@ -5,3 +5,4 @@ requests>=2.31,<3
 beautifulsoup4>=4.12,<5
 pyzstd>=0.15,<1
 cloudinary>=1.44,<2
+colorama>=0.4,<1

@@ -141,18 +141,42 @@ def extract_hero_page(hero_url: str, hero_name: str) -> tuple[str, list[dict[str
         hero_img = absurl(hero_url, imgs[0].get("src"))
 
     skins: list[dict[str, str]] = []
-    # Garena pages expose skin names as headings and the corresponding image in nearby markup.
-    for heading in soup.find_all(["h2", "h3", "h4"]):
-        text = " ".join(heading.stripped_strings).strip()
-        if not text or not norm(text).startswith(norm(hero_name)):
-            continue
-        skin_name = re.sub(rf"^{re.escape(hero_name)}\s*", "", text, flags=re.I).strip()
-        if not skin_name or norm(skin_name) in {"trang phuc", "ky nang"}:
-            continue
-        img = heading.find_next("img")
-        src = absurl(hero_url, img.get("src") if img else "")
-        if src:
+    # Ưu tiên lấy ảnh skin từ mục "Trang phục" (gallery riêng của Garena):
+    # mỗi ảnh ở đây có alt/title = TÊN SKIN ĐẦY ĐỦ, nên khớp chính xác theo tên,
+    # tránh bị dính nhầm ảnh khác (ví dụ rank/tier badge) như khi suy theo vị trí.
+    outfit_heading = None
+    for h in soup.find_all(["h2", "h3", "h4"]):
+        if norm(" ".join(h.stripped_strings)) == "trang phuc":
+            outfit_heading = h
+            break
+    if outfit_heading is not None:
+        container = outfit_heading.find_next(["ul", "ol", "div"])
+        anchors = container.find_all("a", href=re.compile(r"#heroSkin-\d+")) if container else []
+        for a in anchors:
+            img = a.find("img")
+            if not img:
+                continue
+            full_name = (a.get("title") or img.get("alt") or img.get("title") or "").strip()
+            src = absurl(hero_url, img.get("src"))
+            if not full_name or not src:
+                continue
+            skin_name = re.sub(rf"^{re.escape(hero_name)}\s*", "", full_name, flags=re.I).strip() or full_name
             skins.append({"skinNameSource": skin_name, "skinImage": src})
+
+    # Nếu không tìm thấy mục "Trang phục" (trang có thể đổi cấu trúc), quay lại
+    # cách cũ: tên skin lấy từ heading, ảnh là <img> gần nhất theo sau heading đó.
+    if not skins:
+        for heading in soup.find_all(["h2", "h3", "h4"]):
+            text = " ".join(heading.stripped_strings).strip()
+            if not text or not norm(text).startswith(norm(hero_name)):
+                continue
+            skin_name = re.sub(rf"^{re.escape(hero_name)}\s*", "", text, flags=re.I).strip()
+            if not skin_name or norm(skin_name) in {"trang phuc", "ky nang"}:
+                continue
+            img = heading.find_next("img")
+            src = absurl(hero_url, img.get("src") if img else "")
+            if src:
+                skins.append({"skinNameSource": skin_name, "skinImage": src})
     # De-duplicate exact names.
     seen_names = set()
     uniq = []
