@@ -1,0 +1,4 @@
+        <int name="skinId" value="10620" refParamName="" useRefParam="false" />
+        <bool name="bEqual" value="false" refParamName="" useRefParam="false" />
+      </Event>
+    </Track>

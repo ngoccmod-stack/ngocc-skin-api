@@ -1,0 +1,48 @@
+    <Track trackName="14118检测" eventType="CheckSkinIdTick" guid="4cd2db1b-e00b-4b71-916f-e9c0b1b21d07" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+      <Event eventName="CheckSkinIdTick" time="0.000" isDuration="false" guid="03d1e9c3-a23a-4ead-aaf8-7cd333b318b4">
+        <TemplateObject name="targetId" id="0" objectName="self" isTemp="false" refParamName="" useRefParam="false" />
+        <int name="skinId" value="14118" refParamName="" useRefParam="false" />
+      </Event>
+    </Track>
+    <Track trackName="TriggerParticleTick0" eventType="TriggerParticleTick" guid="c6a98de8-8f76-4f6b-8f80-1bcd17efbc2c" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+      <Condition id="4" guid="4cd2db1b-e00b-4b71-916f-e9c0b1b21d07" status="false" />
+      <Event eventName="TriggerParticleTick" time="0.000" isDuration="false" guid="a4c68b42-3e79-4aa1-8af2-451b9e077923">
+        <TemplateObject name="targetId" id="2" objectName="bullet" isTemp="true" refParamName="" useRefParam="false" />
+        <TemplateObject name="objectSpaceId" id="2" objectName="bullet" isTemp="true" refParamName="" useRefParam="false" />
+        <String name="resourceName" value="prefab_skill_effects/hero_skill_effects/141_diaochan/14111/diaochan_attack_spell01_1" refParamName="" useRefParam="false" />
+        <float name="lifeTime" value="2.000" refParamName="" useRefParam="false" />
+        <Vector3i name="scalingInt" x="10000" y="10000" z="10000" refParamName="" useRefParam="false" />
+        <bool name="applyActionSpeedToAnimation" value="true" refParamName="" useRefParam="false" />
+      </Event>
+    </Track>
+    <Track trackName="BUFF" eventType="CheckSkillCombineConditionTick" guid="b37bdadd-b8c9-440e-9ea0-2705476cc057" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+      <Condition id="4" guid="4cd2db1b-e00b-4b71-916f-e9c0b1b21d07" status="true" />
+      <Event eventName="CheckSkillCombineConditionTick" time="0.000" isDuration="false" guid="a88e4c5e-b65e-4bbf-851d-1bd898e9f7d0">
+        <TemplateObject name="targetId" id="0" objectName="self" isTemp="false" refParamName="" useRefParam="false" />
+        <int name="skillCombineId" value="141920" refParamName="" useRefParam="false" />
+        <Enum name="checkOPType" value="5" refParamName="" useRefParam="false" />
+        <int name="skillCombineLevel" value="1" refParamName="" useRefParam="false" />
+      </Event>
+    </Track>
+    <Track trackName="TriggerParticleTick0" eventType="TriggerParticleTick" guid="685ff200-95ad-4b43-8471-83a9572b039b" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+      <Condition id="6" guid="b37bdadd-b8c9-440e-9ea0-2705476cc057" status="false" />
+      <Event eventName="TriggerParticleTick" time="0.000" isDuration="false" guid="9d4c8390-89f0-4ed4-96f3-18dc7af1d978">
+        <TemplateObject name="targetId" id="2" objectName="bullet" isTemp="true" refParamName="" useRefParam="false" />
+        <TemplateObject name="objectSpaceId" id="2" objectName="bullet" isTemp="true" refParamName="" useRefParam="false" />
+        <String name="resourceName" value="prefab_skill_effects/hero_skill_effects/141_diaochan/14111/diaochan_attack_spell01_1" refParamName="" useRefParam="false" />
+        <float name="lifeTime" value="2.000" refParamName="" useRefParam="false" />
+        <Vector3i name="scalingInt" x="10000" y="10000" z="10000" refParamName="" useRefParam="false" />
+        <bool name="applyActionSpeedToAnimation" value="true" refParamName="" useRefParam="false" />
+      </Event>
+    </Track>
+    <Track trackName="TriggerParticleTick0" eventType="TriggerParticleTick" guid="90043ce2-7a80-4e53-b87d-944fe49f7924" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+      <Condition id="6" guid="b37bdadd-b8c9-440e-9ea0-2705476cc057" status="true" />
+      <Event eventName="TriggerParticleTick" time="0.000" isDuration="false" guid="96d74687-1dc4-4407-ab36-663b1eb619b2">
+        <TemplateObject name="targetId" id="2" objectName="bullet" isTemp="true" refParamName="" useRefParam="false" />
+        <TemplateObject name="objectSpaceId" id="2" objectName="bullet" isTemp="true" refParamName="" useRefParam="false" />
+        <String name="resourceName" value="prefab_skill_effects/hero_skill_effects/141_diaochan/14111/diaochan_attack_spell01_1_S" refParamName="" useRefParam="false" />
+        <float name="lifeTime" value="2.000" refParamName="" useRefParam="false" />
+        <Vector3i name="scalingInt" x="10000" y="10000" z="10000" refParamName="" useRefParam="false" />
+        <bool name="applyActionSpeedToAnimation" value="true" refParamName="" useRefParam="false" />
+      </Event>
+    </Track>

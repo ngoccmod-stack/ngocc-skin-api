@@ -1,0 +1,4 @@
+<TemplateObject name="targetId" objectName="None" id="-1" isTemp="false" refParamName="" useRefParam="false" />
+        <TemplateObject name="objectSpaceId" objectName="self" id="0" isTemp="false" refParamName="" useRefParam="false" />
+        <String name="resourceName" value="prefab_skill_effects/hero_skill_effects/599_LvMeng/59901/LvMeng_attack02_spell02B" refParamName="" useRefParam="false" />
+        <float name="lifeTime" value="1.500" refParamName="" useRefParam="false" />

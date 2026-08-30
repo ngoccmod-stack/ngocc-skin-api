@@ -1,0 +1,19 @@
+
+    <Track trackName="MMN | TriggerParticle" eventType="TriggerParticle" guid="MMN-AOV" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+      <Event eventName="TriggerParticle" time="0.000" length="5.000" isDuration="true">
+        <TemplateObject name="targetId" id="1" objectName="target" isTemp="false" refParamName="" useRefParam="false" />
+        <TemplateObject name="objectSpaceId" id="1" objectName="target" isTemp="false" refParamName="" useRefParam="false" />
+        <bool name="bUseTargetSkinEffect" value="true" refParamName="" useRefParam="false"/>
+        <String name="resourceName" value="Prefab_Skill_Effects/Hero_Skill_Effects/Name_Hero/ID_Skin/JiaSu_tongyong_01" refParamName="" useRefParam="false" />
+      </Event>
+    </Track>
+    <Track trackName="MMN | TriggerParticle" eventType="TriggerParticle" guid="MMN-AOV" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+      <Event eventName="TriggerParticle" time="0.000" length="5.000" isDuration="true">
+        <TemplateObject name="targetId" id="1" objectName="target" isTemp="false" refParamName="" useRefParam="false" />
+        <TemplateObject name="objectSpaceId" id="1" objectName="target" isTemp="false" refParamName="" useRefParam="false" />
+        <bool name="bUseTargetSkinEffect" value="true" refParamName="" useRefParam="false"/>
+        <String name="resourceName" value="Prefab_Skill_Effects/Hero_Skill_Effects/Name_Hero/ID_Skin/JiaSu_tongyong_02" refParamName="" useRefParam="false" />
+      </Event>
+    </Track>
+  </Action>
+</Project>

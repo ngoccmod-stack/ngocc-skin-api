@@ -1,0 +1,108 @@
+
+    <Track trackName="CheckSkillCombineConditionTick0" eventType="CheckSkillCombineConditionTick" guid="KIRINMOD_FIX_3" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+      <Event eventName="CheckSkillCombineConditionTick" time="0.000" isDuration="false" guid="MMNAOV">
+        <TemplateObject name="targetId" objectName="target" id="1" isTemp="false" refParamName="" useRefParam="false" />
+        <int name="skillCombineId" value="510903" refParamName="" useRefParam="false" />
+        <Enum name="checkOPType" value="3" EnumValue="等于" refParamName="" useRefParam="false" />
+        <int name="skillCombineLevel" value="1" refParamName="" useRefParam="false" />
+      </Event>
+    </Track>
+    <Track trackName="CheckSkillCombineConditionTick0" eventType="CheckSkillCombineConditionTick" guid="KIRINMOD_FIX_5" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+      <Event eventName="CheckSkillCombineConditionTick" time="0.000" isDuration="false" guid="MMNAOV">
+        <TemplateObject name="targetId" objectName="self" id="0" isTemp="false" refParamName="" useRefParam="false" />
+        <int name="skillCombineId" value="510903" refParamName="" useRefParam="false" />
+        <Enum name="checkOPType" value="5" EnumValue="大等于" refParamName="" useRefParam="false" />
+        <int name="skillCombineLevel" value="1" refParamName="" useRefParam="false" />
+      </Event>
+    </Track>
+   <Track trackName="TriggerParticleTick0" eventType="TriggerParticleTick" guid="FIX-51015" enabled="true" refParamName="" useRefParam="false" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+      <Condition id="0" guid="KIRINMOD_FIX_5" status="false" />
+      <Event eventName="TriggerParticleTick" time="7.000" isDuration="false">
+        <TemplateObject name="targetId" objectName="None" id="-1" isTemp="false" refParamName="" useRefParam="false"/>
+        <TemplateObject name="objectSpaceId" objectName="self" id="0" isTemp="false" refParamName="" useRefParam="false"/>
+        <String name="resourceName" value="Prefab_Skill_Effects/Hero_Skill_Effects/510_Liliana/51015/huijidi_01" refParamName="" useRefParam="true"/>
+        <bool name="bUseTargetSkinEffect" value="true" refParamName="" useRefParam="false"/>
+     </Event>
+    </Track>
+    <Track trackName="TriggerParticle0" eventType="TriggerParticle" guid="FIX-51015" enabled="true" refParamName="" useRefParam="false" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+      <Condition id="0" guid="KIRINMOD_FIX_5" status="false" />
+      <Event eventName="TriggerParticle" time="0.000" length="7.000" isDuration="true">
+        <TemplateObject name="targetId" objectName="self" id="0" isTemp="false" refParamName="" useRefParam="false"/>
+        <TemplateObject name="objectSpaceId" objectName="self" id="0" isTemp="false" refParamName="" useRefParam="false"/>
+        <String name="resourceName" value="Prefab_Skill_Effects/Hero_Skill_Effects/510_Liliana/51015/huicheng_tongyong_01" refParamName="" useRefParam="true"/>
+        <bool name="bUseTargetSkinEffect" value="true" refParamName="" useRefParam="false"/>
+        <Vector3 name="bindPosOffset" x="0.000" y="-0.300" z="0.000" refParamName="" useRefParam="false"/>
+      </Event>
+    </Track>
+    <Track trackName="PlayHeroSoundTick2" eventType="PlayHeroSoundTick" guid="f4de4718-9437-414d-ad91-017b7e947ae5" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+      <Condition id="0" guid="KIRINMOD_FIX_3" status="false" />
+      <Event eventName="PlayHeroSoundTick" time="0.000" isDuration="false" guid="fd62aee8-b4d7-48e9-8701-6ad2f9b4f014">
+        <TemplateObject name="targetId" objectName="self" id="0" isTemp="false" refParamName="" useRefParam="false" />
+        <TemplateObject name="sourceId" objectName="self" id="0" isTemp="false" refParamName="" useRefParam="false" />
+        <String name="eventName" value="Play_Portal_Liliana_H_Skin15" refParamName="" useRefParam="false" />
+        <bool name="useSkinSwitch" value="false" refParamName="" useRefParam="false" />
+      </Event>
+    </Track>
+    <Track trackName="PlayHeroSoundTick2" eventType="PlayHeroSoundTick" guid="cc8a9d4a-4933-4dd8-8269-adca1cf68fae" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+      <Condition id="0" guid="KIRINMOD_FIX_3" status="false" />
+      <Event eventName="PlayHeroSoundTick" time="6.983" isDuration="false" guid="f18bfcdd-b24b-4703-bd29-ebe663bccbdf">
+        <TemplateObject name="targetId" objectName="self" id="0" isTemp="false" refParamName="" useRefParam="false" />
+        <TemplateObject name="sourceId" objectName="self" id="0" isTemp="false" refParamName="" useRefParam="false" />
+        <String name="eventName" value="Play_Back_Liliana_H_Skin15" refParamName="" useRefParam="false" />
+        <bool name="useSkinSwitch" value="false" refParamName="" useRefParam="false" />
+      </Event>
+    </Track>
+    <Track trackName="TriggerParticleTick0" eventType="TriggerParticleTick" guid="FIX-51015" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+      <Condition id="0" guid="KIRINMOD_FIX_5" status="true" />
+      <Event eventName="TriggerParticleTick" time="7.000" isDuration="false" guid="59af0418-d120-47b6-91c6-ec69c6bb0d7e">
+        <TemplateObject name="targetId" objectName="self" id="0" isTemp="false" refParamName="" useRefParam="false" />
+        <String name="resourceName" value="prefab_skill_effects/hero_skill_effects/510_Liliana/51015/Huijidi_02" refParamName="" useRefParam="false" />
+        <bool name="bUseTargetSkinEffect" value="true" refParamName="" useRefParam="false"/>
+      </Event>
+    </Track>
+    <Track trackName="TriggerParticle0" eventType="TriggerParticle" guid="FIX-51015" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+      <Condition id="0" guid="KIRINMOD_FIX_5" status="true" />
+      <Event eventName="TriggerParticle" time="0.000" length="7.000" isDuration="true" guid="f5b251e8-d75d-4a82-adfd-2c60ce09562b">
+        <String name="resourceName" value="prefab_skill_effects/hero_skill_effects/510_Liliana/51015/Huicheng_tongyong_02" refParamName="" useRefParam="false" />
+        <bool name="bUseTargetSkinEffect" value="true" refParamName="" useRefParam="false"/>
+      </Event>
+    </Track>
+    <Track trackName="PlayHeroSoundTick2" eventType="PlayHeroSoundTick" guid="294ac0e7-238f-43bb-a9a4-be3413a5cb1b" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+      <Condition id="0" guid="KIRINMOD_FIX_3" status="true" />
+      <Event eventName="PlayHeroSoundTick" time="0.000" isDuration="false" guid="66d3a038-49c0-4eff-86f6-0cd7b89ba1c6">
+        <TemplateObject name="targetId" objectName="self" id="0" isTemp="false" refParamName="" useRefParam="false" />
+        <TemplateObject name="sourceId" objectName="self" id="0" isTemp="false" refParamName="" useRefParam="false" />
+        <String name="eventName" value="Play_Portal_Liliana_F_Skin15" refParamName="" useRefParam="false" />
+        <bool name="useSkinSwitch" value="false" refParamName="" useRefParam="false" />
+      </Event>
+    </Track>
+    <Track trackName="PlayHeroSoundTick2" eventType="PlayHeroSoundTick" guid="9d925844-0a50-4599-a067-40685871b577" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+      <Condition id="0" guid="KIRINMOD_FIX_3" status="true" />
+      <Event eventName="PlayHeroSoundTick" time="6.983" isDuration="false" guid="977dc12f-0ff1-4f94-94d1-a3a1890131d9">
+        <TemplateObject name="targetId" objectName="self" id="0" isTemp="false" refParamName="" useRefParam="false" />
+        <TemplateObject name="sourceId" objectName="self" id="0" isTemp="false" refParamName="" useRefParam="false" />
+        <String name="eventName" value="Play_Back_Liliana_F_Skin15" refParamName="" useRefParam="false" />
+        <bool name="useSkinSwitch" value="false" refParamName="" useRefParam="false" />
+      </Event>
+    </Track>
+    <Track trackName="StopTracks0" eventType="StopTracks" guid="[DIAOCHAN/KIRINMOD]" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+      <Event eventName="StopTracks" time="0.000" isDuration="false" guid="[DIAOCHAN/KIRINMOD]">
+        <Array name="trackIds" refParamName="" useRefParam="false" type="TrackObject">
+          <TrackObject id="11" guid="95cf43e1-a94a-4b6d-a10e-079af17b888c" />
+          <TrackObject id="12" guid="cb944be3-2bf1-4b56-a5da-6676a85f329c" />
+          <TrackObject id="18" guid="b9729512-4050-459e-9644-dc609c2a3a1f" />
+          <TrackObject id="19" guid="28dbc769-e471-407e-8108-9012ecf910d8" />
+          <TrackObject id="20" guid="b9729512-4050-459e-9644-dc609c2a3a1f" />
+        </Array>
+        <bool name="alsoStopNotStartedTrack" value="true" refParamName="" useRefParam="false" />
+      </Event>
+    </Track>
+    <Track trackName="SetObjectDirectionTick1" eventType="SetObjectDirectionTick" guid="abdf1e2e-176b-460d-91c5-cc1867d1a7ca" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+      <Condition id="0" guid="KIRINMOD_FIX_5" status="false" />    	
+      <Event eventName="SetObjectDirectionTick" time="0.000" isDuration="false" guid="a013d304-3184-4c7a-9a12-e767da470f45">
+        <TemplateObject name="targetId" objectName="self" id="0" isTemp="false" refParamName="" useRefParam="false" />
+        <int name="rotationY" value="180" refParamName="" useRefParam="false" />
+      </Event>
+    </Track>
+  </Action>
+</Project>

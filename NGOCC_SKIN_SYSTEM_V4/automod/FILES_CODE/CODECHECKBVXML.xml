@@ -1,0 +1,9 @@
+  <Action tag="" length="9.000" loop="false">
+    <Track trackName="[BUFF_TRACKNAME]" eventType="CheckHeroIdTick" guid="[DIAOCHAN/KIRINMOD]" enabled="true" refParamName="" useRefParam="false" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+      <Event eventName="CheckHeroIdTick" time="0.000" isDuration="false">
+        <TemplateObject name="targetId" objectName="self" id="0" isTemp="false" refParamName="" useRefParam="false"/>
+        <int name="heroId" value="ID_Hero" refParamName="" useRefParam="false"/>
+        <bool name="bEqual" value="true" refParamName="" useRefParam="false"/>
+        <bool name="bSkipLogicCheck" value="false" refParamName="" useRefParam="false"/>
+      </Event>
+    </Track>

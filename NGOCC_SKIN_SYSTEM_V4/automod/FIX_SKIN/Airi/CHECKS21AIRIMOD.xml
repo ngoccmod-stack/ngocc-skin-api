@@ -1,0 +1,7 @@
+    <Track trackName="T2skin美术true" eventType="CheckHeroIdTick" guid="753f3471-d461-40e5-b0d9-9305c2d4615d" enabled="true" useRefParam="false" refParamName="" r="0.000" g="0.000" b="0.000" execOnForceStopped="false" execOnActionCompleted="false" stopAfterLastEvent="true">
+      <Event eventName="CheckHeroIdTick" time="0.000" isDuration="false" guid="d302841f-faf8-4336-9895-50109a87ca31">
+        <TemplateObject name="targetId" objectName="self" id="0" isTemp="false" refParamName="" useRefParam="false" />
+        <int name="heroId" value="130" refParamName="" useRefParam="false" />
+        <bool name="bSkipLogicCheck" value="true" refParamName="" useRefParam="false" />
+      </Event>
+    </Track>
