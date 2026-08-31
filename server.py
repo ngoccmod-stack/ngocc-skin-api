@@ -47,6 +47,8 @@ BUTTON_ENGINE_READY = BUTTON_DATA / ".engine_ready"
 BUTTON_OVERRIDE_MARKER = BUTTON_DATA / ".cloud_override"
 BUTTON_PREP_LOCK = threading.Lock()
 BUTTON_BUILD_EXECUTOR = ThreadPoolExecutor(max_workers=1)
+BUTTON_PROCS: dict[str, subprocess.Popen] = {}
+BUTTON_PROCS_LOCK = threading.Lock()
 BUTTON_JOBS: dict[str, dict[str, Any]] = {}
 BUTTON_JOBS_LOCK = threading.Lock()
 def _clean_env(v: str) -> str:
@@ -934,117 +936,132 @@ async def button_resources_upload(file: UploadFile = File(...)):
 
 
 def _button_build_sync(skin_id: str, job_id: str | None = None):
-    import importlib, sys as _sys, traceback
+    import subprocess, time as _time, json as _json
     try:
         ensure_button_resources()
-        cat=_button_catalog()
-        row=next((r for r in cat['rows'] if str(r['id'])==str(skin_id)),None)
+        cat = _button_catalog()
+        row = next((r for r in cat['rows'] if str(r['id']) == str(skin_id)), None)
         if not row:
-            raise HTTPException(404,'Nút bấm ID chưa có trong Resources.')
-        files=_button_scan_source(BUTTON_SOURCE).get(str(skin_id))
+            raise HTTPException(404, 'Nút bấm ID chưa có trong Resources.')
+        files = _button_scan_source(BUTTON_SOURCE).get(str(skin_id))
         if not files:
-            raise HTTPException(404,'Không tìm thấy Source cho ID nút này.')
-        if not (BUTTON_DIR/'battleotherui.assetbundle').is_file():
-            raise HTTPException(409,'Thiếu Button/battleotherui.assetbundle.')
+            raise HTTPException(404, 'Không tìm thấy Source cho ID nút này.')
+        base_bundle = BUTTON_DIR / 'battleotherui.assetbundle'
+        if not base_bundle.is_file():
+            raise HTTPException(409, 'Thiếu Button/battleotherui.assetbundle.')
 
-        # Luôn ưu tiên đúng engine bundled trong button_resources; tránh collision với
-        # module tên "core" của package khác đã import trước đó.
-        button_root = str(BUTTON_DATA)
-        if button_root not in _sys.path:
-            _sys.path.insert(0, button_root)
-        for _name in [x for x in list(_sys.modules) if x == 'core' or x.startswith('core.')]:
-            _sys.modules.pop(_name, None)
-        graft_mod=importlib.import_module('core.graft')
+        pack_name = re.sub(r'[\\/:*?"<>|]', '', ((row.get('hero','') + ' ' + row.get('name','')).strip() or str(skin_id))).strip() or str(skin_id)
+        build_root = BUILDS / 'buttons' / str(skin_id)
+        shutil.rmtree(build_root, ignore_errors=True)
+        work = build_root / 'Resources' / '1.63.1' / 'assetbundle' / 'uisystem' / 'battle'
+        work.mkdir(parents=True, exist_ok=True)
+        out_bundle = work / 'battleotherui.assetbundle'
+        zip_path = BUILDS / f'button_{skin_id}.zip'
+        job_file = UPLOADS / f'button_job_{job_id or uuid.uuid4().hex}.json'
 
-        out_dir=BUILDS/'buttons'/str(skin_id)
-        shutil.rmtree(out_dir, ignore_errors=True)
-        work=out_dir/'Resources'/'1.63.1'/'assetbundle'/'uisystem'/'battle'
-        work.mkdir(parents=True,exist_ok=True)
-        out_bundle=work/'battleotherui.assetbundle'
-        logs=[]
-        import time as _time
-        _started_at = _time.monotonic()
-        _stage = {'n': 0}
-        _stages = [
-            'Đang giải mã bundle gốc...',
-            'Đang nạp Unity bundle...',
-            'Đang graft FX...',
-            'Đang graft joystick...',
-            'Đang nén LZMA...',
-            'Đang mã hóa bundle...',
-            'Đang xử lý shop + hoàn tất ZIP...',
-        ]
+        payload = {
+            'skin_id': str(skin_id),
+            'files': files,
+            'button_bundle': str(base_bundle),
+            'button_dir': str(BUTTON_DIR),
+            'out_dir': str(work),
+            'out_path': str(out_bundle),
+            'pack_name': pack_name,
+        }
+        job_file.write_text(_json.dumps(payload, ensure_ascii=False), encoding='utf-8')
 
-        def _update_button_job(**extra):
-            if not job_id:
-                return
-            with BUTTON_JOBS_LOCK:
-                job = BUTTON_JOBS.get(job_id)
-                if not job:
-                    return
-                job.update(**extra)
+        started = _time.monotonic()
+        logs = []
+        timeout_total = 180
+        timeout_idle = 90
+        _update = lambda **kw: _update_button_job(job_id, **kw) if job_id else None
+        _update(progress='Đang khởi động worker... (0%)', progressIndex=0, progressTotal=7, elapsed=0, log=[])
+        print(f'[BUTTON {skin_id}] Worker khởi động', flush=True)
 
-        def _button_log(message):
-            msg = str(message)
-            logs.append(msg)
-            elapsed = _time.monotonic() - _started_at
-            # Ghi log thật ra Render để không còn cảnh chỉ thấy polling status 200.
-            print(f'[BUTTON {skin_id}] +{elapsed:6.1f}s {msg}', flush=True)
-            _update_button_job(log=logs[-80:], lastLog=msg)
-
-        def _button_step():
-            i = _stage['n']
-            if i < len(_stages):
-                elapsed = _time.monotonic() - _started_at
-                pct = int(((i + 1) / len(_stages)) * 100)
-                text = f'{_stages[i]} ({pct}%)'
-                print(f'[BUTTON {skin_id}] +{elapsed:6.1f}s {text}', flush=True)
-                _update_button_job(progress=text, progressIndex=i + 1, progressTotal=len(_stages), elapsed=round(elapsed, 1), log=logs[-80:])
-            _stage['n'] = i + 1
-
-        _update_button_job(progress='Đang chuẩn bị builder... (0%)', progressIndex=0, progressTotal=len(_stages), elapsed=0, log=[])
-        print(f'[BUTTON {skin_id}] Build bắt đầu', flush=True)
-
-        graft_mod.build_one(
-            str(skin_id), files, str(BUTTON_DIR/'battleotherui.assetbundle'), str(out_bundle),
-            log=_button_log, step=_button_step,
-            button_dir=str(BUTTON_DIR), out_dir=str(work)
+        proc = subprocess.Popen(
+            [sys.executable, str(ROOT / 'button_worker.py'), str(job_file)],
+            cwd=str(ROOT),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1,
         )
-        raw_src=BUTTON_DIR/'battleotherui_raw.assetbundle'
-        if raw_src.is_file():
-            shutil.copy2(raw_src,work/'battleotherui_raw.assetbundle')
-        pack_name=(row.get('hero','')+' '+row.get('name','')).strip() or str(skin_id)
-        pack_name=re.sub(r'[\\/:*?"<>|]','',pack_name).strip() or str(skin_id)
-        zip_path=BUILDS/f'button_{skin_id}.zip'
-        tmp=zip_path.with_suffix('.tmp')
-        with zipfile.ZipFile(tmp,'w',zipfile.ZIP_DEFLATED) as z:
-            for f in work.rglob('*'):
-                if not f.is_file(): continue
-                rel=f.relative_to(out_dir).as_posix()
-                z.write(f,f'{pack_name}/files/{rel}')
-        tmp.replace(zip_path)
-        _elapsed = _time.monotonic() - _started_at
-        print(f'[BUTTON {skin_id}] Build hoàn tất sau {_elapsed:.1f}s: {zip_path.name}', flush=True)
-        if job_id:
-            with BUTTON_JOBS_LOCK:
-                BUTTON_JOBS[job_id].update(status='done', progress='Hoàn tất (100%)', progressIndex=len(_stages), progressTotal=len(_stages), elapsed=round(_elapsed, 1), file=str(zip_path), filename=f'{pack_name}.zip', log=logs[-80:])
-        return zip_path, f'{pack_name}.zip', logs
+        with BUTTON_PROCS_LOCK:
+            BUTTON_PROCS[job_id or ''] = proc
+        last_output = started
+        done_line = None
+        try:
+            while True:
+                line = proc.stdout.readline()
+                now = _time.monotonic()
+                if line:
+                    last_output = now
+                    line = line.rstrip('\n')
+                    if line.startswith('WORKER_STAGE:'):
+                        body = line[len('WORKER_STAGE:'):].split('|')
+                        if len(body) >= 5:
+                            n,total,pct,desc,elapsed = body[:5]
+                            _update(progress=f'{desc} ({pct}%)', progressIndex=int(n), progressTotal=int(total), elapsed=float(elapsed), lastLog=desc)
+                            print(f'[BUTTON {skin_id}] +{float(elapsed):.1f}s {desc} ({pct}%)', flush=True)
+                    elif line.startswith('WORKER_LOG:'):
+                        msg = line[len('WORKER_LOG:'):]
+                        logs.append(msg)
+                        _update(log=logs[-80:], lastLog=msg)
+                        print(f'[BUTTON {skin_id}] {msg}', flush=True)
+                    elif line.startswith('WORKER_DONE:'):
+                        done_line = line[len('WORKER_DONE:'):].split('|', 2)
+                    elif line.startswith('WORKER_ERROR:'):
+                        logs.append(line)
+                        _update(log=logs[-80:], lastLog=line)
+                        print(f'[BUTTON {skin_id}] {line}', flush=True)
+                    else:
+                        logs.append(line)
+                        if line.strip(): print(f'[BUTTON {skin_id}] {line}', flush=True)
+                elif proc.poll() is not None:
+                    break
+                else:
+                    if now - last_output > timeout_idle:
+                        proc.kill()
+                        raise TimeoutError(f'Worker không có tiến triển trong {timeout_idle}s; build bị kẹt.')
+                    if now - started > timeout_total:
+                        proc.kill()
+                        raise TimeoutError(f'Build vượt quá {timeout_total}s.')
+                    _time.sleep(0.1)
+
+            rc = proc.wait(timeout=5)
+            elapsed = _time.monotonic() - started
+            if rc != 0 or not out_bundle.is_file():
+                raise RuntimeError('Worker build thất bại.' + (' ' + logs[-1] if logs else ''))
+
+            shutil.copy2(BUTTON_DIR / 'battleotherui_raw.assetbundle', work / 'battleotherui_raw.assetbundle') if (BUTTON_DIR / 'battleotherui_raw.assetbundle').is_file() else None
+            tmp = zip_path.with_suffix('.tmp')
+            with zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as z:
+                for f in build_root.rglob('*'):
+                    if not f.is_file():
+                        continue
+                    rel = f.relative_to(build_root).as_posix()
+                    z.write(f, f'{pack_name}/files/{rel}')
+            tmp.replace(zip_path)
+            print(f'[BUTTON {skin_id}] Build hoàn tất sau {elapsed:.1f}s: {zip_path.name}', flush=True)
+            _update(status='done', progress='Hoàn tất (100%)', progressIndex=7, progressTotal=7, elapsed=round(elapsed,1), file=str(zip_path), filename=f'{pack_name}.zip', log=logs[-80:])
+            return zip_path, f'{pack_name}.zip', logs
+        finally:
+            with BUTTON_PROCS_LOCK:
+                BUTTON_PROCS.pop(job_id or '', None)
+            try: proc.stdout.close()
+            except Exception: pass
+            job_file.unlink(missing_ok=True)
     except HTTPException as e:
-        if job_id:
-            with BUTTON_JOBS_LOCK:
-                BUTTON_JOBS[job_id].update(status='error', error=e.detail if isinstance(e.detail,str) else str(e.detail))
+        if job_id: _update_button_job(job_id, status='error', error=str(e.detail))
         raise
     except Exception as e:
         detail=f'{type(e).__name__}: {e}'
-        if job_id:
-            with BUTTON_JOBS_LOCK:
-                BUTTON_JOBS[job_id].update(status='error', error=detail, log=logs[-80:] if 'logs' in locals() else [])
+        if job_id: _update_button_job(job_id, status='error', error=detail, log=logs[-80:] if 'logs' in locals() else [])
         raise RuntimeError(detail + ('\n' + '\n'.join(logs[-40:]) if 'logs' in locals() and logs else '')) from e
 
 
 @app.post('/api/button/build/start/{skin_id}')
 def start_button_build(skin_id: str):
-    # Kiểm tra nhanh trước khi đưa build nặng sang background worker.
     ensure_button_resources()
     cat=_button_catalog()
     row=next((r for r in cat['rows'] if str(r['id'])==str(skin_id)),None)
@@ -1053,20 +1070,37 @@ def start_button_build(skin_id: str):
     files=_button_scan_source(BUTTON_SOURCE).get(str(skin_id))
     if not files:
         raise HTTPException(404,'Không tìm thấy Source cho ID nút này.')
-    job_id=uuid.uuid4().hex
     with BUTTON_JOBS_LOCK:
+        active=[j for j in BUTTON_JOBS.values() if j.get('status') in ('queued','running')]
+        if active:
+            raise HTTPException(409,'Đang có một build Nút Bấm khác. Vui lòng chờ hoặc huỷ job hiện tại.')
+        job_id=uuid.uuid4().hex
         BUTTON_JOBS[job_id]={'status':'queued','skinId':str(skin_id),'progress':'Đang xếp hàng...', 'error':'', 'file':'', 'filename':'', 'log':[]}
     def runner():
         with BUTTON_JOBS_LOCK:
             BUTTON_JOBS[job_id]['status']='running'
-            BUTTON_JOBS[job_id]['progress']='Đang tạo ZIP...'
+            BUTTON_JOBS[job_id]['progress']='Đang khởi động worker... (0%)'
         try:
             _button_build_sync(str(skin_id), job_id=job_id)
         except Exception:
-            # _button_build_sync already records the useful error.
             pass
     BUTTON_BUILD_EXECUTOR.submit(runner)
     return {'ok':True,'jobId':job_id,'skinId':str(skin_id)}
+
+@app.post('/api/button/build/cancel/{job_id}')
+def cancel_button_build(job_id: str):
+    with BUTTON_JOBS_LOCK:
+        job=BUTTON_JOBS.get(job_id)
+        if not job: raise HTTPException(404,'Không tìm thấy phiên build.')
+        if job.get('status') in ('done','error','cancelled'):
+            return {'ok':True,'status':job.get('status')}
+        job['status']='cancelled'; job['error']='Đã huỷ build.'; job['progress']='Đã huỷ.'
+    with BUTTON_PROCS_LOCK:
+        proc=BUTTON_PROCS.get(job_id)
+        if proc and proc.poll() is None:
+            try: proc.kill()
+            except Exception: pass
+    return {'ok':True,'status':'cancelled'}
 
 
 @app.get('/api/button/build/status/{job_id}')
