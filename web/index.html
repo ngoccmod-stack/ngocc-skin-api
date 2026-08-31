@@ -586,18 +586,22 @@ body.editmode #mainTileEditBtn{display:flex}
 .skin-filter.active{background:linear-gradient(90deg,#2daef0,#7d38ef);color:#fff;border-color:transparent}
 .skin-section-label{display:flex;align-items:center;justify-content:space-between;color:#9296a2;font-size:12px;font-weight:800;margin-top:2px}
 .skin-grid-hero{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-.skin-hero-card{position:relative;overflow:hidden;min-width:0;border-radius:16px;background:#15161d;border:1px solid rgba(255,255,255,.10);cursor:pointer;aspect-ratio:.80;display:flex;flex-direction:column;justify-content:flex-end}
+.skin-hero-card{position:relative;overflow:hidden;min-width:0;border-radius:16px;background:#15161d;border:1px solid rgba(255,255,255,.10);cursor:pointer;aspect-ratio:1;display:flex;flex-direction:column;justify-content:flex-end}
 .skin-hero-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;background:#17181f}
 .skin-hero-card::after{content:"";position:absolute;inset:40% 0 0;background:linear-gradient(to bottom,transparent,rgba(0,0,0,.92))}
 .skin-hero-name{position:relative;z-index:2;padding:28px 8px 9px;text-align:center;font-size:11px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .skin-grid-skin{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
 .skin-card{position:relative;overflow:hidden;border-radius:16px;background:#15161d;border:1px solid rgba(255,255,255,.10);cursor:pointer}
-.skin-card img{width:100%;aspect-ratio:1.35;display:block;object-fit:cover;background:#17181f}
+.skin-card img{width:100%;height:auto;display:block;object-fit:contain;background:#17181f}
 .skin-card-info{padding:9px 10px 10px}
 .skin-card-name{font-size:12.5px;color:#fff;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .skin-card-id{font-size:10.5px;color:#858995;margin-top:4px}
 .skin-status{display:inline-flex;align-items:center;gap:4px;margin-top:6px;padding:3px 7px;border-radius:999px;font-size:9.5px;font-weight:800;background:rgba(97,239,161,.08);color:#61efa1;border:1px solid rgba(97,239,161,.22)}
 .skin-status.locked{background:rgba(239,68,68,.08);color:#ef4444;border-color:rgba(239,68,68,.22)}
+.skin-card-noimg{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:#17181f;color:#5a5e6b;font-size:11px}
+.skin-admin-tools{position:absolute;top:6px;right:6px;z-index:5;display:none;gap:5px}.skin-edit-controls{display:none;gap:8px;align-items:center;flex-wrap:wrap}.skin-edit-controls.active{display:flex}.skin-select-box{position:absolute;top:7px;left:7px;z-index:6;width:22px;height:22px;accent-color:#bc66ff;display:block}body.editmode .skin-admin-tools{display:flex}
+.skin-admin-tools button{width:26px;height:26px;border-radius:8px;border:1px solid rgba(255,255,255,.18);background:rgba(10,10,14,.72);color:#fff;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.skin-admin-tools button:active{background:rgba(0,0,0,.9)}
 .skin-build-btn{display:block;width:100%;margin-top:7px;padding:8px 9px;border-radius:9px;border:1px solid rgba(45,174,240,.35);background:linear-gradient(90deg,rgba(45,174,240,.16),rgba(125,56,245,.18));color:#fff;font-size:10.5px;font-weight:800;cursor:pointer}.skin-build-btn:disabled{opacity:.55;cursor:wait}
 .skin-admin-panel{padding:14px;border:1px solid #292b34;border-radius:15px;background:rgba(17,18,24,.76)}
 .skin-admin-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -835,10 +839,12 @@ body.editmode #mainTileEditBtn{display:flex}
         <button type="button" onclick="saveSkinApiConfig()">💾 Lưu API</button>
         <label>📦 Cập nhật Resources <input id="skinResourcesFile" type="file" accept=".zip" style="display:none" onchange="uploadSkinResources(this)"></label>
         <button type="button" class="scan-btn" onclick="scanSkinCatalog()">🔄 Quét & cập nhật Tướng / Skin</button>
+        <button type="button" class="scan-btn" id="skinPremodBtn" onclick="togglePremodSkins()">🤖 Auto Mod toàn bộ Skin</button>
       </div>
       <div id="skinAdminStatus" class="skin-admin-status">Catalog chỉ được cập nhật khi Admin chủ bấm quét.</div>
+      <div id="skinPremodStatus" class="skin-admin-status" style="display:none"></div>
     </div>
-    <div class="skin-toolbar"><input id="skinHeroSearch" placeholder="Tìm tướng..." autocomplete="off" oninput="renderSkinHeroes()"></div>
+    <div class="skin-toolbar"><input id="skinHeroSearch" placeholder="Tìm tướng..." autocomplete="off" oninput="renderSkinHeroes()"></div><div id="skinHeroBulkBar" class="skin-edit-controls"><button type="button" class="skin-filter" onclick="toggleAllSkinHeroes()">☑ Chọn tất cả</button><button type="button" class="skin-filter" onclick="deleteSelectedSkinHeroes()">🗑 Xoá đã chọn (<span id="skinHeroSelectedCount">0</span>)</button></div>
     <div class="skin-filter-row" id="skinRoleFilters"></div>
     <div class="skin-section-label"><span id="skinHeroCountLabel">Danh sách tướng</span><span id="skinCatalogVersion"></span></div>
     <div id="skinHeroGrid" class="skin-grid-hero"></div>
@@ -853,7 +859,7 @@ body.editmode #mainTileEditBtn{display:flex}
       <div class="skin-hero-title"><b id="skinHeroTitle">Tướng</b><small id="skinHeroMeta"></small></div>
     </div>
     <div id="skinCurrentNotice" class="skin-current-banner" style="display:none"></div>
-    <div class="skin-toolbar"><input id="skinSearch" placeholder="Tìm skin..." autocomplete="off" oninput="renderSkinCards()"></div>
+    <div class="skin-toolbar"><input id="skinSearch" placeholder="Tìm skin..." autocomplete="off" oninput="renderSkinCards()"></div><div id="skinBulkBar" class="skin-edit-controls"><button type="button" class="skin-filter" onclick="toggleAllSkins()">☑ Chọn tất cả</button><button type="button" class="skin-filter" onclick="deleteSelectedSkins()">🗑 Xoá đã chọn (<span id="skinSelectedCount">0</span>)</button></div>
     <div id="skinGrid" class="skin-grid-skin"></div>
   </div>
 </section>
@@ -1615,6 +1621,7 @@ window.toggleEditMode = function(){
     renderOtherModsGrid();
     renderGuideMenu();
     if(currentCustomModSectionId) renderCustomModListView(currentCustomModSectionId);
+    try{ renderSkinHeroes(); renderSkinCards(); }catch(e){}
 }
 
 /* ---------- Kéo-thả đổi thứ tự mục ở trang chủ (chỉ Admin Chủ Quyền, khi đang ở chế độ chỉnh sửa) ---------- */
@@ -4678,13 +4685,15 @@ let ngoccSkinCatalog = {heroes:[], resourcesVersion:'', ready:false};
 let ngoccSkinHero = null;
 let ngoccSkinRole = 'all';
 let ngoccSkinLoadPromise = null;
+let ngoccSelectedHeroIds = new Set();
+let ngoccSelectedSkinIds = new Set();
 
 function skinApiUrl(path){
   const base = String(NGOC_SKIN_API || '').replace(/\/$/,'');
   return base + path;
 }
 function normalizeSkinText(s){
-  return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+  return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/đ/g,'d').trim();
 }
 function skinHeroRoles(name){
   // Role filters remain local UI; catalog scanner intentionally only stores ID/name/image.
@@ -4720,23 +4729,84 @@ async function loadSkinCatalog(force=false){
 }
 
 window.renderSkinHeroes=function(){
-  const grid=document.getElementById('skinHeroGrid');
-  if(!grid) return;
+  const grid=document.getElementById('skinHeroGrid'); if(!grid) return;
   const q=normalizeSkinText(document.getElementById('skinHeroSearch')?.value||'');
   const heroes=Array.isArray(ngoccSkinCatalog.heroes)?ngoccSkinCatalog.heroes:[];
+  const owner=typeof isOwner==='function' && isOwner();
+  const edit=owner && !!editMode;
+  const bulk=document.getElementById('skinHeroBulkBar'); if(bulk) bulk.classList.toggle('active',edit);
   if(!heroes.length){ grid.innerHTML='<div class="skin-empty" style="grid-column:1/-1">Chưa có catalog. Admin chủ hãy bấm “Quét & cập nhật Tướng / Skin”.</div>'; return; }
   const filtered=heroes.filter(h=>!q||normalizeSkinText(h.heroName).includes(q));
   document.getElementById('skinHeroCountLabel').textContent='Danh sách ('+filtered.length+')';
   document.getElementById('skinCatalogVersion').textContent=ngoccSkinCatalog.resourcesVersion?('Resources '+ngoccSkinCatalog.resourcesVersion):'';
-  grid.innerHTML=filtered.map(h=>`<div class="skin-hero-card" onclick="openSkinHero('${skinEscape(h.heroId)}')">${h.heroImage?`<img src="${skinEscape(h.heroImage)}" alt="" loading="lazy" decoding="async">`:''}<div class="skin-hero-name">${skinEscape(h.heroName)}</div></div>`).join('');
+  grid.innerHTML=filtered.map(h=>{
+    const selected=ngoccSelectedHeroIds.has(String(h.heroId));
+    const tools=edit?`<div class="skin-admin-tools" onclick="event.stopPropagation()">
+      <button type="button" title="Đổi ảnh" onclick="editHeroImage('${skinEscape(h.heroId)}')">🖼️</button>
+      <button type="button" title="Xoá tướng" onclick="deleteHero('${skinEscape(h.heroId)}','${skinEscape(h.heroName)}')">🗑️</button>
+    </div>`:'';
+    const check=edit?`<input class="skin-select-box" type="checkbox" ${selected?'checked':''} onclick="event.stopPropagation();toggleSkinHeroSelect('${skinEscape(h.heroId)}',this.checked)">`:'';
+    return `<div class="skin-hero-card" onclick="openSkinHero('${skinEscape(h.heroId)}')">${check}${tools}${h.heroImage?`<img src="${skinEscape(h.heroImage)}" alt="" loading="lazy" decoding="async">`:''}<div class="skin-hero-name">${skinEscape(h.heroName)}</div></div>`;
+  }).join('');
+  const sc=document.getElementById('skinHeroSelectedCount'); if(sc) sc.textContent=ngoccSelectedHeroIds.size;
+};
+
+window.toggleSkinHeroSelect=function(heroId, checked){
+  const id=String(heroId); if(checked) ngoccSelectedHeroIds.add(id); else ngoccSelectedHeroIds.delete(id); renderSkinHeroes();
+};
+window.toggleAllSkinHeroes=function(){
+  const heroes=Array.isArray(ngoccSkinCatalog.heroes)?ngoccSkinCatalog.heroes:[];
+  const all=heroes.length>0 && heroes.every(h=>ngoccSelectedHeroIds.has(String(h.heroId)));
+  if(all) ngoccSelectedHeroIds.clear(); else heroes.forEach(h=>ngoccSelectedHeroIds.add(String(h.heroId)));
+  renderSkinHeroes();
+};
+window.deleteSelectedSkinHeroes=async function(){
+  if(!(typeof isOwner==='function'&&isOwner()&&editMode)) return;
+  const ids=[...ngoccSelectedHeroIds]; if(!ids.length) return alert('Chưa chọn tướng nào.');
+  if(!confirm(`Xoá ${ids.length} tướng đã chọn khỏi catalog?`)) return;
+  try{
+    const r=await fetch(skinApiUrl('/api/catalog/heroes/delete-many'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids})});
+    const d=await r.json(); if(!r.ok) throw new Error(d?.detail||d?.error||('HTTP '+r.status));
+    ngoccSelectedHeroIds.clear(); ngoccSkinCatalog=d; ngoccSkinCatalog.ready=true; renderSkinHeroes();
+    if(d.cloudWarning) alert('⚠️ '+d.cloudWarning);
+  }catch(e){alert('❌ '+e.message);}
+};
+
+window.deleteHero=async function(heroId, heroName){
+  if(!(typeof isOwner==='function' && isOwner() && editMode)) return;
+  if(!confirm(`Xoá tướng "${heroName}" khỏi catalog?`)) return;
+  try{
+    const r=await fetch(skinApiUrl('/api/catalog/hero/'+encodeURIComponent(heroId)+'/delete'),{method:'POST'});
+    const data=await r.json();
+    if(!r.ok) throw new Error(data?.detail||data?.error||('HTTP '+r.status));
+    ngoccSkinCatalog=data; ngoccSkinCatalog.ready=true;
+    renderSkinHeroes();
+    if(data.cloudWarning) alert('⚠️ '+data.cloudWarning);
+  }catch(e){ alert('❌ '+e.message); }
+};
+
+window.editHeroImage=async function(heroId){
+  if(!(typeof isOwner==='function' && isOwner() && editMode)) return;
+  const url=prompt('Dán URL ảnh mới cho tướng này:');
+  if(url===null) return;
+  try{
+    const r=await fetch(skinApiUrl('/api/catalog/hero/'+encodeURIComponent(heroId)+'/image'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({imageUrl:url})});
+    const data=await r.json();
+    if(!r.ok) throw new Error(data?.detail||data?.error||('HTTP '+r.status));
+    ngoccSkinCatalog=data; ngoccSkinCatalog.ready=true;
+    renderSkinHeroes();
+    if(data.cloudWarning) alert('⚠️ '+data.cloudWarning);
+  }catch(e){ alert('❌ '+e.message); }
 };
 
 window.openSkinHero=async function(heroId){
   const hero=(ngoccSkinCatalog.heroes||[]).find(h=>String(h.heroId)===String(heroId));
   if(!hero) return;
   ngoccSkinHero=hero;
+  ngoccSelectedSkinIds.clear();
   document.getElementById('skinHeroTitle').textContent=hero.heroName||'Tướng';
-  document.getElementById('skinHeroMeta').textContent=(hero.skins?.length||0)+' skin';
+  const visibleCount=(hero.skins||[]).filter(skinIsVisible).length;
+  document.getElementById('skinHeroMeta').textContent=visibleCount+' skin';
   const av=document.getElementById('skinHeroAvatar'); av.src=hero.heroImage||''; av.style.display=hero.heroImage?'block':'none';
   document.getElementById('skinSearch').value='';
   const homeEl=document.getElementById('home'); homeEl.classList.add('hidden');
@@ -4746,16 +4816,86 @@ window.openSkinHero=async function(heroId){
   playEnterAnimation(v); window.scrollTo({top:0,behavior:'smooth'});
 };
 
+function skinIsVisible(s){
+  // Ẩn skin chưa có ảnh, skin dạng thử nghiệm/nội bộ tên bắt đầu bằng ngoặc vuông
+  // (vd "[Ex] ..."), và skin "Mặc định" (theo yêu cầu).
+  if(!s || !s.skinImage) return false;
+  const name=String(s.skinName||'').trim();
+  if(/^\[/.test(name)) return false;
+  if(normalizeSkinText(name)==='mac dinh') return false;
+  return true;
+}
+
 window.renderSkinCards=function(){
   const grid=document.getElementById('skinGrid'); if(!grid||!ngoccSkinHero) return;
   const q=normalizeSkinText(document.getElementById('skinSearch')?.value||'');
-  const skins=(ngoccSkinHero.skins||[]).filter(s=>!q||normalizeSkinText(s.skinName).includes(q)||String(s.skinId).includes(q));
+  const owner=typeof isOwner==='function' && isOwner();
+  const edit=owner && !!editMode;
+  const bulk=document.getElementById('skinBulkBar'); if(bulk) bulk.classList.toggle('active',edit);
+  const base=(ngoccSkinHero.skins||[]).filter(s=>skinIsVisible(s));
+  const skins=base.filter(s=>!q||normalizeSkinText(s.skinName).includes(q)||String(s.skinId).includes(q));
   if(!skins.length){grid.innerHTML='<div class="skin-empty" style="grid-column:1/-1">Không tìm thấy skin.</div>';return;}
   grid.innerHTML=skins.map(s=>{
     const ok=!!s.supported;
+    const selected=ngoccSelectedSkinIds.has(String(s.skinId));
     const buildBtn=ok?`<button type="button" class="skin-build-btn" onclick="event.stopPropagation();buildSkinZip('${skinEscape(s.skinId)}', this)">⬇️ Tạo & tải ZIP</button>`:'';
-    return `<div class="skin-card" onclick="openSkinForMod('${skinEscape(s.skinId)}')">${s.skinImage?`<img src="${skinEscape(s.skinImage)}" alt="" loading="lazy" decoding="async">`:''}<div class="skin-card-info"><div class="skin-card-name">${skinEscape(s.skinName||'Skin '+s.skinId)}</div><div class="skin-card-id">ID ${skinEscape(s.skinId)}</div><span class="skin-status ${ok?'':'locked'}">${ok?'✅ Có Resources':'🔒 Chưa hỗ trợ'}</span>${buildBtn}</div></div>`;
+    const tools=edit?`<div class="skin-admin-tools" onclick="event.stopPropagation()">
+      <button type="button" title="Đổi ảnh" onclick="editSkinImage('${skinEscape(ngoccSkinHero.heroId)}','${skinEscape(s.skinId)}')">🖼️</button>
+      <button type="button" title="Xoá skin" onclick="deleteSkin('${skinEscape(ngoccSkinHero.heroId)}','${skinEscape(s.skinId)}','${skinEscape(s.skinName||s.skinId)}')">🗑️</button>
+    </div>`:'';
+    const check=edit?`<input class="skin-select-box" type="checkbox" ${selected?'checked':''} onclick="event.stopPropagation();toggleSkinSelect('${skinEscape(s.skinId)}',this.checked)">`:'';
+    return `<div class="skin-card" onclick="openSkinForMod('${skinEscape(s.skinId)}')">${check}${tools}${s.skinImage?`<img src="${skinEscape(s.skinImage)}" alt="" loading="lazy" decoding="async">`:'<div class="skin-card-noimg">Chưa có ảnh</div>'}<div class="skin-card-info"><div class="skin-card-name">${skinEscape(s.skinName||'Skin '+s.skinId)}</div><div class="skin-card-id">ID ${skinEscape(s.skinId)}</div><span class="skin-status ${ok?'':'locked'}">${ok?'✅ Có Resources':'🔒 Chưa hỗ trợ'}</span>${buildBtn}</div></div>`;
   }).join('');
+  const sc=document.getElementById('skinSelectedCount'); if(sc) sc.textContent=ngoccSelectedSkinIds.size;
+};
+window.toggleSkinSelect=function(skinId, checked){const id=String(skinId); if(checked) ngoccSelectedSkinIds.add(id); else ngoccSelectedSkinIds.delete(id); renderSkinCards();};
+window.toggleAllSkins=function(){
+  if(!ngoccSkinHero) return; const skins=(ngoccSkinHero.skins||[]).filter(s=>skinIsVisible(s));
+  const all=skins.length>0 && skins.every(s=>ngoccSelectedSkinIds.has(String(s.skinId)));
+  if(all) ngoccSelectedSkinIds.clear(); else skins.forEach(s=>ngoccSelectedSkinIds.add(String(s.skinId)));
+  renderSkinCards();
+};
+window.deleteSelectedSkins=async function(){
+  if(!(typeof isOwner==='function'&&isOwner()&&editMode)||!ngoccSkinHero) return;
+  const ids=[...ngoccSelectedSkinIds]; if(!ids.length) return alert('Chưa chọn skin nào.');
+  if(!confirm(`Xoá ${ids.length} skin đã chọn khỏi ${ngoccSkinHero.heroName||'tướng này'}?`)) return;
+  try{
+    const r=await fetch(skinApiUrl('/api/catalog/hero/'+encodeURIComponent(ngoccSkinHero.heroId)+'/skins/delete-many'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids})});
+    const d=await r.json(); if(!r.ok) throw new Error(d?.detail||d?.error||('HTTP '+r.status));
+    ngoccSelectedSkinIds.clear(); ngoccSkinCatalog=d; ngoccSkinCatalog.ready=true;
+    ngoccSkinHero=(d.heroes||[]).find(h=>String(h.heroId)===String(ngoccSkinHero.heroId))||null;
+    renderSkinCards(); renderSkinHeroes();
+    if(d.cloudWarning) alert('⚠️ '+d.cloudWarning);
+  }catch(e){alert('❌ '+e.message);}
+};
+
+window.deleteSkin=async function(heroId, skinId, skinName){
+  if(!(typeof isOwner==='function' && isOwner() && editMode)) return;
+  if(!confirm(`Xoá skin "${skinName}" (ID ${skinId})?`)) return;
+  try{
+    const r=await fetch(skinApiUrl('/api/catalog/hero/'+encodeURIComponent(heroId)+'/skin/'+encodeURIComponent(skinId)+'/delete'),{method:'POST'});
+    const data=await r.json();
+    if(!r.ok) throw new Error(data?.detail||data?.error||('HTTP '+r.status));
+    ngoccSkinCatalog=data; ngoccSkinCatalog.ready=true;
+    ngoccSkinHero=(data.heroes||[]).find(h=>String(h.heroId)===String(heroId))||ngoccSkinHero;
+    renderSkinCards();
+    if(data.cloudWarning) alert('⚠️ '+data.cloudWarning);
+  }catch(e){ alert('❌ '+e.message); }
+};
+
+window.editSkinImage=async function(heroId, skinId){
+  if(!(typeof isOwner==='function' && isOwner() && editMode)) return;
+  const url=prompt('Dán URL ảnh mới cho skin này:');
+  if(url===null) return;
+  try{
+    const r=await fetch(skinApiUrl('/api/catalog/hero/'+encodeURIComponent(heroId)+'/skin/'+encodeURIComponent(skinId)+'/image'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({imageUrl:url})});
+    const data=await r.json();
+    if(!r.ok) throw new Error(data?.detail||data?.error||('HTTP '+r.status));
+    ngoccSkinCatalog=data; ngoccSkinCatalog.ready=true;
+    ngoccSkinHero=(data.heroes||[]).find(h=>String(h.heroId)===String(heroId))||ngoccSkinHero;
+    renderSkinCards();
+    if(data.cloudWarning) alert('⚠️ '+data.cloudWarning);
+  }catch(e){ alert('❌ '+e.message); }
 };
 
 window.buildSkinZip=async function(skinId, btn){
@@ -4765,12 +4905,21 @@ window.buildSkinZip=async function(skinId, btn){
   if(btn){ btn.disabled=true; btn.innerHTML='⏳ Đang tạo ZIP...'; }
   try{
     const r=await fetch(base,{method:'POST'});
-    const data=await r.json();
-    if(!r.ok) throw new Error(data?.detail||data?.error||('HTTP '+r.status));
-    if(data.downloadUrl){
-      const a=document.createElement('a'); a.href=skinApiUrl(data.downloadUrl); a.download=''; a.target='_blank'; a.rel='noopener'; document.body.appendChild(a); a.click(); a.remove();
+    if(!r.ok){
+      let msg='HTTP '+r.status;
+      try{ const j=await r.json(); msg=j?.detail||j?.error||msg; }catch(_e){}
+      throw new Error(msg);
     }
-    if(btn) btn.innerHTML=data.cached?'✅ Tải lại ZIP':'✅ Đã tạo ZIP';
+    // Server trả thẳng file ZIP ngay trong response này (không cần gọi thêm link tải
+    // riêng), nên chỉ cần lấy blob rồi cho trình duyệt lưu về máy.
+    const blob=await r.blob();
+    const cd=r.headers.get('content-disposition')||'';
+    const m=/filename\*?=(?:UTF-8''|")?([^";]+)"?/i.exec(cd);
+    const fname=(m&&decodeURIComponent(m[1].replace(/"/g,'')))||(String(skinId)+'.zip');
+    const blobUrl=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=blobUrl; a.download=fname; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(blobUrl),30000);
+    if(btn) btn.innerHTML='✅ Đã tạo ZIP';
     setTimeout(()=>{if(btn) btn.innerHTML=old;},1800);
   }catch(e){
     alert('❌ Không tạo được mod: '+e.message);
@@ -4800,50 +4949,117 @@ window.openSkinForMod=function(skinId){
 window.scanSkinCatalog=async function(){
   if(typeof isOwner==='function' && !isOwner()) return;
   const status=document.getElementById('skinAdminStatus');
-  if(status) status.textContent='⏳ Đang quét Resources + Garena...';
+  const setStatus=(t)=>{ if(status) status.textContent=t; };
+  setStatus('⏳ Đang khởi động quét Resources + Garena...');
   try{
-    const r=await fetch(skinApiUrl('/api/scan'),{method:'POST'});
-    const data=await r.json();
-    if(!r.ok) throw new Error(data?.detail||data?.error||('HTTP '+r.status));
-    ngoccSkinCatalog=data; ngoccSkinCatalog.ready=true;
-    if(status) status.textContent=`✅ Đã quét: ${data.heroCount||0} tướng, ${data.skinCount||0} skin • Resources ${data.resourcesVersion||'?'}`;
-    renderSkinHeroes();
+    const sr=await fetch(skinApiUrl('/api/scan/start'),{method:'POST'});
+    const sd=await sr.json();
+    if(!sr.ok) throw new Error(sd?.detail||sd?.error||('HTTP '+sr.status));
+
+    // Quét chạy nền trên server; ở đây chỉ hỏi thăm tiến độ định kỳ,
+    // tránh giữ 1 request duy nhất quá lâu khiến trình duyệt/Render báo Failed to fetch.
+    let waited=0;
+    while(true){
+      await new Promise(res=>setTimeout(res,2000));
+      waited+=2000;
+      const pr=await fetch(skinApiUrl('/api/scan/status'));
+      const data=await pr.json();
+      if(!pr.ok) throw new Error(data?.detail||data?.error||('HTTP '+pr.status));
+      if(data.error){ throw new Error(data.error); }
+      if(data.done){
+        ngoccSkinCatalog=data; ngoccSkinCatalog.ready=true;
+        const warn=(data.progress||'').includes('Cloudinary') ? ('\n'+data.progress) : '';
+        setStatus(`✅ Đã quét: ${data.heroCount||0} tướng, ${data.skinCount||0} skin • Resources ${data.resourcesVersion||'?'}${warn}`);
+        renderSkinHeroes();
+        return;
+      }
+      setStatus('⏳ '+(data.progress||'Đang quét...'));
+      if(waited>10*60*1000){ throw new Error('Quét quá lâu (>10 phút), vui lòng kiểm tra log server.'); }
+    }
   }catch(e){
-    console.error(e); if(status) status.textContent='❌ '+e.message;
+    console.error(e); setStatus('❌ '+e.message);
+  }
+};
+
+let _premodPolling=false;
+window.togglePremodSkins=async function(){
+  if(typeof isOwner==='function' && !isOwner()) return;
+  const btn=document.getElementById('skinPremodBtn');
+  const status=document.getElementById('skinPremodStatus');
+  if(!status||!btn) return;
+  if(_premodPolling){
+    // Đang chạy -> bấm lần nữa để dừng.
+    btn.disabled=true;
+    try{ await fetch(skinApiUrl('/api/premod/stop'),{method:'POST'}); }catch(_e){}
+    btn.disabled=false;
+    return;
+  }
+  status.style.display='block';
+  status.textContent='⏳ Đang khởi động Auto Mod toàn bộ skin...';
+  try{
+    const sr=await fetch(skinApiUrl('/api/premod/start'),{method:'POST'});
+    const sd=await sr.json();
+    if(!sr.ok) throw new Error(sd?.detail||sd?.error||('HTTP '+sr.status));
+    _premodPolling=true; btn.textContent='⏹ Dừng Auto Mod';
+    while(_premodPolling){
+      await new Promise(res=>setTimeout(res,3000));
+      const pr=await fetch(skinApiUrl('/api/premod/status'));
+      const data=await pr.json();
+      if(!pr.ok) throw new Error(data?.detail||data?.error||('HTTP '+pr.status));
+      if(data.total){
+        status.textContent=`⏳ ${data.progress||'Đang mod...'} — Xong ${data.doneCount||0}/${data.total} (✅ ${data.okCount||0} • ❌ ${data.failCount||0})`;
+      }else{
+        status.textContent='⏳ '+(data.progress||'Đang xử lý...');
+      }
+      if(data.done){
+        status.textContent='✅ '+(data.progress||'Hoàn tất.');
+        break;
+      }
+    }
+  }catch(e){
+    status.textContent='❌ '+e.message;
+  }finally{
+    _premodPolling=false; btn.textContent='🤖 Auto Mod toàn bộ Skin';
   }
 };
 
 window.uploadSkinResources=async function(input){
   if(typeof isOwner==='function' && !isOwner()) return;
   const file=input?.files?.[0]; if(!file) return;
-  if(!/\.zip$/i.test(file.name)){ alert('Vui lòng chọn file Resources .zip'); input.value=''; return; }
   const status=document.getElementById('skinAdminStatus');
-  const api=skinApiUrl('');
-  const chunkSize=8*1024*1024;
+  const setStatus=(t)=>{ if(status) status.textContent=t; };
   try{
-    status.textContent='⏳ Đang chuẩn bị upload Resources...';
-    const init=await fetch(api+'/api/resources/upload/init',{method:'POST'});
-    const initData=await init.json(); if(!init.ok) throw new Error(initData.detail||('HTTP '+init.status));
-    const uploadId=initData.uploadId; const total=Math.ceil(file.size/chunkSize);
+    // 1) init upload session
+    setStatus('⏳ Đang khởi tạo phiên tải Resources...');
+    const initR=await fetch(skinApiUrl('/api/resources/upload/init'),{method:'POST'});
+    const initData=await initR.json();
+    if(!initR.ok) throw new Error(initData?.detail||initData?.error||('HTTP '+initR.status));
+    const uploadId=initData.uploadId;
+    const chunkSize=initData.chunkSize||8*1024*1024;
+
+    // 2) upload each chunk
+    const total=Math.ceil(file.size/chunkSize);
     for(let i=0;i<total;i++){
-      const blob=file.slice(i*chunkSize,Math.min(file.size,(i+1)*chunkSize));
-      const fd=new FormData(); fd.append('file',blob,file.name+'.part'+i);
-      fd.append('uploadId',uploadId); fd.append('index',String(i));
-      let ok=false;
-      for(let retry=0;retry<3 && !ok;retry++){
-        try{
-          const r=await fetch(api+'/api/resources/upload/chunk?uploadId='+encodeURIComponent(uploadId)+'&index='+i,{method:'POST',body:fd});
-          const d=await r.json().catch(()=>({})); if(!r.ok) throw new Error(d.detail||('HTTP '+r.status)); ok=true;
-        }catch(e){ if(retry===2) throw e; await new Promise(res=>setTimeout(res,1000*(retry+1))); }
-      }
-      status.textContent=`⏳ Đang tải Resources: ${Math.round((i+1)/total*100)}% • phần ${i+1}/${total}`;
+      const start=i*chunkSize;
+      const end=Math.min(file.size,start+chunkSize);
+      const blob=file.slice(start,end);
+      const fd=new FormData(); fd.append('file',blob,file.name);
+      const qs=new URLSearchParams({uploadId,index:String(i)}).toString();
+      setStatus(`⏳ Đang tải Resources... (${i+1}/${total})`);
+      const cr=await fetch(skinApiUrl('/api/resources/upload/chunk?'+qs),{method:'POST',body:fd});
+      const cd=await cr.json().catch(()=>({}));
+      if(!cr.ok) throw new Error(cd?.detail||cd?.error||('HTTP '+cr.status+' ở phần '+(i+1)+'/'+total));
     }
-    status.textContent='⏳ Đang ghép + cài Resources...';
-    const r=await fetch(api+'/api/resources/upload/finalize?uploadId='+encodeURIComponent(uploadId)+'&total='+total+'&filename='+encodeURIComponent(file.name),{method:'POST'});
-    const d=await r.json().catch(()=>({})); if(!r.ok) throw new Error(d.detail||('HTTP '+r.status));
-    status.textContent=`✅ Resources ${d.version||''} đã cập nhật. Bấm “Quét” để cập nhật catalog.`;
-  }catch(e){ console.error(e); status.textContent='❌ '+(e.message||'Upload thất bại'); }
-  finally{ input.value=''; }
+
+    // 3) finalize (server ráp file + cài Resources)
+    setStatus('⏳ Đang xử lý & cài đặt Resources trên server (có thể mất vài phút)...');
+    const fqs=new URLSearchParams({uploadId,total:String(total),filename:file.name}).toString();
+    const fr=await fetch(skinApiUrl('/api/resources/upload/finalize?'+fqs),{method:'POST'});
+    const data=await fr.json().catch(()=>({}));
+    if(!fr.ok) throw new Error(data?.detail||data?.error||('HTTP '+fr.status));
+    setStatus('✅ Đã cập nhật Resources '+(data.version||'')+'. Bấm “Quét” để cập nhật catalog.');
+  }catch(e){ setStatus('❌ '+e.message); console.error(e); }
+  finally{input.value='';}
 };
 
 </script>

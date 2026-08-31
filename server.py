@@ -13,6 +13,7 @@ import threading
 import unicodedata
 import zipfile
 import uuid
+import base64
 from pathlib import Path
 from typing import Any
 
@@ -47,6 +48,9 @@ def _clean_env(v: str) -> str:
 
 GITHUB_TOKEN = _clean_env(os.environ.get("GITHUB_TOKEN", ""))
 GITHUB_REPO = _clean_env(os.environ.get("GITHUB_REPO", "ngoccmod-stack/ngocc-skin-api"))
+GITHUB_BRANCH = _clean_env(os.environ.get("GITHUB_BRANCH", "main")) or "main"
+GITHUB_CATALOG_PATH = _clean_env(os.environ.get("GITHUB_CATALOG_PATH", "data/skin_catalog.json")) or "data/skin_catalog.json"
+CATALOG_PERSIST_LOCK = threading.Lock()
 CHUNK_DIR = UPLOADS / "resource_chunks"
 CHUNK_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -201,77 +205,181 @@ def extract_hero_page(hero_url: str, hero_name: str) -> tuple[str, list[dict[str
     return hero_img, uniq
 
 
+def is_hidden_skin_name(name: str) -> bool:
+    n = str(name or "").strip()
+    if re.match(r"^\[\s*ex\s*\]", n, flags=re.I):
+        return True
+    return norm(n) in {"mac dinh", "default"}
+
+
+def is_valid_hero_name(name: str) -> bool:
+    n = str(name or "").strip()
+    if not n:
+        return False
+    # Bad scanner hits such as a raw skin ID (70621) must never become hero cards.
+    if re.fullmatch(r"\d{4,6}", n):
+        return False
+    return True
+
+
+def is_valid_hero_id(hero_id: str) -> bool:
+    try:
+        v = int(str(hero_id or "").strip())
+    except Exception:
+        return False
+    return 100 <= v <= 999
+
+
+def sanitize_catalog(data: dict[str, Any]) -> dict[str, Any]:
+    """Remove stale/rubbish hero entries from older catalogs and dedupe heroes/skins."""
+    out = dict(data or {})
+    merged: dict[str, dict] = {}
+    order: list[str] = []
+    for h in out.get("heroes", []):
+        hid = str(h.get("heroId", "")).strip()
+        hname = str(h.get("heroName", "")).strip()
+        if not is_valid_hero_id(hid) or not is_valid_hero_name(hname):
+            continue
+        key = norm(hname) or hid
+        if key not in merged:
+            merged[key] = dict(h)
+            merged[key]["heroId"] = hid
+            merged[key]["heroName"] = hname
+            merged[key]["skins"] = []
+            order.append(key)
+        target = merged[key]
+        seen = {str(x.get("skinId")) for x in target.get("skins", [])}
+        for sk in h.get("skins", []):
+            sid = str(sk.get("skinId", "")).strip()
+            sname = str(sk.get("skinName", "")).strip()
+            if not sid or sid in seen or is_hidden_skin_name(sname):
+                continue
+            seen.add(sid)
+            target["skins"].append(dict(sk))
+    heroes = [merged[k] for k in order]
+    for h in heroes:
+        h["skinCount"] = len(h.get("skins", []))
+    out["heroes"] = heroes
+    out["heroCount"] = len(heroes)
+    out["skinCount"] = sum(len(h.get("skins", [])) for h in heroes)
+    return out
+
+
+def filter_auto_catalog(auto_data: dict[str, Any]) -> dict[str, Any]:
+    out = dict(auto_data)
+    heroes = []
+    seen_heroes: set[str] = set()
+    for h in auto_data.get("heroes", []):
+        name = str(h.get("heroName", "")).strip()
+        if not is_valid_hero_id(str(h.get("heroId", ""))) or not is_valid_hero_name(name):
+            continue
+        hk = norm(name) or str(h.get("heroId", ""))
+        if hk in seen_heroes:
+            continue
+        seen_heroes.add(hk)
+        hh = dict(h)
+        skins = []
+        seen_skins: set[str] = set()
+        for sk in h.get("skins", []):
+            sid = str(sk.get("skinId", "")).strip()
+            sname = str(sk.get("skinName", "")).strip()
+            if is_hidden_skin_name(sname):
+                continue
+            if not sid or sid in seen_skins:
+                continue
+            seen_skins.add(sid)
+            skins.append(dict(sk))
+        hh["skins"] = skins
+        heroes.append(hh)
+    out["heroes"] = heroes
+    out["heroCount"] = len(heroes)
+    out["skinCount"] = sum(len(h.get("skins", [])) for h in heroes)
+    return out
+
+
 def merge_catalog(auto_data: dict[str, Any], garena_heroes: list[dict[str, str]]) -> dict[str, Any]:
-    by_name = {norm(h.get("heroName", "")): h for h in garena_heroes}
-    # If duplicate/current naming differs, also index by slug.
+    auto_data = filter_auto_catalog(auto_data)
+    by_name = {norm(h.get("heroName", "")): h for h in garena_heroes if is_valid_hero_name(h.get("heroName", ""))}
     result = {
-        "schemaVersion": 2,
+        "schemaVersion": 3,
         "resourcesVersion": auto_data.get("resourcesVersion", ""),
         "generatedAt": auto_data.get("generatedAt", ""),
         "heroCount": 0,
         "skinCount": 0,
         "heroes": [],
     }
+    by_hero_key: dict[str, dict] = {}
     for h in auto_data.get("heroes", []):
-        hero_id = str(h.get("heroId", ""))
-        hero_name = h.get("heroName", "")
-        g = by_name.get(norm(hero_name), {})
-        # Some Garena pages include duplicate Flowborn entries; keep whichever image exists.
-        hero = {
-            "heroId": hero_id,
-            "heroName": hero_name,
-            "heroImage": g.get("heroImage", ""),
-            "garenaSlug": g.get("slug", ""),
-            "skins": [],
-        }
+        hero_id = str(h.get("heroId", "")).strip()
+        hero_name = str(h.get("heroName", "")).strip()
+        g = by_name.get(norm(hero_name))
+        # When official Garena data is available, accept only heroes actually present there.
+        if not g:
+            continue
+        key = norm(hero_name) or hero_id
+        hero = by_hero_key.get(key)
+        if hero is None:
+            hero = {
+                "heroId": hero_id,
+                "heroName": hero_name,
+                "heroImage": g.get("heroImage", ""),
+                "garenaSlug": g.get("slug", ""),
+                "skins": [],
+            }
+            by_hero_key[key] = hero
+            result["heroes"].append(hero)
+        seen_skin_ids = {str(x.get("skinId")) for x in hero["skins"]}
         for s in h.get("skins", []):
+            sid = str(s.get("skinId", "")).strip()
+            sname = str(s.get("skinName", "")).strip()
+            if not sid or sid in seen_skin_ids or is_hidden_skin_name(sname):
+                continue
+            seen_skin_ids.add(sid)
             hero["skins"].append({
-                "skinId": str(s.get("skinId", "")),
-                "skinName": s.get("skinName", ""),
+                "skinId": sid,
+                "skinName": sname,
                 "skinImage": "",
                 "supported": bool(s.get("resolved")),
                 "resourcesVersion": s.get("resourcesVersion", result["resourcesVersion"]),
             })
-        result["heroes"].append(hero)
 
-    # Match skin images by normalized source name; nếu không khớp tuyệt đối thì thử
-    # khớp gần đúng (tên bên này chứa tên bên kia) — KHÔNG bao giờ đoán bừa theo vị
-    # trí nữa, vì đoán theo vị trí từng gây lấy nhầm ảnh của một skin khác hẳn.
+    # Match skin images by normalized source name; never by position.
     for hero in result["heroes"]:
         garena = next((x for x in garena_heroes if x.get("slug") == hero.get("garenaSlug")), None)
         if not garena or not garena.get("_skins"):
             continue
-        source_skins = garena["_skins"]
+        source_skins = [x for x in garena["_skins"] if not is_hidden_skin_name(x.get("skinNameSource", ""))]
         by_skin_name: dict[str, list[dict[str, str]]] = {}
         for x in source_skins:
             by_skin_name.setdefault(norm(x["skinNameSource"]), []).append(x)
         used_images: set[str] = set()
-        for s in hero["skins"]:
-            key = norm(s["skinName"])
+        for skin in hero["skins"]:
+            key = norm(skin["skinName"])
             img = ""
             for c in by_skin_name.get(key, []):
-                if c["skinImage"] not in used_images:
+                if c.get("skinImage") and c["skinImage"] not in used_images:
                     img = c["skinImage"]
                     break
             if not img and key:
                 best = None
                 for c in source_skins:
-                    if c["skinImage"] in used_images:
+                    if c.get("skinImage") in used_images:
                         continue
-                    ck = norm(c["skinNameSource"])
+                    ck = norm(c.get("skinNameSource", ""))
                     if ck and (ck in key or key in ck):
-                        if best is None or len(ck) > len(norm(best["skinNameSource"])):
+                        if best is None or len(ck) > len(norm(best.get("skinNameSource", ""))):
                             best = c
                 if best:
-                    img = best["skinImage"]
+                    img = best.get("skinImage", "")
             if img:
                 used_images.add(img)
-            s["skinImage"] = img
+            skin["skinImage"] = img
             if not img:
-                s["imageMissing"] = True
+                skin["imageMissing"] = True
         hero["skinCount"] = len(hero["skins"])
+
     result["heroCount"] = len(result["heroes"])
-    result["skinCount"] = sum(len(h["skins"]) for h in result["heroes"])
+    result["skinCount"] = sum(len(h.get("skins", [])) for h in result["heroes"])
     return result
 
 
@@ -290,6 +398,67 @@ def save_json(path: Path, data: Any):
 
 def cloudinary_ready() -> bool:
     return bool(os.environ.get("CLOUDINARY_URL"))
+
+
+def github_ready() -> bool:
+    return bool(GITHUB_TOKEN and GITHUB_REPO)
+
+
+def github_api_headers() -> dict[str, str]:
+    if not github_ready():
+        raise RuntimeError("GitHub storage chưa được cấu hình.")
+    return {
+        "Authorization": f"Bearer {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+
+
+def github_catalog_read() -> dict[str, Any]:
+    if not github_ready():
+        return {}
+    url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{GITHUB_CATALOG_PATH}"
+    r = requests.get(url, headers=github_api_headers(), params={"ref": GITHUB_BRANCH}, timeout=30)
+    if r.status_code == 404:
+        return {}
+    r.raise_for_status()
+    payload = r.json()
+    content = payload.get("content", "")
+    if not content:
+        return {}
+    raw = base64.b64decode(content.replace("\n", ""))
+    data = json.loads(raw.decode("utf-8"))
+    if isinstance(data, dict):
+        data["_github_sha"] = payload.get("sha", "")
+        return data
+    return {}
+
+
+def github_catalog_write(data: dict[str, Any]) -> None:
+    if not github_ready():
+        return
+    clean = dict(data)
+    clean.pop("_github_sha", None)
+    raw = json.dumps(clean, ensure_ascii=False, indent=2).encode("utf-8")
+    url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{GITHUB_CATALOG_PATH}"
+    sha = ""
+    try:
+        r = requests.get(url, headers=github_api_headers(), params={"ref": GITHUB_BRANCH}, timeout=30)
+        if r.status_code == 200:
+            sha = r.json().get("sha", "")
+        elif r.status_code != 404:
+            r.raise_for_status()
+    except Exception:
+        raise
+    body = {
+        "message": "chore: persist NGOCC skin catalog",
+        "content": base64.b64encode(raw).decode("ascii"),
+        "branch": GITHUB_BRANCH,
+    }
+    if sha:
+        body["sha"] = sha
+    r = requests.put(url, headers={**github_api_headers(), "Content-Type": "application/json"}, json=body, timeout=60)
+    r.raise_for_status()
 
 
 def resource_public_id(version: str) -> str:
@@ -311,17 +480,38 @@ def catalog_secure_url() -> str:
 
 
 def persist_catalog_to_cloud(data: dict[str, Any]) -> str:
-    if not cloudinary_ready():
-        return ""
-    local = DATA / "skin_catalog.json"
-    local.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-    result = cloudinary.uploader.upload(
-        str(local), resource_type="raw", public_id=catalog_public_id(), overwrite=True
-    )
-    return result.get("secure_url") or catalog_secure_url()
+    warnings = []
+    if cloudinary_ready():
+        try:
+            local = DATA / "skin_catalog.json"
+            local.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+            cloudinary.uploader.upload(
+                str(local), resource_type="raw", public_id=catalog_public_id(), overwrite=True
+            )
+        except Exception as e:
+            warnings.append(f"Cloudinary: {e}")
+    if github_ready():
+        try:
+            with CATALOG_PERSIST_LOCK:
+                github_catalog_write(data)
+        except Exception as e:
+            warnings.append(f"GitHub: {e}")
+    if warnings:
+        return " | ".join(warnings)
+    return catalog_secure_url() if cloudinary_ready() else ""
 
 
 def restore_catalog_from_cloud() -> dict[str, Any]:
+    # GitHub is the durable fallback for Render/other ephemeral filesystems.
+    if github_ready():
+        try:
+            g = github_catalog_read()
+            if g:
+                g.pop("_github_sha", None)
+                save_json(CATALOG, g)
+                return g
+        except Exception:
+            pass
     url = catalog_secure_url()
     if not url:
         return {}
@@ -333,6 +523,73 @@ def restore_catalog_from_cloud() -> dict[str, Any]:
         return data
     except Exception:
         return {}
+
+
+def build_public_id(skin_id: str, version: str) -> str:
+    return f"{CLOUDINARY_FOLDER}/builds/{version}/{skin_id}.zip"
+
+
+def build_secure_url(skin_id: str, version: str) -> str:
+    if not cloudinary_ready():
+        return ""
+    try:
+        return cloudinary.utils.cloudinary_url(
+            build_public_id(skin_id, version), resource_type="raw", type="upload", secure=True
+        )[0]
+    except Exception:
+        return ""
+
+
+def persist_build_to_cloud(path: Path, skin_id: str, version: str) -> None:
+    if not path.is_file():
+        return
+    errors=[]
+    if cloudinary_ready():
+        try:
+            cloudinary.uploader.upload(
+                str(path), resource_type="raw", public_id=build_public_id(skin_id, version), overwrite=True
+            )
+            return
+        except Exception as e:
+            errors.append(f"Cloudinary: {e}")
+    if github_ready():
+        try:
+            github_upload_build_asset(version, skin_id, path)
+            return
+        except Exception as e:
+            errors.append(f"GitHub: {e}")
+    if errors:
+        raise RuntimeError("; ".join(errors))
+
+
+def restore_build_from_cloud(skin_id: str, version: str) -> Path | None:
+    if not version:
+        return None
+    target = BUILDS / f"{skin_id}_{version}.zip"
+    urls=[]
+    if cloudinary_ready():
+        u=build_secure_url(skin_id, version)
+        if u: urls.append((u, HEADERS))
+    if github_ready():
+        try:
+            u=github_find_build_asset(version, skin_id)
+            if u: urls.append((u, {**github_headers(), "Accept":"application/octet-stream"}))
+        except Exception:
+            pass
+    for url, headers in urls:
+        try:
+            r=requests.get(url, headers=headers, timeout=1800, stream=True)
+            r.raise_for_status()
+            with target.open("wb") as f:
+                for ch in r.iter_content(1024 * 1024):
+                    if ch:
+                        f.write(ch)
+            if target.is_file() and target.stat().st_size > 0:
+                return target
+        except Exception:
+            target.unlink(missing_ok=True)
+    return None
+
 
 
 def resource_secure_url(version: str) -> str:
@@ -365,12 +622,21 @@ def ensure_local_resources_from_cloud(version: str | None = None) -> str:
     elif versions:
         return versions[-1].name
     manifest=load_resource_manifest(); target=version or manifest.get('active') or ''
+    if not target and github_ready():
+        try:
+            rr=requests.get(f'https://api.github.com/repos/{GITHUB_REPO}/releases', headers=github_headers(), params={'per_page':100}, timeout=30)
+            rr.raise_for_status()
+            tags=[str(x.get('tag_name',''))[10:] for x in rr.json() if str(x.get('tag_name','')).startswith('resources-')]
+            if tags:
+                target=sorted(tags, key=version_key)[-1]
+        except Exception:
+            pass
     if not target: raise FileNotFoundError('Chưa có Resources; Admin hãy cập nhật Resources trước.')
     info=manifest.get('versions',{}).get(target) or {}
     asset_url=info.get('assetUrl')
     if not asset_url:
         # Try resolving from release tag.
-        if not GITHUB_TOKEN: raise FileNotFoundError('Chưa có GITHUB_TOKEN để khôi phục Resources.')
+        if not github_ready(): raise FileNotFoundError('Chưa cấu hình GitHub để khôi phục Resources.')
         h=github_headers(); base=f'https://api.github.com/repos/{GITHUB_REPO}/releases/tags/resources-{target}'
         r=requests.get(base,headers=h,timeout=30); r.raise_for_status(); rel=r.json();
         asset=next((a for a in rel.get('assets',[]) if a.get('name')==f'Resources-{target}.zip'),None)
@@ -407,10 +673,16 @@ def health():
 @app.get("/api/catalog")
 def catalog():
     data = load_json(CATALOG, {})
-    if not data and cloudinary_ready():
+    if not data and (cloudinary_ready() or github_ready()):
         data = restore_catalog_from_cloud()
     if not data:
         return JSONResponse({"ready": False, "heroes": [], "skinCount": 0})
+    clean = sanitize_catalog(data)
+    if clean != data:
+        save_json(CATALOG, clean)
+        try: persist_catalog_to_cloud(clean)
+        except Exception: pass
+        data = clean
     return JSONResponse({"ready": True, **data})
 
 
@@ -455,6 +727,36 @@ def github_download_asset(asset_url: str, dest: Path):
     with dest.open("wb") as f:
         for ch in r.iter_content(1024*1024):
             if ch: f.write(ch)
+
+
+def github_upload_build_asset(version: str, skin_id: str, zip_path: Path):
+    """Durable fallback for generated AutoMod ZIPs when Cloudinary is unavailable."""
+    rel=github_create_or_get_release(version)
+    asset_name=f"Skin-{skin_id}.zip"
+    h=github_headers()
+    for a in rel.get("assets", []):
+        if a.get("name") == asset_name:
+            rr=requests.delete(a["url"], headers=h, timeout=30)
+            if rr.status_code not in (204,404): rr.raise_for_status()
+            break
+    up_url=rel["upload_url"].split("{",1)[0] + "?name=" + asset_name
+    with zip_path.open("rb") as fh:
+        rr=requests.post(up_url, headers={**h,"Content-Type":"application/zip"}, data=fh, timeout=1800)
+    rr.raise_for_status()
+    return rr.json()
+
+
+def github_find_build_asset(version: str, skin_id: str) -> str:
+    if not github_ready():
+        return ""
+    h=github_headers(); url=f"https://api.github.com/repos/{GITHUB_REPO}/releases/tags/resources-{version}"
+    r=requests.get(url, headers=h, timeout=30)
+    if r.status_code != 200:
+        return ""
+    rel=r.json()
+    asset_name=f"Skin-{skin_id}.zip"
+    asset=next((a for a in rel.get("assets", []) if a.get("name")==asset_name), None)
+    return asset.get("url", "") if asset else ""
 
 
 @app.post("/api/resources/upload/init")
@@ -547,25 +849,21 @@ def scan_catalog():
         catalog_data = merge_catalog(auto_data, enriched)
     except Exception as e:
         # Still save Auto-only catalog so admin can see ID/name support even if Garena is temporarily unavailable.
+        safe_auto = filter_auto_catalog(auto_data)
         catalog_data = {
-            "schemaVersion": 2,
-            "resourcesVersion": auto_data.get("resourcesVersion", version_dir.name),
-            "generatedAt": auto_data.get("generatedAt", ""),
-            "heroCount": len(auto_data.get("heroes", [])),
-            "skinCount": sum(len(h.get("skins", [])) for h in auto_data.get("heroes", [])),
+            "schemaVersion": 3,
+            "resourcesVersion": safe_auto.get("resourcesVersion", version_dir.name),
+            "generatedAt": safe_auto.get("generatedAt", ""),
+            "heroCount": len(safe_auto.get("heroes", [])),
+            "skinCount": sum(len(h.get("skins", [])) for h in safe_auto.get("heroes", [])),
             "garenaScanError": str(e),
             "heroes": [
                 {**h, "heroImage": "", "garenaSlug": "", "skins": [
                     {**s, "skinImage": ""} for s in h.get("skins", [])
-                ]} for h in auto_data.get("heroes", [])
+                ]} for h in safe_auto.get("heroes", [])
             ],
         }
-    save_json(CATALOG, catalog_data)
-    cloud_warning = ""
-    try:
-        persist_catalog_to_cloud(catalog_data)
-    except Exception as e:
-        cloud_warning = f"Quét xong nhưng backup catalog lên Cloudinary thất bại: {e}"
+    cloud_warning = _save_catalog_and_persist(catalog_data)
     save_json(ACTIVE, {"version": version_dir.name, "scannedAt": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat()})
     return {"ok": True, "cloudWarning": cloud_warning, **catalog_data}
 
@@ -632,27 +930,23 @@ def _run_scan_job():
         enriched.sort(key=lambda x: norm(x.get('heroName', '')))
         catalog_data = merge_catalog(auto_data, enriched)
     except Exception as e:
+        safe_auto = filter_auto_catalog(auto_data)
         catalog_data = {
-            "schemaVersion": 2,
-            "resourcesVersion": auto_data.get("resourcesVersion", version_dir.name),
-            "generatedAt": auto_data.get("generatedAt", ""),
-            "heroCount": len(auto_data.get("heroes", [])),
-            "skinCount": sum(len(h.get("skins", [])) for h in auto_data.get("heroes", [])),
+            "schemaVersion": 3,
+            "resourcesVersion": safe_auto.get("resourcesVersion", version_dir.name),
+            "generatedAt": safe_auto.get("generatedAt", ""),
+            "heroCount": len(safe_auto.get("heroes", [])),
+            "skinCount": sum(len(h.get("skins", [])) for h in safe_auto.get("heroes", [])),
             "garenaScanError": str(e),
             "heroes": [
                 {**h, "heroImage": "", "garenaSlug": "", "skins": [
                     {**s, "skinImage": ""} for s in h.get("skins", [])
-                ]} for h in auto_data.get("heroes", [])
+                ]} for h in safe_auto.get("heroes", [])
             ],
         }
 
     _set_scan_state(progress="Đang lưu catalog...")
-    save_json(CATALOG, catalog_data)
-    cloud_warning = ""
-    try:
-        persist_catalog_to_cloud(catalog_data)
-    except Exception as e:
-        cloud_warning = f"⚠️ Quét xong nhưng backup catalog lên Cloudinary thất bại: {e}"
+    cloud_warning = _save_catalog_and_persist(catalog_data)
     save_json(ACTIVE, {"version": version_dir.name, "scannedAt": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat()})
     _set_scan_state(running=False, done=True, progress=(cloud_warning or "Hoàn tất"), error="", result=catalog_data)
 
@@ -701,8 +995,9 @@ def _run_premod_job():
     """Build sẵn (và lưu cache) toàn bộ skin đang được Resources hỗ trợ, để người
     dùng bình thường bấm 'Tạo & tải ZIP' là có file ngay, không phải chờ build."""
     data = load_json(CATALOG, {})
-    if not data and cloudinary_ready():
+    if not data and (cloudinary_ready() or github_ready()):
         data = restore_catalog_from_cloud()
+    data = sanitize_catalog(data)
     version = data.get("resourcesVersion") or load_json(ACTIVE, {}).get("version", "")
     all_skins = [(h, s) for h in data.get("heroes", []) for s in h.get("skins", []) if s.get("supported")]
     total = len(all_skins)
@@ -720,7 +1015,13 @@ def _run_premod_job():
         _set_premod_state(progress=f"Đang mod: {display_name} ({i}/{total})")
         try:
             if not (cached.is_file() and cached.stat().st_size > 0):
-                run_build(skin_id, version, display_name)
+                built_path, built_version = run_build(skin_id, version, display_name)
+                cached = built_path
+            # Keep generated AutoMod output outside the ephemeral server disk when Cloudinary is available.
+            try:
+                persist_build_to_cloud(cached, skin_id, version)
+            except Exception as e:
+                print(f"[PREMOD] cloud backup failed for {skin_id}: {e}")
             ok += 1
         except Exception:
             fail += 1
@@ -730,13 +1031,12 @@ def _run_premod_job():
 
 
 def _save_catalog_and_persist(data: dict[str, Any]) -> str:
+    data = sanitize_catalog(data)
     save_json(CATALOG, data)
-    warn = ""
     try:
-        persist_catalog_to_cloud(data)
+        return persist_catalog_to_cloud(data) or ""
     except Exception as e:
-        warn = f"Đã lưu cục bộ nhưng backup lên Cloudinary thất bại: {e}"
-    return warn
+        return f"Đã lưu cục bộ nhưng backup catalog thất bại: {e}"
 
 
 @app.post("/api/catalog/hero/{hero_id}/delete")
@@ -768,6 +1068,44 @@ def delete_skin(hero_id: str, skin_id: str):
     data["skinCount"] = sum(len(h.get("skins", [])) for h in data.get("heroes", []))
     warn = _save_catalog_and_persist(data)
     return {"ok": True, "cloudWarning": warn, **data}
+
+
+class BulkDeletePayload(BaseModel):
+    ids: list[str] = []
+
+
+@app.post("/api/catalog/heroes/delete-many")
+def delete_heroes_many(payload: BulkDeletePayload):
+    wanted = {str(x) for x in payload.ids if str(x).strip()}
+    if not wanted:
+        return {"ok": True, "deleted": 0, **load_json(CATALOG, {})}
+    data = load_json(CATALOG, {})
+    before = len(data.get("heroes", []))
+    data["heroes"] = [h for h in data.get("heroes", []) if str(h.get("heroId")) not in wanted]
+    deleted = before - len(data["heroes"])
+    if deleted:
+        data["heroCount"] = len(data["heroes"])
+        data["skinCount"] = sum(len(h.get("skins", [])) for h in data["heroes"])
+        warn = _save_catalog_and_persist(data)
+    else:
+        warn = ""
+    return {"ok": True, "deleted": deleted, "cloudWarning": warn, **data}
+
+
+@app.post("/api/catalog/hero/{hero_id}/skins/delete-many")
+def delete_skins_many(hero_id: str, payload: BulkDeletePayload):
+    wanted = {str(x) for x in payload.ids if str(x).strip()}
+    data = load_json(CATALOG, {})
+    hero = next((h for h in data.get("heroes", []) if str(h.get("heroId")) == str(hero_id)), None)
+    if not hero:
+        raise HTTPException(404, "Không tìm thấy tướng trong catalog.")
+    before = len(hero.get("skins", []))
+    hero["skins"] = [s for s in hero.get("skins", []) if str(s.get("skinId")) not in wanted]
+    deleted = before - len(hero["skins"])
+    hero["skinCount"] = len(hero["skins"])
+    data["skinCount"] = sum(len(h.get("skins", [])) for h in data.get("heroes", []))
+    warn = _save_catalog_and_persist(data) if deleted else ""
+    return {"ok": True, "deleted": deleted, "cloudWarning": warn, **data}
 
 
 class ImageEditPayload(BaseModel):
@@ -825,8 +1163,9 @@ def premod_status():
 @app.post("/api/build/{skin_id}")
 def build_skin(skin_id: str):
     data = load_json(CATALOG, {})
-    if not data and cloudinary_ready():
+    if not data and (cloudinary_ready() or github_ready()):
         data = restore_catalog_from_cloud()
+    data = sanitize_catalog(data)
     try:
         ensure_local_resources_from_cloud(data.get("resourcesVersion") or None)
     except Exception as e:
@@ -843,11 +1182,19 @@ def build_skin(skin_id: str):
     display_name = f"{hero.get('heroName','').strip()} {skin.get('skinName','').strip()}".strip() or skin_id
     display_name = re.sub(r'[\\/:*?"<>|]', '', display_name).strip() or skin_id
     cached = BUILDS / f"{skin_id}_{version}.zip"
+    if not (cached.is_file() and cached.stat().st_size > 0):
+        restored = restore_build_from_cloud(skin_id, version)
+        if restored:
+            cached = restored
     if cached.is_file() and cached.stat().st_size > 0:
         out = cached
     else:
         try:
             out, version = run_build(skin_id, version, display_name)
+            try:
+                persist_build_to_cloud(out, skin_id, version)
+            except Exception as e:
+                print(f"[BUILD] cloud backup failed for {skin_id}: {e}")
         except subprocess.TimeoutExpired:
             raise HTTPException(504, "Build mod quá lâu, đã dừng.")
         except Exception as e:
