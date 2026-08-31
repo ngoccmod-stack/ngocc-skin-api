@@ -682,14 +682,20 @@ def build_skin(skin_id: str):
         raise HTTPException(409, f"Skin chưa được Resources {version or 'hiện tại'} hỗ trợ.")
     cached = BUILDS / f"{skin_id}_{version}.zip"
     if cached.is_file() and cached.stat().st_size > 0:
-        return {"ok": True, "cached": True, "resourcesVersion": version, "downloadUrl": f"/download/{cached.name}"}
-    try:
-        out, used_version = run_build(skin_id, version)
-        return {"ok": True, "cached": False, "resourcesVersion": used_version, "downloadUrl": f"/download/{out.name}"}
-    except subprocess.TimeoutExpired:
-        raise HTTPException(504, "Build mod quá lâu, đã dừng.")
-    except Exception as e:
-        raise HTTPException(500, f"Build mod thất bại: {e}")
+        out = cached
+    else:
+        try:
+            out, version = run_build(skin_id, version)
+        except subprocess.TimeoutExpired:
+            raise HTTPException(504, "Build mod quá lâu, đã dừng.")
+        except Exception as e:
+            raise HTTPException(500, f"Build mod thất bại: {e}")
+    # Trả thẳng file ZIP ngay trong response này (không bắt trình duyệt gọi thêm
+    # 1 request /download riêng), để tránh trường hợp request tải sau đó bị lệch
+    # sang một instance/tiến trình khác (hoặc ổ đĩa tạm đã dọn) không còn thấy file.
+    if not out.is_file():
+        raise HTTPException(500, "Build xong nhưng không tìm thấy file ZIP để trả về.")
+    return FileResponse(str(out), filename=out.name, media_type="application/zip")
 
 
 app.mount("/", StaticFiles(directory=str(ROOT / "web"), html=True), name="web")
@@ -700,3 +706,4 @@ def download(name: str):
     if not p.is_file() or not str(p).startswith(str(BUILDS.resolve())):
         raise HTTPException(404, "Không tìm thấy file.")
     return FileResponse(str(p), filename=p.name)
+
