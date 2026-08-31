@@ -58,7 +58,7 @@ def find_active_version() -> Optional[str]:
     return sorted(versions,key=k)[-1].name
 
 
-def build_skin(skin_id: str, resources_version: Optional[str] = None) -> tuple[Path, str]:
+def build_skin(skin_id: str, resources_version: Optional[str] = None, display_name: Optional[str] = None) -> tuple[Path, str]:
     version = resources_version or find_active_version()
     if not version: raise RuntimeError('Chưa có Resources hợp lệ.')
     source = RESOURCES / version
@@ -104,7 +104,8 @@ def build_skin(skin_id: str, resources_version: Optional[str] = None) -> tuple[P
         if 'if WEB_BUILD_MODE:\n        break' not in text:
             text=text.replace('    print("\\033[1;97m[\\033[1;92m•\\033[1;97m] Done Mod")\n', '    print("\\033[1;97m[\\033[1;92m•\\033[1;97m] Done Mod")\n    if WEB_BUILD_MODE:\n        break\n', 1)
         py.write_text(text,encoding='utf-8')
-        env=os.environ.copy(); env.update(NGOCC_WEB_BUILD='1',NGOCC_WEB_BUILD_ID=str(skin_id),NGOCC_WEB_BUILD_NAME=f'{skin_id} [DiaoChan]',TERM='xterm')
+        pack_name = (display_name or str(skin_id)).strip() or str(skin_id)
+        env=os.environ.copy(); env.update(NGOCC_WEB_BUILD='1',NGOCC_WEB_BUILD_ID=str(skin_id),NGOCC_WEB_BUILD_NAME=f'{pack_name} [DiaoChan]',TERM='xterm')
         cp=subprocess.run([os.environ.get('PYTHON','python3'),'Skin.py'], cwd=work, env=env, text=True, capture_output=True, timeout=900)
         if cp.returncode != 0:
             # The patched one-shot builder completes before EOF only if an unexpected error occurs.
@@ -118,6 +119,13 @@ def build_skin(skin_id: str, resources_version: Optional[str] = None) -> tuple[P
         tmp=out.with_suffix('.tmp')
         with zipfile.ZipFile(tmp,'w',zipfile.ZIP_DEFLATED) as z:
             for f in android.rglob('*'):
-                if f.is_file(): z.write(f, f.relative_to(android).as_posix())
+                if not f.is_file():
+                    continue
+                if f.name.lower() == 'version.txt':
+                    continue  # file thừa, không cần đóng gói theo yêu cầu
+                rel = f.relative_to(android).as_posix()
+                # Giữ đúng cấu trúc chuẩn: <Tên gói>/files/Resources/... (bỏ lớp "Android"
+                # trung gian mà AutoMod tạo ra, vì các tool khác không dùng lớp này).
+                z.write(f, f"{root.name}/files/{rel}")
         tmp.replace(out)
         return out, version

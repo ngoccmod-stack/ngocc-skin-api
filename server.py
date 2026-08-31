@@ -677,15 +677,20 @@ def build_skin(skin_id: str):
     skins = {str(s.get("skinId")): (h, s) for h in data.get("heroes", []) for s in h.get("skins", [])}
     if skin_id not in skins:
         raise HTTPException(404, "Skin ID chưa có trong catalog.")
+    hero, skin = skins[skin_id]
     version = data.get("resourcesVersion") or load_json(ACTIVE, {}).get("version", "")
-    if not skins[skin_id][1].get("supported", False):
+    if not skin.get("supported", False):
         raise HTTPException(409, f"Skin chưa được Resources {version or 'hiện tại'} hỗ trợ.")
+    # Tên tướng + tên skin thật (vd "Billow Okarun"), dùng làm tên gói bên trong ZIP
+    # và tên file tải về, thay vì chỉ dùng số Skin ID trần trụi.
+    display_name = f"{hero.get('heroName','').strip()} {skin.get('skinName','').strip()}".strip() or skin_id
+    display_name = re.sub(r'[\\/:*?"<>|]', '', display_name).strip() or skin_id
     cached = BUILDS / f"{skin_id}_{version}.zip"
     if cached.is_file() and cached.stat().st_size > 0:
         out = cached
     else:
         try:
-            out, version = run_build(skin_id, version)
+            out, version = run_build(skin_id, version, display_name)
         except subprocess.TimeoutExpired:
             raise HTTPException(504, "Build mod quá lâu, đã dừng.")
         except Exception as e:
@@ -695,7 +700,7 @@ def build_skin(skin_id: str):
     # sang một instance/tiến trình khác (hoặc ổ đĩa tạm đã dọn) không còn thấy file.
     if not out.is_file():
         raise HTTPException(500, "Build xong nhưng không tìm thấy file ZIP để trả về.")
-    return FileResponse(str(out), filename=out.name, media_type="application/zip")
+    return FileResponse(str(out), filename=f"{display_name}.zip", media_type="application/zip")
 
 
 app.mount("/", StaticFiles(directory=str(ROOT / "web"), html=True), name="web")
