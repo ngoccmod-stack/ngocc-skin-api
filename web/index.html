@@ -576,6 +576,32 @@ body{padding-bottom:96px}
 .main-tile-edit-btn{position:absolute;bottom:10px;right:54px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:14px;display:none;align-items:center;justify-content:center;cursor:pointer;z-index:7}
 body.editmode #mainTileEditBtn{display:flex}
 
+
+/* ===== MOD NÚT BẤM THƯỜNG ===== */
+.button-admin-panel{display:none;background:rgba(17,18,24,.72);border:1px solid #292b34;border-radius:16px;padding:14px;margin-bottom:12px}
+body.editmode .button-admin-panel{display:block}
+.button-admin-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.button-admin-row button,.button-admin-row label{padding:10px 12px;border-radius:11px;border:1px solid #292b34;background:rgba(23,24,31,.88);color:#fff;font-size:11.5px;font-weight:800;cursor:pointer}
+.button-admin-row .button-upload-label{border-color:rgba(188,102,255,.5);background:rgba(188,102,255,.1)}
+.button-admin-status{font-size:11px;color:#9296a2;line-height:1.5;margin-top:8px}
+.button-toolbar{display:flex;gap:9px;align-items:center;margin-bottom:12px}
+.button-toolbar input{flex:1;min-width:0;padding:13px 14px;border:1px solid #292b34;border-radius:13px;background:rgba(23,24,31,.88);color:#fff;outline:0;font-family:inherit}
+.button-count{font-size:11px;color:#9296a2;white-space:nowrap}
+.button-row-list{display:flex;flex-direction:column;border:1px solid #292b34;border-radius:17px;overflow:hidden;background:rgba(17,18,24,.66)}
+.button-row{position:relative;display:flex;align-items:center;gap:12px;padding:15px 14px;border-bottom:1px solid #292b34;cursor:pointer;transition:background .25s,transform .2s}
+.button-row:last-child{border-bottom:none}
+.button-row:hover{background:rgba(188,102,255,.07)}
+.button-row:active{transform:scale(.995)}
+.button-row-num{width:31px;height:31px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.07);color:#c9cbd3;font-size:11px;font-weight:800;flex:0 0 31px}
+.button-row-main{min-width:0;flex:1}
+.button-row-name{font-size:14px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.button-row-sub{display:flex;gap:8px;align-items:center;margin-top:4px;min-width:0;font-size:10.5px;color:#858995;white-space:nowrap;overflow:hidden}
+.button-row-id{color:#bc66ff;font-weight:800}
+.button-row-parts{padding:3px 7px;border-radius:999px;background:rgba(97,239,161,.08);border:1px solid rgba(97,239,161,.18);color:#61efa1;font-weight:800}
+.button-row-arrow{color:#6d707a;font-size:21px;flex:0 0 auto}
+.button-empty{padding:42px 12px;text-align:center;color:#777b86}
+@media(max-width:520px){.button-row{padding:14px 11px}.button-row-name{font-size:13px}.button-row-num{width:28px;height:28px;flex-basis:28px}.button-row-arrow{font-size:19px}}
+
 /* ===== MOD SKIN THƯỜNG ===== */
 .skin-view-shell{display:flex;flex-direction:column;gap:14px}
 .skin-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -672,6 +698,20 @@ body.editmode #mainTileEditBtn{display:flex}
         <small>Tìm tướng và skin để tạo mod</small>
       </span>
     </div>
+  </div>
+
+  <div class="item orderable-tile" id="tile-button-thuong" data-order-key="buttonThuong" onclick="openButtonMenu()">
+    <span class="corner-flare" style="background:linear-gradient(135deg,rgba(97,239,161,.62),rgba(97,239,161,0) 80%);"></span>
+    <span class="arr">&rsaquo;</span>
+    <div>
+      <span class="ico">🎮</span>
+      <span class="mtxt">
+        <b>MOD NÚT BẤM THƯỜNG</b>
+        <small>Đổi nút bấm theo skin, FX &amp; joystick</small>
+      </span>
+    </div>
+    <button class="drag-handle" onclick="event.stopPropagation()">⠿</button>
+    <button class="pencil-btn" onclick="event.stopPropagation()">✎</button>
   </div>
 
   <div class="item c-guide hidden" id="tileDangMod" style="grid-column: span 2;" onclick="openView('postMod')">
@@ -828,6 +868,22 @@ body.editmode #mainTileEditBtn{display:flex}
   <div id="deputyPermissionsList"></div>
 </section>
 
+
+<section id="buttonMenu" class="view" data-anim="slide">
+  <div class="viewhead"><button class="back" onclick="showHome()">&lsaquo;</button><div class="viewtitle">Mod Nút Bấm Thường</div></div>
+  <div class="button-view-shell">
+    <div id="buttonAdminPanel" class="button-admin-panel">
+      <div class="label">QUẢN LÝ RESOURCES NÚT BẤM</div>
+      <div class="button-admin-row">
+        <label class="button-upload-label">📦 Cập nhật Resources <input id="buttonResourcesFile" type="file" accept=".zip" style="display:none" onchange="uploadButtonResources(this)"></label>
+        <button type="button" onclick="loadButtonCatalog(true)">🔄 Cập nhật danh sách</button>
+      </div>
+      <div id="buttonAdminStatus" class="button-admin-status">Danh sách được load đúng theo Source của tool Nút Bấm.</div>
+    </div>
+    <div class="button-toolbar"><input id="buttonSearch" placeholder="Tìm skin nút bấm..." autocomplete="off" oninput="renderButtonRows()"><span class="button-count" id="buttonCount">0 mục</span></div>
+    <div id="buttonRowList" class="button-row-list"></div>
+  </div>
+</section>
 
 <section id="skinMenu" class="view" data-anim="slide">
   <div class="viewhead"><button class="back" onclick="showHome()">&lsaquo;</button><div class="viewtitle">Mod Skin Thường</div></div>
@@ -4681,6 +4737,64 @@ window.saveSkinApiConfig=async function(){
   if(!url){ alert('Nhập URL API trước.'); return; }
   try{ await setDoc(doc(db,'siteConfig','skinApi'),{url,updatedAt:serverTimestamp(),updatedBy:(myUsername||'owner')},{merge:true}); NGOC_SKIN_API=url; if(input) input.value=url; alert('✅ Đã lưu Skin API.'); }catch(e){ alert('❌ Không lưu được API: '+e.message); }
 };
+
+let ngoccButtonCatalog={rows:[],ready:false};
+let ngoccButtonLoadPromise=null;
+async function loadButtonCatalog(force=false){
+  if(!force&&ngoccButtonCatalog.ready) return ngoccButtonCatalog;
+  if(ngoccButtonLoadPromise&&!force) return ngoccButtonLoadPromise;
+  const status=document.getElementById('buttonAdminStatus');
+  if(status) status.textContent='⏳ Đang tải danh sách Nút Bấm...';
+  ngoccButtonLoadPromise=fetch(skinApiUrl('/api/button/catalog'),{cache:'no-store'})
+    .then(async r=>{const d=await r.json();if(!r.ok)throw new Error(d?.detail||d?.error||('HTTP '+r.status));return d;})
+    .then(d=>{ngoccButtonCatalog=d||{rows:[]};ngoccButtonCatalog.ready=true;if(status)status.textContent=`✅ ${d.count||0} skin nút bấm • load theo Source của tool`;renderButtonRows();return ngoccButtonCatalog;})
+    .catch(e=>{ngoccButtonCatalog={rows:[],ready:false,error:e.message};if(status)status.textContent='❌ '+e.message;renderButtonRows();return ngoccButtonCatalog;})
+    .finally(()=>{ngoccButtonLoadPromise=null;});
+  return ngoccButtonLoadPromise;
+}
+window.openButtonMenu=async function(){
+  const home=document.getElementById('home'); if(home)home.classList.add('hidden');
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  const v=document.getElementById('buttonMenu'); if(v)v.classList.add('active');
+  try{updateBottomNavActive('buttonMenu');}catch(e){}
+  const panel=document.getElementById('buttonAdminPanel'); if(panel)panel.style.display=(typeof isOwner==='function'&&isOwner()&&editMode)?'block':'none';
+  await loadButtonCatalog(false); renderButtonRows(); playEnterAnimation(v); window.scrollTo({top:0,behavior:'smooth'});
+};
+window.renderButtonRows=function(){
+  const list=document.getElementById('buttonRowList'); if(!list)return;
+  const q=normalizeSkinText(document.getElementById('buttonSearch')?.value||'');
+  const rows=(ngoccButtonCatalog.rows||[]).filter(r=>!q||normalizeSkinText((r.hero||'')+' '+(r.name||'')).includes(q)||String(r.id).includes(q));
+  const c=document.getElementById('buttonCount'); if(c)c.textContent=rows.length+' mục';
+  if(!rows.length){list.innerHTML='<div class="button-empty">Chưa có Resources Nút Bấm hoặc không tìm thấy skin.</div>';return;}
+  list.innerHTML=rows.map((r,i)=>`<div class="button-row" onclick="buildButtonZip('${skinEscape(r.id)}',this)"><div class="button-row-num">${i+1}</div><div class="button-row-main"><div class="button-row-name">${skinEscape(((r.hero||'')+' '+(r.name||'')).trim()||('Skin '+r.id))}</div><div class="button-row-sub"><span class="button-row-id">ID ${skinEscape(r.id)}</span><span class="button-row-parts">${skinEscape(r.parts||'-')}</span></div></div><span class="button-row-arrow">›</span></div>`).join('');
+};
+window.buildButtonZip=async function(skinId,row){
+  if(!skinId)return;
+  const old=row?.querySelector('.button-row-name')?.textContent||'';
+  const title=row?.querySelector('.button-row-name'); if(title)title.textContent='⏳ Đang tạo ZIP...';
+  try{
+    const r=await fetch(skinApiUrl('/api/button/build/'+encodeURIComponent(skinId)),{method:'POST'});
+    if(!r.ok){let m='HTTP '+r.status;try{const j=await r.json();m=j?.detail||j?.error||m;}catch(_){}throw new Error(m);}
+    const blob=await r.blob(); const cd=r.headers.get('content-disposition')||'';
+    const m=/filename\*?=(?:UTF-8''|")?([^";]+)"?/i.exec(cd); const fname=(m&&decodeURIComponent(m[1].replace(/"/g,'')))||('Nut Bam '+skinId+'.zip');
+    const u=URL.createObjectURL(blob); const a=document.createElement('a');a.href=u;a.download=fname;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),30000);
+    if(title)title.textContent='✅ '+old; setTimeout(()=>{if(title)title.textContent=old;},1600);
+  }catch(e){alert('❌ Không tạo được mod Nút Bấm: '+e.message);if(title)title.textContent=old;}
+};
+window.uploadButtonResources=async function(input){
+  if(!(typeof isOwner==='function'&&isOwner())){input.value='';return;}
+  const file=input?.files?.[0];if(!file)return;
+  const status=document.getElementById('buttonAdminStatus');if(status)status.textContent='⏳ Đang tải Resources Nút Bấm...';
+  try{
+    const fd=new FormData();fd.append('file',file,file.name);
+    const r=await fetch(skinApiUrl('/api/button/resources/upload'),{method:'POST',body:fd});
+    const d=await r.json();if(!r.ok)throw new Error(d?.detail||d?.error||('HTTP '+r.status));
+    ngoccButtonCatalog=d;ngoccButtonCatalog.ready=true;renderButtonRows();
+    if(status)status.textContent=`✅ Đã cập nhật ${d.count||0} skin nút bấm.`+(d.cloudWarning?' ⚠️ '+d.cloudWarning:'');
+  }catch(e){if(status)status.textContent='❌ '+e.message;}
+  finally{input.value='';}
+};
+
 let ngoccSkinCatalog = {heroes:[], resourcesVersion:'', ready:false};
 let ngoccSkinHero = null;
 let ngoccSkinRole = 'all';

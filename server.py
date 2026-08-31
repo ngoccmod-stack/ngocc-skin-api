@@ -37,7 +37,15 @@ BUILDS = ROOT / "builds"
 CATALOG = DATA / "skin_catalog.json"
 ACTIVE = DATA / "active_resources.json"
 RESOURCE_MANIFEST = DATA / "resources_manifest.json"
+BUTTON_ENGINE_ZIP = ROOT / "button_engine.zip"
+BUTTON_DATA = DATA / "button_resources"
+BUTTON_SOURCE = BUTTON_DATA / "Source"
+BUTTON_SKIN_TXT = BUTTON_DATA / "Skin" / "skin.txt"
+BUTTON_DIR = BUTTON_DATA / "Button"
 CLOUDINARY_FOLDER = os.environ.get("NGOCC_CLOUDINARY_FOLDER", "ngocc_resources").strip("/")
+BUTTON_ENGINE_READY = BUTTON_DATA / ".engine_ready"
+BUTTON_OVERRIDE_MARKER = BUTTON_DATA / ".cloud_override"
+BUTTON_PREP_LOCK = threading.Lock()
 def _clean_env(v: str) -> str:
     # Loại bỏ các ký tự Unicode vô hình (LRM/RLM/zero-width/BOM...) hay bị dính
     # khi copy-paste trên điện thoại, vì chúng làm hỏng HTTP header (latin-1 only).
@@ -54,7 +62,7 @@ CATALOG_PERSIST_LOCK = threading.Lock()
 CHUNK_DIR = UPLOADS / "resource_chunks"
 CHUNK_DIR.mkdir(parents=True, exist_ok=True)
 
-for p in (RESOURCES, DATA, UPLOADS, BUILDS):
+for p in (RESOURCES, DATA, UPLOADS, BUILDS, BUTTON_DATA, BUTTON_SOURCE, BUTTON_SKIN_TXT.parent, BUTTON_DIR):
     p.mkdir(parents=True, exist_ok=True)
 
 if os.environ.get("CLOUDINARY_URL"):
@@ -694,6 +702,273 @@ def health():
     current = load_json(ACTIVE, {})
     return {"ok": True, "resourcesVersion": current.get("version", "")}
 
+
+
+# ===================== MOD NÚT BẤM THƯỜNG =====================
+def _button_engine_extract(force: bool = False) -> None:
+    """Lazily unpack only the fixed engine pieces from the supplied button tool."""
+    with BUTTON_PREP_LOCK:
+        if BUTTON_ENGINE_READY.exists() and not force and (BUTTON_SOURCE / 'personalbuttoneffect_10618.assetbundle').exists():
+            return
+        if not BUTTON_ENGINE_ZIP.is_file():
+            raise FileNotFoundError('Thiếu button_engine.zip')
+        tmp = BUTTON_DATA.with_name('button_resources_tmp')
+        if tmp.exists():
+            shutil.rmtree(tmp, ignore_errors=True)
+        tmp.mkdir(parents=True, exist_ok=True)
+        with zipfile.ZipFile(BUTTON_ENGINE_ZIP) as z:
+            prefix = '#1Nút Bấm/'
+            members = z.namelist()
+            wanted_prefixes = (prefix + 'core/', prefix + 'lib/', prefix + 'Button/', prefix + 'Skin/')
+            for name in members:
+                if not name.startswith(wanted_prefixes):
+                    continue
+                rel = name[len(prefix):]
+                if not rel or rel.endswith('/') or '/__pycache__/' in rel or rel.endswith('.pyc'):
+                    continue
+                dest = tmp / rel
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                dest.write_bytes(z.read(name))
+            # Seed Source from the exact supplied button tool unless a persisted source exists.
+            src_members = [n for n in members if n.startswith(prefix+'Source/') and not n.endswith('/')]
+            if src_members:
+                for name in src_members:
+                    rel = name[len(prefix+'Source/'):]
+                    if '/__pycache__/' in rel or rel.endswith('.pyc'):
+                        continue
+                    dest = tmp/'Source'/rel
+                    dest.parent.mkdir(parents=True, exist_ok=True)
+                    dest.write_bytes(z.read(name))
+            # Move into live location atomically-ish.
+        if BUTTON_DATA.exists():
+            for child in BUTTON_DATA.iterdir():
+                if child.name.startswith('.'):
+                    continue
+                if child.name == tmp.name:
+                    continue
+                if child.is_dir(): shutil.rmtree(child, ignore_errors=True)
+                else:
+                    try: child.unlink()
+                    except Exception: pass
+        for child in tmp.iterdir():
+            shutil.move(str(child), str(BUTTON_DATA/child.name))
+        shutil.rmtree(tmp, ignore_errors=True)
+        BUTTON_ENGINE_READY.write_text('1', encoding='utf-8')
+
+
+def _button_cloud_public_id() -> str:
+    return f"{CLOUDINARY_FOLDER}/button_resources.zip"
+
+
+def _button_cloud_url() -> str:
+    if not cloudinary_ready(): return ''
+    try:
+        return cloudinary.utils.cloudinary_url(_button_cloud_public_id(), resource_type='raw', type='upload', secure=True)[0]
+    except Exception:
+        return ''
+
+
+def _persist_button_resources_cloud() -> str:
+    try:
+        local = DATA / 'button_resources.zip'
+        with zipfile.ZipFile(local, 'w', zipfile.ZIP_DEFLATED) as z:
+            for base_name in ['Source','Skin','Button']:
+                base = BUTTON_DATA/base_name
+                if not base.is_dir(): continue
+                for f in base.rglob('*'):
+                    if f.is_file(): z.write(f, f'{base_name}/{f.relative_to(base).as_posix()}')
+        if cloudinary_ready():
+            cloudinary.uploader.upload(str(local), resource_type='raw', public_id=_button_cloud_public_id(), overwrite=True)
+        return ''
+    except Exception as e:
+        return str(e)
+
+
+def _restore_button_resources_cloud() -> bool:
+    url=_button_cloud_url()
+    if not url: return False
+    try:
+        tmp=UPLOADS/'button_resources_restore.zip'
+        r=requests.get(url, headers=HEADERS, timeout=300)
+        r.raise_for_status(); tmp.write_bytes(r.content)
+        extract=UPLOADS/'button_restore_extract'
+        shutil.rmtree(extract, ignore_errors=True); extract.mkdir(parents=True, exist_ok=True)
+        with zipfile.ZipFile(tmp) as z: z.extractall(extract)
+        ok=False
+        for base_name in ['Source','Skin','Button']:
+            src=extract/base_name
+            if src.is_dir():
+                dst=BUTTON_DATA/base_name
+                shutil.rmtree(dst, ignore_errors=True); shutil.copytree(src,dst,dirs_exist_ok=True); ok=True
+        if ok: BUTTON_ENGINE_READY.write_text('1',encoding='utf-8')
+        return ok
+    except Exception:
+        return False
+
+
+def ensure_button_resources() -> None:
+    _button_engine_extract(False)
+    # On a fresh Render instance, restore the admin-updated source from durable storage.
+    # Do not overwrite the live files on every request.
+    if not BUTTON_OVERRIDE_MARKER.exists():
+        if _restore_button_resources_cloud():
+            BUTTON_OVERRIDE_MARKER.write_text('1', encoding='utf-8')
+
+
+def _button_skin_parser(path: Path) -> dict[str, tuple[str, str]]:
+    out={}; hero=''
+    id_re=re.compile(r'^\s*(\d{4,6})\s*[-–—:]\s*(.+?)\s*$')
+    hero_re=re.compile(r'^\s*(\S.*?)\s*:\s*$')
+    if not path.is_file(): return out
+    for line in path.read_text(encoding='utf-8',errors='replace').splitlines():
+        m=id_re.match(line)
+        if m:
+            out[m.group(1)]=(m.group(2),hero); continue
+        m=hero_re.match(line)
+        if m and m.group(1) and not m.group(1)[0].isdigit(): hero=m.group(1)
+    return out
+
+
+def _button_scan_source(src: Path) -> dict[str,dict]:
+    res={}
+    pat=re.compile(r'^personalbutton(effect|sprite)_(\d+)(_raw)?\.assetbundle$',re.I)
+    for p in src.rglob('*.assetbundle') if src.is_dir() else []:
+        m=pat.match(p.name)
+        if not m: continue
+        kind,sid,raw=m.group(1).lower(),m.group(2),bool(m.group(3))
+        d=res.setdefault(sid,{'effect':None,'effect_raw':None,'sprite_raw':None})
+        if kind=='effect': d['effect_raw' if raw else 'effect']=str(p)
+        elif kind=='sprite' and raw: d['sprite_raw']=str(p)
+    return res
+
+
+def _button_catalog() -> dict:
+    ensure_button_resources()
+    skins=_button_skin_parser(BUTTON_SKIN_TXT)
+    files=_button_scan_source(BUTTON_SOURCE)
+    hero_by_prefix={}
+    for sid,(name,hero) in skins.items():
+        if hero and len(sid)>=3: hero_by_prefix.setdefault(sid[:3],hero)
+    rows=[]
+    for sid,f in files.items():
+        if not (f.get('effect') or f.get('sprite_raw')): continue
+        if sid in skins: name,hero,known=skins[sid][0],skins[sid][1],True
+        else:
+            hero=hero_by_prefix.get(sid[:3],'') if len(sid)>=3 else ''
+            name=f'Skin {sid}?' ; known=False
+        parts=[]
+        if f.get('effect'): parts.append('FX')
+        if f.get('sprite_raw'): parts.append('JOY')
+        rows.append({'id':sid,'name':name,'hero':hero,'parts':'+'.join(parts) or '-', 'known':known})
+    rows.sort(key=lambda r:(r['hero'].lower(), not r['known'], int(r['id'])))
+    return {'ready':bool(rows),'count':len(rows),'rows':rows}
+
+
+class ButtonSourceUploadInfo(BaseModel):
+    pass
+
+
+@app.get('/api/button/catalog')
+def button_catalog():
+    try:
+        return {'ok':True, **_button_catalog()}
+    except Exception as e:
+        raise HTTPException(500, f'Không tải được danh sách Nút Bấm: {e}')
+
+
+@app.post('/api/button/resources/upload')
+async def button_resources_upload(file: UploadFile = File(...)):
+    try:
+        ensure_button_resources()
+        raw=UPLOADS/f'button_upload_{uuid.uuid4().hex}.zip'
+        with raw.open('wb') as f:
+            while ch:=await file.read(1024*1024): f.write(ch)
+        extract=UPLOADS/f'button_upload_extract_{uuid.uuid4().hex}'
+        extract.mkdir(parents=True,exist_ok=True)
+        with zipfile.ZipFile(raw) as z:
+            z.extractall(extract)
+        # Accept Source.zip, full button tool zip, or a ZIP whose root directly contains personalbutton*.assetbundle.
+        src_candidates=[p for p in extract.rglob('*') if p.is_dir() and p.name.lower()=='source']
+        if src_candidates:
+            source_dir=src_candidates[0]
+        else:
+            direct=extract
+            root_children=[p for p in extract.iterdir()]
+            top_dirs=[p for p in root_children if p.is_dir()]
+            if len(top_dirs)==1 and (top_dirs[0]/'Source').is_dir():
+                source_dir=top_dirs[0]/'Source'
+            else:
+                source_dir=direct
+        found=list(source_dir.glob('personalbutton*.assetbundle')) if source_dir.is_dir() else []
+        if not found:
+            found=list(source_dir.rglob('personalbutton*.assetbundle')) if source_dir.is_dir() else []
+        if not found: raise HTTPException(400,'ZIP không có personalbutton*.assetbundle trong Source.')
+        # Replace only Source. If full tool includes Skin/skin.txt, update names too.
+        shutil.rmtree(BUTTON_SOURCE,ignore_errors=True); BUTTON_SOURCE.mkdir(parents=True,exist_ok=True)
+        for p in source_dir.rglob('*'):
+            if p.is_file() and p.name.lower().endswith('.assetbundle'):
+                rel=p.relative_to(source_dir); d=BUTTON_SOURCE/rel; d.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(p,d)
+        for p in extract.rglob('skin.txt'):
+            BUTTON_SKIN_TXT.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(p,BUTTON_SKIN_TXT); break
+        # If full tool ZIP includes Button/ base bundles, accept those as updated base as well.
+        for bd in extract.rglob('Button'):
+            if bd.is_dir() and (bd/'battleotherui.assetbundle').is_file():
+                shutil.rmtree(BUTTON_DIR,ignore_errors=True); shutil.copytree(bd,BUTTON_DIR,dirs_exist_ok=True); break
+        BUTTON_ENGINE_READY.write_text('1',encoding='utf-8')
+        warn=_persist_button_resources_cloud()
+        if not warn:
+            BUTTON_OVERRIDE_MARKER.write_text('1', encoding='utf-8')
+        shutil.rmtree(extract,ignore_errors=True)
+        try: raw.unlink()
+        except Exception: pass
+        cat=_button_catalog()
+        return {'ok':True,'cloudWarning':warn,**cat}
+    except HTTPException: raise
+    except zipfile.BadZipFile:
+        raise HTTPException(400,'File tải lên không phải ZIP hợp lệ.')
+    except Exception as e:
+        raise HTTPException(500,f'Cập nhật Resources Nút Bấm thất bại: {e}')
+
+
+@app.post('/api/button/build/{skin_id}')
+def build_button(skin_id: str):
+    import importlib, sys as _sys
+    try:
+        ensure_button_resources()
+        cat=_button_catalog(); row=next((r for r in cat['rows'] if str(r['id'])==str(skin_id)),None)
+        if not row: raise HTTPException(404,'Nút bấm ID chưa có trong Resources.')
+        files=_button_scan_source(BUTTON_SOURCE).get(str(skin_id))
+        if not files: raise HTTPException(404,'Không tìm thấy Source cho ID nút này.')
+        # Import the exact engine bundled from #1Nút Bấm.zip.
+        if str(BUTTON_DATA) not in _sys.path: _sys.path.insert(0,str(BUTTON_DATA))
+        # Avoid name collision if core already imported elsewhere.
+        graft_mod=importlib.import_module('core.graft')
+        btn_bundle=str(BUTTON_DIR/'battleotherui.assetbundle')
+        if not Path(btn_bundle).is_file(): raise HTTPException(409,'Thiếu Button/battleotherui.assetbundle.')
+        out_dir=BUILDS/'buttons'/str(skin_id)
+        work=out_dir/'Resources'/'1.63.1'/'assetbundle'/'uisystem'/'battle'
+        work.mkdir(parents=True,exist_ok=True)
+        out_bundle=work/'battleotherui.assetbundle'
+        logs=[]
+        graft_mod.build_one(str(skin_id),files,btn_bundle,str(out_bundle),log=logs.append,step=lambda:None,
+                            button_dir=str(BUTTON_DIR),out_dir=str(work))
+        raw_src=BUTTON_DIR/'battleotherui_raw.assetbundle'
+        if raw_src.is_file(): shutil.copy2(raw_src,work/'battleotherui_raw.assetbundle')
+        # Copy shop bundles when present (graft already writes them to work); add raw source if present.
+        pack_name=(row.get('hero','')+' '+row.get('name','')).strip() or str(skin_id)
+        pack_name=re.sub(r'[\\/:*?"<>|]','',pack_name).strip() or str(skin_id)
+        zip_path=BUILDS/f'button_{skin_id}.zip'
+        tmp=zip_path.with_suffix('.tmp')
+        with zipfile.ZipFile(tmp,'w',zipfile.ZIP_DEFLATED) as z:
+            for f in work.rglob('*'):
+                if not f.is_file(): continue
+                rel=f.relative_to(out_dir).as_posix()
+                z.write(f,f'{pack_name}/files/{rel}')
+        tmp.replace(zip_path)
+        return FileResponse(str(zip_path),filename=f'{pack_name}.zip',media_type='application/zip')
+    except HTTPException: raise
+    except Exception as e:
+        raise HTTPException(500,f'Tạo mod Nút Bấm thất bại: {e}')
 
 @app.get("/api/catalog")
 def catalog():
