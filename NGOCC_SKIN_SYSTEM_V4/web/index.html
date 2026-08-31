@@ -4809,8 +4809,12 @@ window.buildButtonZip=async function(skinId,row){
         if(title)title.textContent='✅ '+old; setTimeout(()=>{if(title)title.textContent=old;},1600);
         break;
       }
-      if(title) title.textContent='⏳ '+(d.progress||'Đang tạo ZIP...');
-      if(waited>15*60*1000) throw new Error('Build quá lâu (>15 phút). Kiểm tra log Render.');
+      if(title){
+        const pct = (d.progressIndex!=null && d.progressTotal) ? ` [${d.progressIndex}/${d.progressTotal}]` : '';
+        const elapsed = d.elapsed!=null ? ` • ${d.elapsed}s` : '';
+        title.textContent='⏳ '+(d.progress||'Đang tạo ZIP...')+pct+elapsed;
+      }
+      if(waited>15*60*1000) throw new Error('Build quá lâu (>15 phút). Trạng thái cuối: '+(d.progress||'không rõ')+'. Xem log Render.');
     }
   }catch(e){alert('❌ Không tạo được mod Nút Bấm: '+e.message);if(title)title.textContent=old;}
 };

@@ -962,13 +962,52 @@ def _button_build_sync(skin_id: str, job_id: str | None = None):
         work.mkdir(parents=True,exist_ok=True)
         out_bundle=work/'battleotherui.assetbundle'
         logs=[]
-        if job_id:
+        import time as _time
+        _started_at = _time.monotonic()
+        _stage = {'n': 0}
+        _stages = [
+            'Đang giải mã bundle gốc...',
+            'Đang nạp Unity bundle...',
+            'Đang graft FX...',
+            'Đang graft joystick...',
+            'Đang nén LZMA...',
+            'Đang mã hóa bundle...',
+            'Đang xử lý shop + hoàn tất ZIP...',
+        ]
+
+        def _update_button_job(**extra):
+            if not job_id:
+                return
             with BUTTON_JOBS_LOCK:
-                BUTTON_JOBS[job_id].update(progress='Đang graft FX + joystick...', log=[])
+                job = BUTTON_JOBS.get(job_id)
+                if not job:
+                    return
+                job.update(**extra)
+
+        def _button_log(message):
+            msg = str(message)
+            logs.append(msg)
+            elapsed = _time.monotonic() - _started_at
+            # Ghi log thật ra Render để không còn cảnh chỉ thấy polling status 200.
+            print(f'[BUTTON {skin_id}] +{elapsed:6.1f}s {msg}', flush=True)
+            _update_button_job(log=logs[-80:], lastLog=msg)
+
+        def _button_step():
+            i = _stage['n']
+            if i < len(_stages):
+                elapsed = _time.monotonic() - _started_at
+                pct = int(((i + 1) / len(_stages)) * 100)
+                text = f'{_stages[i]} ({pct}%)'
+                print(f'[BUTTON {skin_id}] +{elapsed:6.1f}s {text}', flush=True)
+                _update_button_job(progress=text, progressIndex=i + 1, progressTotal=len(_stages), elapsed=round(elapsed, 1), log=logs[-80:])
+            _stage['n'] = i + 1
+
+        _update_button_job(progress='Đang chuẩn bị builder... (0%)', progressIndex=0, progressTotal=len(_stages), elapsed=0, log=[])
+        print(f'[BUTTON {skin_id}] Build bắt đầu', flush=True)
 
         graft_mod.build_one(
             str(skin_id), files, str(BUTTON_DIR/'battleotherui.assetbundle'), str(out_bundle),
-            log=logs.append, step=lambda: None,
+            log=_button_log, step=_button_step,
             button_dir=str(BUTTON_DIR), out_dir=str(work)
         )
         raw_src=BUTTON_DIR/'battleotherui_raw.assetbundle'
@@ -984,9 +1023,11 @@ def _button_build_sync(skin_id: str, job_id: str | None = None):
                 rel=f.relative_to(out_dir).as_posix()
                 z.write(f,f'{pack_name}/files/{rel}')
         tmp.replace(zip_path)
+        _elapsed = _time.monotonic() - _started_at
+        print(f'[BUTTON {skin_id}] Build hoàn tất sau {_elapsed:.1f}s: {zip_path.name}', flush=True)
         if job_id:
             with BUTTON_JOBS_LOCK:
-                BUTTON_JOBS[job_id].update(status='done', progress='Hoàn tất', file=str(zip_path), filename=f'{pack_name}.zip', log=logs[-80:])
+                BUTTON_JOBS[job_id].update(status='done', progress='Hoàn tất (100%)', progressIndex=len(_stages), progressTotal=len(_stages), elapsed=round(_elapsed, 1), file=str(zip_path), filename=f'{pack_name}.zip', log=logs[-80:])
         return zip_path, f'{pack_name}.zip', logs
     except HTTPException as e:
         if job_id:
