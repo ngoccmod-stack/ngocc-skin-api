@@ -1,65 +1,63 @@
+#!/usr/bin/env python3
 from __future__ import annotations
-import json, os, re, sys, time, traceback
+import json, os, sys, time, importlib
 from pathlib import Path
+
+
+def emit(kind: str, value: object = ''):
+    print(f'@@{kind}@@{value}', flush=True)
 
 
 def main() -> int:
     if len(sys.argv) != 2:
-        print('WORKER_ERROR: thiếu job json', flush=True)
+        emit('ERROR', 'Thiếu file job spec')
         return 2
-    job = json.loads(Path(sys.argv[1]).read_text(encoding='utf-8'))
-    skin_id = str(job['skin_id'])
-    files = job['files']
-    button_bundle = str(job['button_bundle'])
-    out_path = Path(job['out_path'])
-    button_dir = Path(job['button_dir'])
-    out_dir = Path(job['out_dir'])
-    pack_name = str(job['pack_name'])
-
-    root = Path(__file__).resolve().parent
-    data_root = root / 'button_resources'
-    if str(data_root) not in sys.path:
-        sys.path.insert(0, str(data_root))
-
-    import core.graft as graft_mod
-
-    started = time.monotonic()
-    last_stage = {'n': 0}
-    total = 7
+    spec_path = Path(sys.argv[1])
+    spec = json.loads(spec_path.read_text(encoding='utf-8'))
+    button_data = Path(spec['button_data'])
+    if str(button_data) not in sys.path:
+        sys.path.insert(0, str(button_data))
+    for name in [x for x in list(sys.modules) if x == 'core' or x.startswith('core.')]:
+        sys.modules.pop(name, None)
+    graft_mod = importlib.import_module('core.graft')
+    skin_id = str(spec['skin_id'])
+    files = spec['files']
+    button_bundle = spec['button_bundle']
+    out_bundle = spec['out_bundle']
+    button_dir = spec['button_dir']
+    out_dir = spec['work_dir']
     stages = [
-        'Giải mã bundle gốc',
-        'Nạp Unity bundle',
-        'Graft FX',
-        'Graft joystick',
-        'Nén LZMA',
-        'Mã hóa bundle',
-        'Đóng ZIP',
+        'Đang giải mã bundle gốc...',
+        'Đang nạp Unity bundle...',
+        'Đang graft FX...',
+        'Đang graft joystick...',
+        'Đang nén LZMA...',
+        'Đang mã hóa bundle...',
+        'Đang xử lý shop + hoàn tất ZIP...',
     ]
-
+    stage_n = 0
+    started = time.monotonic()
     def log(msg):
-        print(f'WORKER_LOG:{msg}', flush=True)
-
+        emit('LOG', str(msg))
     def step():
-        n = min(last_stage['n'] + 1, total)
-        last_stage['n'] = n
-        elapsed = time.monotonic() - started
-        pct = int(n / total * 100)
-        print(f'WORKER_STAGE:{n}|{total}|{pct}|{stages[n-1]}|{elapsed:.1f}', flush=True)
-
+        nonlocal stage_n
+        stage_n += 1
+        if stage_n <= len(stages):
+            elapsed = time.monotonic() - started
+            emit('STEP', json.dumps({'index': stage_n, 'total': len(stages), 'text': f'{stages[stage_n-1]} ({int(stage_n/len(stages)*100)}%)', 'elapsed': round(elapsed, 1)}))
     try:
-        out_dir.mkdir(parents=True, exist_ok=True)
-        out_path.parent.mkdir(parents=True, exist_ok=True)
+        Path(out_bundle).parent.mkdir(parents=True, exist_ok=True)
         graft_mod.build_one(
-            skin_id, files, button_bundle, str(out_path),
+            skin_id, files, button_bundle, out_bundle,
             log=log, step=step,
-            button_dir=str(button_dir), out_dir=str(out_dir),
+            button_dir=button_dir, out_dir=out_dir
         )
-        elapsed = time.monotonic() - started
-        print(f'WORKER_DONE:{out_path}|{pack_name}.zip|{elapsed:.1f}', flush=True)
+        emit('DONE', json.dumps({'elapsed': round(time.monotonic()-started, 1), 'out': out_bundle}))
         return 0
     except Exception as e:
-        print(f'WORKER_ERROR:{type(e).__name__}: {e}', flush=True)
-        traceback.print_exc()
+        import traceback
+        emit('ERROR', f'{type(e).__name__}: {e}')
+        traceback.print_exc(file=sys.stdout)
         return 1
 
 

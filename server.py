@@ -47,8 +47,8 @@ BUTTON_ENGINE_READY = BUTTON_DATA / ".engine_ready"
 BUTTON_OVERRIDE_MARKER = BUTTON_DATA / ".cloud_override"
 BUTTON_PREP_LOCK = threading.Lock()
 BUTTON_BUILD_EXECUTOR = ThreadPoolExecutor(max_workers=1)
-BUTTON_PROCS: dict[str, subprocess.Popen] = {}
-BUTTON_PROCS_LOCK = threading.Lock()
+BUTTON_WORKER_SCRIPT = ROOT / 'button_worker.py'
+BUTTON_BUILD_TIMEOUT = int(os.environ.get('NGOCC_BUTTON_BUILD_TIMEOUT', '600'))
 BUTTON_JOBS: dict[str, dict[str, Any]] = {}
 BUTTON_JOBS_LOCK = threading.Lock()
 def _clean_env(v: str) -> str:
@@ -67,7 +67,7 @@ CATALOG_PERSIST_LOCK = threading.Lock()
 CHUNK_DIR = UPLOADS / "resource_chunks"
 CHUNK_DIR.mkdir(parents=True, exist_ok=True)
 
-for p in (RESOURCES, DATA, UPLOADS, BUILDS, BUTTON_DATA, BUTTON_SOURCE, BUTTON_SKIN_TXT.parent, BUTTON_DIR):
+for p in (RESOURCES, DATA, UPLOADS, BUILDS, BUTTON_DATA, BUTTON_SOURCE, BUTTON_SKIN_TXT.parent, BUTTON_DIR, BUTTON_MODS_DIR, BUTTON_MOD_UPLOAD_DIR, BUTTON_MOD_CHUNK_DIR):
     p.mkdir(parents=True, exist_ok=True)
 
 if os.environ.get("CLOUDINARY_URL"):
@@ -713,7 +713,7 @@ def health():
 def _button_engine_extract(force: bool = False) -> None:
     """Lazily unpack only the fixed engine pieces from the supplied button tool."""
     with BUTTON_PREP_LOCK:
-        if BUTTON_ENGINE_READY.exists() and not force and (BUTTON_SOURCE / 'personalbuttoneffect_10618.assetbundle').exists():
+        if BUTTON_ENGINE_READY.exists() and not force and (BUTTON_DIR / 'battleotherui.assetbundle').is_file() and any(BUTTON_SOURCE.glob('personalbutton*.assetbundle')):
             return
         if not BUTTON_ENGINE_ZIP.is_file():
             raise FileNotFoundError('Thiếu button_engine.zip')
@@ -761,6 +761,154 @@ def _button_engine_extract(force: bool = False) -> None:
         BUTTON_ENGINE_READY.write_text('1', encoding='utf-8')
 
 
+def _button_norm_name(value: str) -> str:
+    s = str(value or '').strip()
+    s = re.sub(r'\.(zip|rar)$', '', s, flags=re.I)
+    s = norm(s)
+    s = re.sub(r'^(?:nut\s*bam|button|mod\s*nut\s*bam)\s*[-_:|]*\s*', '', s, flags=re.I)
+    return s
+
+
+def _button_mod_cloud_public_id() -> str:
+    return f"{CLOUDINARY_FOLDER}/button_resources.zip"
+
+
+def _load_button_cached() -> dict | None:
+    data = load_json(BUTTON_CATALOG_CACHE, {})
+    if isinstance(data, dict) and isinstance(data.get('rows'), list) and data.get('ready'):
+        return data
+    return None
+
+
+def _save_button_cache(data: dict) -> None:
+    clean = dict(data or {})
+    clean['ready'] = bool(clean.get('rows'))
+    clean['count'] = len(clean.get('rows', []))
+    save_json(BUTTON_CATALOG_CACHE, clean)
+
+
+def _match_button_mod_file(filename: str, rows: list[dict]) -> dict | None:
+    base = _button_norm_name(filename)
+    if not base:
+        return None
+    # Prefer an exact ID mentioned in the filename.
+    ids = re.findall(r'(?<!\d)(\d{4,6})(?!\d)', base)
+    for sid in ids:
+        hit = next((r for r in rows if str(r.get('id')) == sid), None)
+        if hit:
+            return hit
+    exact = []
+    for r in rows:
+        full = _button_norm_name(f"{r.get('hero','')} {r.get('name','')}")
+        name = _button_norm_name(r.get('name',''))
+        if base == full or base == name:
+            exact.append(r)
+    if len(exact) == 1:
+        return exact[0]
+    # Conservative contains matching: require all normalized name tokens from the row.
+    scored=[]
+    bt=set(base.split())
+    for r in rows:
+        aliases=[_button_norm_name(f"{r.get('hero','')} {r.get('name','')}"), _button_norm_name(r.get('name',''))]
+        best=0
+        for a in aliases:
+            at=set(a.split())
+            if at and at.issubset(bt): best=max(best, len(at))
+        if best: scored.append((best,r))
+    scored.sort(key=lambda x:x[0], reverse=True)
+    if scored and (len(scored)==1 or scored[0][0]>scored[1][0]):
+        return scored[0][1]
+    return None
+
+
+def _button_update_rows_with_files(rows: list[dict]) -> list[dict]:
+    for r in rows:
+        p = BUTTON_MODS_DIR / str(r.get('id')) / (str(r.get('downloadFilename') or ''))
+        # Also support the legacy flat layout.
+        flat = BUTTON_MODS_DIR / str(r.get('downloadFilename') or '')
+        found = p if p.is_file() else flat if flat.is_file() else None
+        if found:
+            r['downloadReady']=True
+            r['downloadFilename']=found.name
+        else:
+            r['downloadReady']=False
+            r.pop('downloadFilename', None)
+    return rows
+
+
+def _button_catalog_cloud_public_id() -> str:
+    return f"{CLOUDINARY_FOLDER}/button_catalog.json"
+
+
+def _button_catalog_cloud_url() -> str:
+    if not cloudinary_ready(): return ''
+    try:
+        return cloudinary.utils.cloudinary_url(_button_catalog_cloud_public_id(), resource_type='raw', type='upload', secure=True)[0]
+    except Exception:
+        return ''
+
+
+def _persist_button_catalog_cloud() -> str:
+    if not cloudinary_ready(): return ''
+    try:
+        cloudinary.uploader.upload(str(BUTTON_CATALOG_CACHE), resource_type='raw', public_id=_button_catalog_cloud_public_id(), overwrite=True)
+        return ''
+    except Exception as e:
+        return str(e)
+
+
+def _restore_button_catalog_cloud() -> bool:
+    if BUTTON_CATALOG_CACHE.is_file(): return True
+    url=_button_catalog_cloud_url()
+    if not url: return False
+    try:
+        r=requests.get(url,headers=HEADERS,timeout=120); r.raise_for_status(); BUTTON_CATALOG_CACHE.write_bytes(r.content)
+        return bool(_load_button_cached())
+    except Exception:
+        return False
+
+
+def _button_mods_cloud_public_id() -> str:
+    return f"{CLOUDINARY_FOLDER}/button_mods.zip"
+
+
+def _button_mods_cloud_url() -> str:
+    if not cloudinary_ready(): return ''
+    try:
+        return cloudinary.utils.cloudinary_url(_button_mods_cloud_public_id(), resource_type='raw', type='upload', secure=True)[0]
+    except Exception:
+        return ''
+
+
+def _persist_button_mods_cloud() -> str:
+    if not cloudinary_ready(): return ''
+    try:
+        tmp=DATA/'button_mods_archive.zip'
+        with zipfile.ZipFile(tmp,'w',zipfile.ZIP_DEFLATED) as z:
+            if BUTTON_MODS_DIR.is_dir():
+                for f in BUTTON_MODS_DIR.rglob('*.zip'):
+                    z.write(f, f.relative_to(BUTTON_MODS_DIR).as_posix())
+        cloudinary.uploader.upload(str(tmp),resource_type='raw',public_id=_button_mods_cloud_public_id(),overwrite=True)
+        tmp.unlink(missing_ok=True)
+        return ''
+    except Exception as e:
+        return str(e)
+
+
+def _restore_button_mods_cloud() -> bool:
+    if any(BUTTON_MODS_DIR.rglob('*.zip')): return True
+    url=_button_mods_cloud_url()
+    if not url: return False
+    try:
+        tmp=UPLOADS/'button_mods_restore.zip'
+        r=requests.get(url,headers=HEADERS,timeout=180); r.raise_for_status(); tmp.write_bytes(r.content)
+        shutil.rmtree(BUTTON_MODS_DIR,ignore_errors=True); BUTTON_MODS_DIR.mkdir(parents=True,exist_ok=True)
+        with zipfile.ZipFile(tmp) as z: z.extractall(BUTTON_MODS_DIR)
+        tmp.unlink(missing_ok=True); return any(BUTTON_MODS_DIR.rglob('*.zip'))
+    except Exception:
+        return False
+
+
 def _button_cloud_public_id() -> str:
     return f"{CLOUDINARY_FOLDER}/button_resources.zip"
 
@@ -782,6 +930,10 @@ def _persist_button_resources_cloud() -> str:
                 if not base.is_dir(): continue
                 for f in base.rglob('*'):
                     if f.is_file(): z.write(f, f'{base_name}/{f.relative_to(base).as_posix()}')
+            if BUTTON_MODS_DIR.is_dir():
+                for f in BUTTON_MODS_DIR.rglob('*.zip'):
+                    z.write(f, f'ButtonMods/{f.relative_to(BUTTON_MODS_DIR).as_posix()}')
+            if BUTTON_CATALOG_CACHE.is_file(): z.write(BUTTON_CATALOG_CACHE, 'button_catalog.json')
         if cloudinary_ready():
             cloudinary.uploader.upload(str(local), resource_type='raw', public_id=_button_cloud_public_id(), overwrite=True)
         return ''
@@ -805,6 +957,12 @@ def _restore_button_resources_cloud() -> bool:
             if src.is_dir():
                 dst=BUTTON_DATA/base_name
                 shutil.rmtree(dst, ignore_errors=True); shutil.copytree(src,dst,dirs_exist_ok=True); ok=True
+        srcmods=extract/'ButtonMods'
+        if srcmods.is_dir():
+            shutil.rmtree(BUTTON_MODS_DIR, ignore_errors=True); shutil.copytree(srcmods,BUTTON_MODS_DIR,dirs_exist_ok=True); ok=True
+        cached=extract/'button_catalog.json'
+        if cached.is_file():
+            shutil.copy2(cached, BUTTON_CATALOG_CACHE)
         if ok: BUTTON_ENGINE_READY.write_text('1',encoding='utf-8')
         return ok
     except Exception:
@@ -813,8 +971,7 @@ def _restore_button_resources_cloud() -> bool:
 
 def ensure_button_resources() -> None:
     _button_engine_extract(False)
-    # On a fresh Render instance, restore the admin-updated source from durable storage.
-    # Do not overwrite the live files on every request.
+    # Restore durable Source/skin/catalog once per fresh instance.
     if not BUTTON_OVERRIDE_MARKER.exists():
         if _restore_button_resources_cloud():
             BUTTON_OVERRIDE_MARKER.write_text('1', encoding='utf-8')
@@ -847,7 +1004,15 @@ def _button_scan_source(src: Path) -> dict[str,dict]:
     return res
 
 
-def _button_catalog() -> dict:
+def _button_catalog(refresh: bool = False) -> dict:
+    cached = _load_button_cached()
+    if not refresh and not cached:
+        _restore_button_catalog_cloud()
+        _restore_button_mods_cloud()
+        cached = _load_button_cached()
+    if not refresh and cached:
+        rows = _button_update_rows_with_files([dict(r) for r in cached.get('rows',[])])
+        return {**cached, 'rows': rows, 'count': len(rows), 'ready': bool(rows)}
     ensure_button_resources()
     skins=_button_skin_parser(BUTTON_SKIN_TXT)
     files=_button_scan_source(BUTTON_SOURCE)
@@ -866,7 +1031,11 @@ def _button_catalog() -> dict:
         if f.get('sprite_raw'): parts.append('JOY')
         rows.append({'id':sid,'name':name,'hero':hero,'parts':'+'.join(parts) or '-', 'known':known})
     rows.sort(key=lambda r:(r['hero'].lower(), not r['known'], int(r['id'])))
-    return {'ready':bool(rows),'count':len(rows),'rows':rows}
+    rows=_button_update_rows_with_files(rows)
+    data={'ready':bool(rows),'count':len(rows),'rows':rows}
+    _save_button_cache(data)
+    return data
+
 
 
 class ButtonSourceUploadInfo(BaseModel):
@@ -874,9 +1043,9 @@ class ButtonSourceUploadInfo(BaseModel):
 
 
 @app.get('/api/button/catalog')
-def button_catalog():
+def button_catalog(refresh: bool = False):
     try:
-        return {'ok':True, **_button_catalog()}
+        return {'ok':True, **_button_catalog(refresh=bool(refresh))}
     except Exception as e:
         raise HTTPException(500, f'Không tải được danh sách Nút Bấm: {e}')
 
@@ -926,8 +1095,10 @@ async def button_resources_upload(file: UploadFile = File(...)):
         shutil.rmtree(extract,ignore_errors=True)
         try: raw.unlink()
         except Exception: pass
-        cat=_button_catalog()
-        return {'ok':True,'cloudWarning':warn,**cat}
+        cat=_button_catalog(refresh=True)
+        warn2=_persist_button_resources_cloud()
+        warn3=_persist_button_catalog_cloud()
+        return {'ok':True,'cloudWarning':warn or warn2 or warn3,**cat}
     except HTTPException: raise
     except zipfile.BadZipFile:
         raise HTTPException(400,'File tải lên không phải ZIP hợp lệ.')
@@ -935,133 +1106,266 @@ async def button_resources_upload(file: UploadFile = File(...)):
         raise HTTPException(500,f'Cập nhật Resources Nút Bấm thất bại: {e}')
 
 
+async def _button_save_uploaded_archive(raw: Path) -> dict:
+    extract = BUTTON_MOD_UPLOAD_DIR / f'extract_{uuid.uuid4().hex}'
+    extract.mkdir(parents=True, exist_ok=True)
+    try:
+        with zipfile.ZipFile(raw) as z:
+            z.extractall(extract)
+        cat = _button_catalog(refresh=False)
+        rows = [dict(r) for r in cat.get('rows', [])]
+        shutil.rmtree(BUTTON_MODS_DIR, ignore_errors=True)
+        BUTTON_MODS_DIR.mkdir(parents=True, exist_ok=True)
+        matched=[]; unmatched=[]; bad=[]
+        nested=list(extract.rglob('*.zip'))
+        for child in nested:
+            try:
+                with zipfile.ZipFile(child) as z:
+                    if z.testzip() is not None: raise zipfile.BadZipFile('ZIP con lỗi CRC')
+            except Exception:
+                bad.append(child.name); continue
+            row=_match_button_mod_file(child.name,rows)
+            if not row:
+                unmatched.append(child.name); continue
+            sid=str(row['id'])
+            dest_dir=BUTTON_MODS_DIR/sid; dest_dir.mkdir(parents=True,exist_ok=True)
+            safe_name=re.sub(r'[\\/:*?"<>|]','_',child.name).strip() or f'{sid}.zip'
+            dest=dest_dir/safe_name
+            shutil.copy2(child,dest)
+            # Remove older attached ZIPs for this ID to keep one canonical download.
+            for old in dest_dir.glob('*.zip'):
+                if old != dest: old.unlink(missing_ok=True)
+            row['downloadReady']=True; row['downloadFilename']=safe_name
+            matched.append({'id':sid,'name':row.get('name',''),'filename':safe_name})
+        _save_button_cache({'ready':bool(rows),'count':len(rows),'rows':rows})
+        warn_catalog=_persist_button_catalog_cloud()
+        warn_mods=_persist_button_mods_cloud()
+        warn=warn_catalog or warn_mods
+        return {'ok':True,'matched':matched,'matchedCount':len(matched),'unmatched':unmatched,'unmatchedCount':len(unmatched),'bad':bad,'badCount':len(bad),'cloudWarning':warn,**_button_catalog(refresh=False)}
+    finally:
+        shutil.rmtree(extract, ignore_errors=True)
+        raw.unlink(missing_ok=True)
+
+
+@app.post('/api/button/mods/upload/init')
+def button_mod_upload_init():
+    sid=uuid.uuid4().hex
+    (BUTTON_MOD_CHUNK_DIR/sid).mkdir(parents=True,exist_ok=True)
+    return {'ok':True,'uploadId':sid,'chunkSize':8*1024*1024}
+
+
+@app.post('/api/button/mods/upload/chunk')
+async def button_mod_upload_chunk(uploadId: str, index: int, file: UploadFile = File(...)):
+    d=BUTTON_MOD_CHUNK_DIR/uploadId
+    if not d.is_dir(): raise HTTPException(404,'Phiên upload không tồn tại.')
+    if index<0: raise HTTPException(400,'index không hợp lệ.')
+    part=d/f'{index:08d}.part'
+    with part.open('wb') as f:
+        while ch:=await file.read(1024*1024): f.write(ch)
+    return {'ok':True,'index':index,'size':part.stat().st_size}
+
+
+@app.post('/api/button/mods/upload/finalize')
+def button_mod_upload_finalize(uploadId: str, total: int, filename: str):
+    d=BUTTON_MOD_CHUNK_DIR/uploadId
+    if not d.is_dir(): raise HTTPException(404,'Phiên upload không tồn tại.')
+    raw=BUTTON_MOD_UPLOAD_DIR/f'package_{uploadId}.zip'
+    try:
+        safe=Path(filename).name
+        if not safe.lower().endswith('.zip'): raise HTTPException(400,'Chỉ nhận file ZIP.')
+        with raw.open('wb') as out:
+            for i in range(int(total)):
+                part=d/f'{i:08d}.part'
+                if not part.is_file(): raise HTTPException(400,f'Thiếu phần {i+1}/{total}')
+                with part.open('rb') as f: shutil.copyfileobj(f,out,1024*1024)
+        # Reuse the same matcher/persister synchronously; this runs after all chunks arrive.
+        import asyncio as _asyncio
+        result=_asyncio.run(_button_save_uploaded_archive(raw))
+        return result
+    except HTTPException: raise
+    except zipfile.BadZipFile: raise HTTPException(400,'File tổng không phải ZIP hợp lệ.')
+    except Exception as e: raise HTTPException(500,f'Xử lý ZIP Nút Bấm thất bại: {e}')
+    finally:
+        shutil.rmtree(d,ignore_errors=True); raw.unlink(missing_ok=True)
+
+
+@app.post('/api/button/mods/upload')
+async def button_mods_upload(file: UploadFile = File(...)):
+    if not str(file.filename or '').lower().endswith('.zip'):
+        raise HTTPException(400,'Chỉ nhận file ZIP chứa các ZIP nút bấm thành phẩm.')
+    raw=BUTTON_MOD_UPLOAD_DIR/f'package_{uuid.uuid4().hex}.zip'
+    try:
+        with raw.open('wb') as f:
+            while ch:=await file.read(1024*1024):
+                f.write(ch)
+        return await _button_save_uploaded_archive(raw)
+    except zipfile.BadZipFile:
+        raw.unlink(missing_ok=True); raise HTTPException(400,'File tổng không phải ZIP hợp lệ.')
+    except HTTPException: raise
+    except Exception as e:
+        raw.unlink(missing_ok=True); raise HTTPException(500,f'Upload Nút Bấm thất bại: {e}')
+
+
+@app.get('/api/button/download/{skin_id}')
+def button_download_ready(skin_id: str):
+    cat=_button_catalog(refresh=False)
+    row=next((r for r in cat.get('rows',[]) if str(r.get('id'))==str(skin_id)),None)
+    if not row or not row.get('downloadReady'):
+        raise HTTPException(404,'Skin này chưa có ZIP nút bấm thành phẩm.')
+    name=str(row.get('downloadFilename') or '').strip()
+    path=BUTTON_MODS_DIR/str(skin_id)/name
+    if not path.is_file():
+        raise HTTPException(404,'File ZIP nút bấm không còn trên server.')
+    return FileResponse(path,filename=path.name,media_type='application/zip')
+
+
+@app.post('/api/button/catalog/row/{skin_id}')
+async def button_catalog_row_update(skin_id: str, payload: dict[str, Any]):
+    name=str(payload.get('name','')).strip()
+    if not name: raise HTTPException(400,'Tên skin không được để trống.')
+    cat=_button_catalog(refresh=False)
+    rows=[dict(r) for r in cat.get('rows',[])]
+    target=next((r for r in rows if str(r.get('id'))==str(skin_id)),None)
+    if not target: raise HTTPException(404,'Không tìm thấy skin nút bấm.')
+    # Store a lightweight display override in the cached catalog. Source IDs remain untouched.
+    target['name']=name
+    _save_button_cache({'ready':bool(rows),'count':len(rows),'rows':rows})
+    warn=_persist_button_catalog_cloud()
+    return {'ok':True,'cloudWarning':warn,**_button_catalog(refresh=False)}
+
+
 def _button_build_sync(skin_id: str, job_id: str | None = None):
-    import subprocess, time as _time, json as _json
+    """Run the heavy button graft in an isolated subprocess.
+
+    Render's web process stays responsive while UnityPy/LZMA work runs in a child
+    process. A hard timeout prevents a stuck build from occupying the server forever.
+    """
+    import json as _json, subprocess as _subprocess, time as _time, selectors as _selectors
+    logs=[]
+    proc=None
     try:
         ensure_button_resources()
-        cat = _button_catalog()
-        row = next((r for r in cat['rows'] if str(r['id']) == str(skin_id)), None)
+        cat=_button_catalog()
+        row=next((r for r in cat['rows'] if str(r['id'])==str(skin_id)),None)
         if not row:
-            raise HTTPException(404, 'Nút bấm ID chưa có trong Resources.')
-        files = _button_scan_source(BUTTON_SOURCE).get(str(skin_id))
+            raise HTTPException(404,'Nút bấm ID chưa có trong Resources.')
+        files=_button_scan_source(BUTTON_SOURCE).get(str(skin_id))
         if not files:
-            raise HTTPException(404, 'Không tìm thấy Source cho ID nút này.')
-        base_bundle = BUTTON_DIR / 'battleotherui.assetbundle'
-        if not base_bundle.is_file():
-            raise HTTPException(409, 'Thiếu Button/battleotherui.assetbundle.')
+            raise HTTPException(404,'Không tìm thấy Source cho ID nút này.')
+        if not (BUTTON_DIR/'battleotherui.assetbundle').is_file():
+            raise HTTPException(409,'Thiếu Button/battleotherui.assetbundle.')
 
-        pack_name = re.sub(r'[\\/:*?"<>|]', '', ((row.get('hero','') + ' ' + row.get('name','')).strip() or str(skin_id))).strip() or str(skin_id)
-        build_root = BUILDS / 'buttons' / str(skin_id)
-        shutil.rmtree(build_root, ignore_errors=True)
-        work = build_root / 'Resources' / '1.63.1' / 'assetbundle' / 'uisystem' / 'battle'
-        work.mkdir(parents=True, exist_ok=True)
-        out_bundle = work / 'battleotherui.assetbundle'
-        zip_path = BUILDS / f'button_{skin_id}.zip'
-        job_file = UPLOADS / f'button_job_{job_id or uuid.uuid4().hex}.json'
-
-        payload = {
-            'skin_id': str(skin_id),
-            'files': files,
-            'button_bundle': str(base_bundle),
-            'button_dir': str(BUTTON_DIR),
-            'out_dir': str(work),
-            'out_path': str(out_bundle),
-            'pack_name': pack_name,
+        out_dir=BUILDS/'buttons'/str(skin_id)
+        shutil.rmtree(out_dir, ignore_errors=True)
+        work=out_dir/'Resources'/'1.63.1'/'assetbundle'/'uisystem'/'battle'
+        work.mkdir(parents=True,exist_ok=True)
+        out_bundle=work/'battleotherui.assetbundle'
+        job_spec=out_dir/'job.json'
+        spec={
+            'skin_id':str(skin_id), 'files':files,
+            'button_bundle':str(BUTTON_DIR/'battleotherui.assetbundle'),
+            'button_dir':str(BUTTON_DIR), 'button_data':str(BUTTON_DATA),
+            'out_bundle':str(out_bundle), 'work_dir':str(work),
         }
-        job_file.write_text(_json.dumps(payload, ensure_ascii=False), encoding='utf-8')
+        job_spec.write_text(_json.dumps(spec,ensure_ascii=False),encoding='utf-8')
+        started=_time.monotonic()
 
-        started = _time.monotonic()
-        logs = []
-        timeout_total = 180
-        timeout_idle = 90
-        _update = lambda **kw: _update_button_job(job_id, **kw) if job_id else None
-        _update(progress='Đang khởi động worker... (0%)', progressIndex=0, progressTotal=7, elapsed=0, log=[])
-        print(f'[BUTTON {skin_id}] Worker khởi động', flush=True)
+        def update_job(**extra):
+            if not job_id: return
+            with BUTTON_JOBS_LOCK:
+                job=BUTTON_JOBS.get(job_id)
+                if job: job.update(**extra)
 
-        proc = subprocess.Popen(
-            [sys.executable, str(ROOT / 'button_worker.py'), str(job_file)],
-            cwd=str(ROOT),
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            bufsize=1,
-        )
-        with BUTTON_PROCS_LOCK:
-            BUTTON_PROCS[job_id or ''] = proc
-        last_output = started
-        done_line = None
+        update_job(progress='Đang khởi động worker...',progressIndex=0,progressTotal=7,elapsed=0,log=[])
+        print(f'[BUTTON {skin_id}] Spawn worker',flush=True)
+        env=os.environ.copy(); env['PYTHONUNBUFFERED']='1'
+        env['PYTHONPATH']=str(BUTTON_DATA)+os.pathsep+env.get('PYTHONPATH','')
+        proc=_subprocess.Popen([sys.executable,'-u',str(BUTTON_WORKER_SCRIPT),str(job_spec)],cwd=str(ROOT),env=env,stdout=_subprocess.PIPE,stderr=_subprocess.STDOUT,text=True,bufsize=1)
+
+        sel=_selectors.DefaultSelector()
+        if proc.stdout is not None:
+            sel.register(proc.stdout, _selectors.EVENT_READ)
         try:
             while True:
-                line = proc.stdout.readline()
-                now = _time.monotonic()
-                if line:
-                    last_output = now
-                    line = line.rstrip('\n')
-                    if line.startswith('WORKER_STAGE:'):
-                        body = line[len('WORKER_STAGE:'):].split('|')
-                        if len(body) >= 5:
-                            n,total,pct,desc,elapsed = body[:5]
-                            _update(progress=f'{desc} ({pct}%)', progressIndex=int(n), progressTotal=int(total), elapsed=float(elapsed), lastLog=desc)
-                            print(f'[BUTTON {skin_id}] +{float(elapsed):.1f}s {desc} ({pct}%)', flush=True)
-                    elif line.startswith('WORKER_LOG:'):
-                        msg = line[len('WORKER_LOG:'):]
-                        logs.append(msg)
-                        _update(log=logs[-80:], lastLog=msg)
-                        print(f'[BUTTON {skin_id}] {msg}', flush=True)
-                    elif line.startswith('WORKER_DONE:'):
-                        done_line = line[len('WORKER_DONE:'):].split('|', 2)
-                    elif line.startswith('WORKER_ERROR:'):
-                        logs.append(line)
-                        _update(log=logs[-80:], lastLog=line)
-                        print(f'[BUTTON {skin_id}] {line}', flush=True)
-                    else:
-                        logs.append(line)
-                        if line.strip(): print(f'[BUTTON {skin_id}] {line}', flush=True)
-                elif proc.poll() is not None:
+                elapsed=_time.monotonic()-started
+                if elapsed > BUTTON_BUILD_TIMEOUT:
+                    proc.kill()
+                    try: proc.wait(timeout=10)
+                    except Exception: pass
+                    raise RuntimeError(f'Button worker quá {BUTTON_BUILD_TIMEOUT}s và đã được dừng. Xem log Render với [BUTTON {skin_id}].')
+                events=sel.select(timeout=0.25)
+                if events:
+                    line=proc.stdout.readline() if proc.stdout is not None else ''
+                    if line:
+                        line=line.rstrip('\n')
+                        if line.startswith('@@LOG@@'):
+                            msg=line[7:]; logs.append(msg); logs=logs[-80:]
+                            print(f'[BUTTON {skin_id}] +{elapsed:6.1f}s {msg}',flush=True)
+                            update_job(log=logs,lastLog=msg,elapsed=round(elapsed,1))
+                        elif line.startswith('@@STEP@@'):
+                            try:
+                                d=_json.loads(line[8:]); idx=int(d.get('index',0)); total=int(d.get('total',7)); text=d.get('text','')
+                            except Exception:
+                                idx=0; total=7; text=line[8:]
+                            print(f'[BUTTON {skin_id}] +{elapsed:6.1f}s {text}',flush=True)
+                            update_job(progress=text,progressIndex=idx,progressTotal=total,elapsed=round(elapsed,1),log=logs)
+                        elif line.startswith('@@ERROR@@'):
+                            msg=line[9:]; logs.append('ERROR: '+msg); print(f'[BUTTON {skin_id}] ERROR {msg}',flush=True)
+                            update_job(log=logs,lastLog=msg,elapsed=round(elapsed,1))
+                        elif line.startswith('@@DONE@@'):
+                            print(f'[BUTTON {skin_id}] worker done',flush=True)
+                        else:
+                            print(f'[BUTTON {skin_id}] {line}',flush=True)
+                    continue
+                rc=proc.poll()
+                if rc is not None:
+                    # Drain any final buffered lines after process exit.
+                    if proc.stdout is not None:
+                        tail=proc.stdout.read() or ''
+                        for line in tail.splitlines():
+                            if line:
+                                logs.append(line); print(f'[BUTTON {skin_id}] {line}',flush=True)
+                    if rc != 0:
+                        raise RuntimeError('\n'.join(logs[-40:]) or f'Worker exit code {rc}')
                     break
-                else:
-                    if now - last_output > timeout_idle:
-                        proc.kill()
-                        raise TimeoutError(f'Worker không có tiến triển trong {timeout_idle}s; build bị kẹt.')
-                    if now - started > timeout_total:
-                        proc.kill()
-                        raise TimeoutError(f'Build vượt quá {timeout_total}s.')
-                    _time.sleep(0.1)
-
-            rc = proc.wait(timeout=5)
-            elapsed = _time.monotonic() - started
-            if rc != 0 or not out_bundle.is_file():
-                raise RuntimeError('Worker build thất bại.' + (' ' + logs[-1] if logs else ''))
-
-            shutil.copy2(BUTTON_DIR / 'battleotherui_raw.assetbundle', work / 'battleotherui_raw.assetbundle') if (BUTTON_DIR / 'battleotherui_raw.assetbundle').is_file() else None
-            tmp = zip_path.with_suffix('.tmp')
-            with zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as z:
-                for f in build_root.rglob('*'):
-                    if not f.is_file():
-                        continue
-                    rel = f.relative_to(build_root).as_posix()
-                    z.write(f, f'{pack_name}/files/{rel}')
-            tmp.replace(zip_path)
-            print(f'[BUTTON {skin_id}] Build hoàn tất sau {elapsed:.1f}s: {zip_path.name}', flush=True)
-            _update(status='done', progress='Hoàn tất (100%)', progressIndex=7, progressTotal=7, elapsed=round(elapsed,1), file=str(zip_path), filename=f'{pack_name}.zip', log=logs[-80:])
-            return zip_path, f'{pack_name}.zip', logs
         finally:
-            with BUTTON_PROCS_LOCK:
-                BUTTON_PROCS.pop(job_id or '', None)
-            try: proc.stdout.close()
+            try: sel.close()
             except Exception: pass
-            job_file.unlink(missing_ok=True)
+
+        if not out_bundle.is_file() or out_bundle.stat().st_size<=0:
+            raise RuntimeError('Worker hoàn tất nhưng không tạo được battleotherui.assetbundle.')
+        pack_name=(row.get('hero','')+' '+row.get('name','')).strip() or str(skin_id)
+        pack_name=re.sub(r'[\\/:*?"<>|]','',pack_name).strip() or str(skin_id)
+        zip_path=BUILDS/f'button_{skin_id}.zip'
+        tmp=zip_path.with_suffix('.tmp')
+        with zipfile.ZipFile(tmp,'w',zipfile.ZIP_DEFLATED) as z:
+            for f in out_dir.rglob('*'):
+                if not f.is_file() or f == job_spec: continue
+                if f.name.lower() == 'version.txt': continue
+                rel=f.relative_to(out_dir).as_posix()
+                if rel.startswith('Resources/'):
+                    z.write(f,f'{pack_name}/files/{rel}')
+        tmp.replace(zip_path)
+        elapsed=_time.monotonic()-started
+        print(f'[BUTTON {skin_id}] Build hoàn tất sau {elapsed:.1f}s: {zip_path.name}',flush=True)
+        update_job(status='done',progress='Hoàn tất (100%)',progressIndex=7,progressTotal=7,elapsed=round(elapsed,1),file=str(zip_path),filename=f'{pack_name}.zip',log=logs[-80:])
+        return zip_path,f'{pack_name}.zip',logs
     except HTTPException as e:
-        if job_id: _update_button_job(job_id, status='error', error=str(e.detail))
+        if job_id:
+            with BUTTON_JOBS_LOCK:
+                if job_id in BUTTON_JOBS: BUTTON_JOBS[job_id].update(status='error',error=e.detail if isinstance(e.detail,str) else str(e.detail))
         raise
     except Exception as e:
         detail=f'{type(e).__name__}: {e}'
-        if job_id: _update_button_job(job_id, status='error', error=detail, log=logs[-80:] if 'logs' in locals() else [])
-        raise RuntimeError(detail + ('\n' + '\n'.join(logs[-40:]) if 'logs' in locals() and logs else '')) from e
+        if job_id:
+            with BUTTON_JOBS_LOCK:
+                if job_id in BUTTON_JOBS: BUTTON_JOBS[job_id].update(status='error',error=detail,log=logs[-80:])
+        raise RuntimeError(detail) from e
 
 
 @app.post('/api/button/build/start/{skin_id}')
 def start_button_build(skin_id: str):
+    # Kiểm tra nhanh trước khi đưa build nặng sang background worker.
     ensure_button_resources()
     cat=_button_catalog()
     row=next((r for r in cat['rows'] if str(r['id'])==str(skin_id)),None)
@@ -1070,37 +1374,20 @@ def start_button_build(skin_id: str):
     files=_button_scan_source(BUTTON_SOURCE).get(str(skin_id))
     if not files:
         raise HTTPException(404,'Không tìm thấy Source cho ID nút này.')
+    job_id=uuid.uuid4().hex
     with BUTTON_JOBS_LOCK:
-        active=[j for j in BUTTON_JOBS.values() if j.get('status') in ('queued','running')]
-        if active:
-            raise HTTPException(409,'Đang có một build Nút Bấm khác. Vui lòng chờ hoặc huỷ job hiện tại.')
-        job_id=uuid.uuid4().hex
         BUTTON_JOBS[job_id]={'status':'queued','skinId':str(skin_id),'progress':'Đang xếp hàng...', 'error':'', 'file':'', 'filename':'', 'log':[]}
     def runner():
         with BUTTON_JOBS_LOCK:
             BUTTON_JOBS[job_id]['status']='running'
-            BUTTON_JOBS[job_id]['progress']='Đang khởi động worker... (0%)'
+            BUTTON_JOBS[job_id]['progress']='Đang tạo ZIP...'
         try:
             _button_build_sync(str(skin_id), job_id=job_id)
         except Exception:
+            # _button_build_sync already records the useful error.
             pass
     BUTTON_BUILD_EXECUTOR.submit(runner)
     return {'ok':True,'jobId':job_id,'skinId':str(skin_id)}
-
-@app.post('/api/button/build/cancel/{job_id}')
-def cancel_button_build(job_id: str):
-    with BUTTON_JOBS_LOCK:
-        job=BUTTON_JOBS.get(job_id)
-        if not job: raise HTTPException(404,'Không tìm thấy phiên build.')
-        if job.get('status') in ('done','error','cancelled'):
-            return {'ok':True,'status':job.get('status')}
-        job['status']='cancelled'; job['error']='Đã huỷ build.'; job['progress']='Đã huỷ.'
-    with BUTTON_PROCS_LOCK:
-        proc=BUTTON_PROCS.get(job_id)
-        if proc and proc.poll() is None:
-            try: proc.kill()
-            except Exception: pass
-    return {'ok':True,'status':'cancelled'}
 
 
 @app.get('/api/button/build/status/{job_id}')
@@ -1130,13 +1417,7 @@ def button_build_download(job_id: str):
 # proxy nếu build quá lâu. Frontend mới dùng start/status/download ở trên.
 @app.post('/api/button/build/{skin_id}')
 def build_button(skin_id: str):
-    try:
-        zip_path, filename, _ = _button_build_sync(str(skin_id))
-        return FileResponse(str(zip_path),filename=filename,media_type='application/zip')
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(500,f'Tạo mod Nút Bấm thất bại: {e}')
+    raise HTTPException(410,'Build Nút Bấm trên server đã tắt. Hãy upload ZIP thành phẩm từ tool Nút Bấm.')
 
 @app.get("/api/catalog")
 def catalog():
@@ -1618,6 +1899,54 @@ def add_skin(hero_id: str, payload: AddSkinPayload):
     data["skinCount"] = sum(len(h.get("skins", [])) for h in data.get("heroes", []))
     warn = _save_catalog_and_persist(data)
     return {"ok": True, "cloudWarning": warn, **data}
+
+
+class CatalogHeroUpdatePayload(BaseModel):
+    heroName: str
+    heroImage: str = ''
+    titleSize: float = 11
+    titleColor: str = '#ffffff'
+
+
+@app.post('/api/catalog/hero/{hero_id}/update')
+def update_catalog_hero(hero_id: str, payload: CatalogHeroUpdatePayload):
+    data=load_json(CATALOG,{})
+    hero=next((h for h in data.get('heroes',[]) if str(h.get('heroId'))==str(hero_id)),None)
+    if not hero: raise HTTPException(404,'Không tìm thấy tướng trong catalog.')
+    name=str(payload.heroName or '').strip()
+    if not name: raise HTTPException(400,'Tên tướng không được để trống.')
+    hero['heroName']=name
+    hero['heroImage']=str(payload.heroImage or '').strip()
+    hero['titleSize']=max(9,min(30,float(payload.titleSize or 11)))
+    hero['titleColor']=str(payload.titleColor or '#ffffff')
+    warn=_save_catalog_and_persist(data)
+    return {'ok':True,'cloudWarning':warn,**data}
+
+
+class CatalogSkinUpdatePayload(BaseModel):
+    skinName: str
+    skinImage: str = ''
+    titleSize: float = 12.5
+    titleColor: str = '#ffffff'
+
+
+@app.post('/api/catalog/hero/{hero_id}/skin/{skin_id}/update')
+def update_catalog_skin(hero_id: str, skin_id: str, payload: CatalogSkinUpdatePayload):
+    data=load_json(CATALOG,{})
+    hero=next((h for h in data.get('heroes',[]) if str(h.get('heroId'))==str(hero_id)),None)
+    if not hero: raise HTTPException(404,'Không tìm thấy tướng trong catalog.')
+    skin=next((x for x in hero.get('skins',[]) if str(x.get('skinId'))==str(skin_id)),None)
+    if not skin: raise HTTPException(404,'Không tìm thấy skin trong tướng này.')
+    name=str(payload.skinName or '').strip()
+    if not name: raise HTTPException(400,'Tên skin không được để trống.')
+    if is_hidden_skin_name(name): raise HTTPException(400,'Không thể đặt tên [EX]/Mặc định cho skin này.')
+    skin['skinName']=name
+    skin['skinImage']=str(payload.skinImage or '').strip()
+    skin['titleSize']=max(9,min(30,float(payload.titleSize or 12.5)))
+    skin['titleColor']=str(payload.titleColor or '#ffffff')
+    skin['imageMissing']=not bool(skin['skinImage'])
+    warn=_save_catalog_and_persist(data)
+    return {'ok':True,'cloudWarning':warn,**data}
 
 
 class ImageEditPayload(BaseModel):

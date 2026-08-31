@@ -599,6 +599,8 @@ body.editmode .button-admin-panel{display:block}
 .button-row-id{color:#bc66ff;font-weight:800}
 .button-row-parts{padding:3px 7px;border-radius:999px;background:rgba(97,239,161,.08);border:1px solid rgba(97,239,161,.18);color:#61efa1;font-weight:800}
 .button-row-arrow{color:#6d707a;font-size:21px;flex:0 0 auto}
+.button-row .button-edit-tools{display:none;gap:5px;flex:0 0 auto}.button-row .button-edit-tools button{width:28px;height:28px;border-radius:8px;border:1px solid #292b34;background:rgba(0,0,0,.45);color:#fff;cursor:pointer}.button-row .button-download-btn{flex:0 0 auto;padding:8px 10px;border-radius:10px;border:1px solid rgba(97,239,161,.25);background:rgba(97,239,161,.08);color:#61efa1;font-weight:800;font-size:11px;cursor:pointer}.button-row.editable .button-edit-tools{display:flex}
+
 .button-empty{padding:42px 12px;text-align:center;color:#777b86}
 @media(max-width:520px){.button-row{padding:14px 11px}.button-row-name{font-size:13px}.button-row-num{width:28px;height:28px;flex-basis:28px}.button-row-arrow{font-size:19px}}
 
@@ -698,6 +700,7 @@ body.editmode .button-admin-panel{display:block}
         <small>Tìm tướng và skin để tạo mod</small>
       </span>
     </div>
+    <button class="pencil-btn" id="skinTileEditBtn" onclick="event.stopPropagation();openBuiltinTileEditor('skinThuong')">✎</button>
   </div>
 
   <div class="item orderable-tile" id="tile-button-thuong" data-order-key="buttonThuong" onclick="openButtonMenu()">
@@ -711,7 +714,7 @@ body.editmode .button-admin-panel{display:block}
       </span>
     </div>
     <button class="drag-handle" onclick="event.stopPropagation()">⠿</button>
-    <button class="pencil-btn" onclick="event.stopPropagation()">✎</button>
+    <button class="pencil-btn" id="buttonTileEditBtn" onclick="event.stopPropagation();openBuiltinTileEditor('buttonThuong')">✎</button>
   </div>
 
   <div class="item c-guide hidden" id="tileDangMod" style="grid-column: span 2;" onclick="openView('postMod')">
@@ -870,15 +873,16 @@ body.editmode .button-admin-panel{display:block}
 
 
 <section id="buttonMenu" class="view" data-anim="slide">
-  <div class="viewhead"><button class="back" onclick="showHome()">&lsaquo;</button><div class="viewtitle">Mod Nút Bấm Thường</div></div>
+  <div class="viewhead"><button class="back" onclick="showHome()">&lsaquo;</button><div class="viewtitle">Mod Nút Bấm Thường</div><button class="pencil-btn" style="position:static;margin-left:auto;display:none" id="buttonMenuEditBtn" onclick="openBuiltinTileEditor('buttonThuong')">✎</button></div>
   <div class="button-view-shell">
     <div id="buttonAdminPanel" class="button-admin-panel">
       <div class="label">QUẢN LÝ RESOURCES NÚT BẤM</div>
       <div class="button-admin-row">
         <label class="button-upload-label">📦 Cập nhật Resources <input id="buttonResourcesFile" type="file" accept=".zip" style="display:none" onchange="uploadButtonResources(this)"></label>
+        <label class="button-upload-label">📤 Upload ZIP Nút Bấm <input id="buttonModsPackageFile" type="file" accept=".zip" style="display:none" onchange="uploadButtonModsPackage(this)"></label>
         <button type="button" onclick="loadButtonCatalog(true)">🔄 Cập nhật danh sách</button>
       </div>
-      <div id="buttonAdminStatus" class="button-admin-status">Danh sách được load đúng theo Source của tool Nút Bấm.</div>
+      <div id="buttonAdminStatus" class="button-admin-status">Catalog được lưu lại; ZIP thành phẩm sẽ tự ghép vào đúng skin theo tên file.</div>
     </div>
     <div class="button-toolbar"><input id="buttonSearch" placeholder="Tìm skin nút bấm..." autocomplete="off" oninput="renderButtonRows()"><span class="button-count" id="buttonCount">0 mục</span></div>
     <div id="buttonRowList" class="button-row-list"></div>
@@ -886,7 +890,7 @@ body.editmode .button-admin-panel{display:block}
 </section>
 
 <section id="skinMenu" class="view" data-anim="slide">
-  <div class="viewhead"><button class="back" onclick="showHome()">&lsaquo;</button><div class="viewtitle">Mod Skin Thường</div></div>
+  <div class="viewhead"><button class="back" onclick="showHome()">&lsaquo;</button><div class="viewtitle">Mod Skin Thường</div><button class="pencil-btn" style="position:static;margin-left:auto;display:none" id="skinMenuEditBtn" onclick="openBuiltinTileEditor('skinThuong')">✎</button></div>
   <div class="skin-view-shell">
     <div id="skinAdminPanel" class="skin-admin-panel" style="display:none">
       <div class="label">QUẢN LÝ DỮ LIỆU SKIN</div>
@@ -1660,6 +1664,58 @@ window.clearAnnouncementEditor = async function(){
     }catch(e){ showToast('Lỗi: ' + e.message, 'error'); }
 }
 
+const BUILTIN_TILE_DEFAULTS = {
+  skinThuong:{name:'MOD SKIN THƯỜNG',desc:'Tìm tướng và skin để tạo mod',color:'#ff74c6',backgroundType:'glass',titleSize:16,descSize:12,fontFamily:'Roboto'},
+  buttonThuong:{name:'MOD NÚT BẤM THƯỜNG',desc:'Đổi nút bấm theo skin, FX & joystick',color:'#61efa1',backgroundType:'glass',titleSize:16,descSize:12,fontFamily:'Roboto'}
+};
+let builtinTileOverrides={};
+let unsubBuiltinTiles=null;
+function listenBuiltinTiles(){
+  if(unsubBuiltinTiles){unsubBuiltinTiles();unsubBuiltinTiles=null;}
+  unsubBuiltinTiles=onSnapshot(doc(db,'siteConfig','builtinTiles'),snap=>{
+    builtinTileOverrides=snap.exists()?snap.data()||{}:{};
+    renderBuiltinTiles();
+  },e=>console.error('Lỗi tải kiểu mục mặc định:',e));
+}
+function getBuiltinTile(key){ return {...BUILTIN_TILE_DEFAULTS[key], ...(builtinTileOverrides[key]||{})}; }
+function renderBuiltinTiles(){
+  const defs={skinThuong:'tile-skin-thuong',buttonThuong:'tile-button-thuong'};
+  Object.keys(defs).forEach(key=>{
+    const t=getBuiltinTile(key), el=document.getElementById(defs[key]); if(!el)return;
+    const b=el.querySelector('.mtxt b'), d=el.querySelector('.mtxt small'); if(b)b.textContent=t.name; if(d)d.textContent=t.desc;
+    el.classList.toggle('section-solid',t.backgroundType==='solid');
+    el.style.setProperty('--section-solid-color',t.backgroundColor||t.color||'#242631');
+    el.style.setProperty('--section-title-size',(Number(t.titleSize)||16)+'px');
+    el.style.setProperty('--section-desc-size',(Number(t.descSize)||12)+'px');
+    el.style.setProperty('--section-title-color',t.titleColor||'#fff');
+    el.style.setProperty('--section-desc-color',t.descColor||'#9296a2');
+    el.style.setProperty('--section-font-family',safeModFont(t.fontFamily||'Roboto'));
+    const flare=el.querySelector('.corner-flare'); if(flare) flare.style.background=`linear-gradient(135deg,${t.color||'#bc66ff'}99,${t.color||'#bc66ff'}00 80%)`;
+  });
+}
+window.openBuiltinTileEditor=function(key){
+  if(!(isOwner()&&editMode)) return;
+  const t=getBuiltinTile(key);
+  renderModal(`
+    <div class="mlabel">CHỈNH SỬA MỤC</div><h3>${escapeHtml(t.name)}</h3>
+    <input id="btName" value="${escapeHtml(t.name||'')}" placeholder="Tên mục">
+    <textarea id="btDesc" rows="2" placeholder="Mô tả">${escapeHtml(t.desc||'')}</textarea>
+    <div class="mlabel">KIỂU NỀN</div><div class="section-style-choice"><button id="btGlass" onclick="pickBuiltinBg('glass')">🫧 Glass Blur</button><button id="btSolid" onclick="pickBuiltinBg('solid')">🎨 Màu cứng</button></div>
+    ${sectionColorPickerHtml('bt',t.color||'#bc66ff','🎨 Màu góc')}
+    <div class="section-size-grid"><label>Cỡ tên<input id="btTitleSize" type="number" min="10" max="40" step="0.5" value="${Number(t.titleSize)||16}"></label><label>Cỡ mô tả<input id="btDescSize" type="number" min="9" max="28" step="0.5" value="${Number(t.descSize)||12}"></label></div>
+    <div class="mlabel">FONT CHỮ</div><div class="mod-font-select-row"><select id="btFont">${allFontOptions().map(f=>`<option value="${escapeHtml(f)}" ${safeModFont(t.fontFamily||'Roboto')===f?'selected':''}>${escapeHtml(f)}</option>`).join('')}</select></div>
+    <div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Hủy</button><button class="btn-save" onclick="saveBuiltinTileEditor('${key}')">Lưu</button></div>`);
+  window._btBg=t.backgroundType==='solid'?'solid':'glass'; setupSectionColorPicker('bt',t.color||'#bc66ff'); pickBuiltinBg(window._btBg);
+};
+window.pickBuiltinBg=function(v){window._btBg=v; document.getElementById('btGlass')?.classList.toggle('picked',v==='glass'); document.getElementById('btSolid')?.classList.toggle('picked',v==='solid');};
+window.saveBuiltinTileEditor=async function(key){
+  if(!(isOwner()&&editMode))return;
+  const color=document.getElementById('btColorInput')?.value||getBuiltinTile(key).color||'#bc66ff';
+  const payload={name:document.getElementById('btName')?.value.trim(),desc:document.getElementById('btDesc')?.value.trim(),backgroundType:window._btBg||'glass',color,titleSize:Number(document.getElementById('btTitleSize')?.value||16),descSize:Number(document.getElementById('btDescSize')?.value||12),fontFamily:document.getElementById('btFont')?.value||'Roboto',updatedAt:serverTimestamp()};
+  if(!payload.name)return showToast('Vui lòng nhập tên mục.','error');
+  try{await setDoc(doc(db,'siteConfig','builtinTiles'),{[key]:payload},{merge:true});showToast('✅ Đã lưu mục.','success');closeModal();}catch(e){showToast('Lỗi lưu mục: '+e.message,'error');}
+};
+
 /* ---------- Chế độ Điều Chỉnh Web ---------- */
 window.toggleEditMode = function(){
     if(!canCreateSection()) return;
@@ -1678,6 +1734,7 @@ window.toggleEditMode = function(){
     renderGuideMenu();
     if(currentCustomModSectionId) renderCustomModListView(currentCustomModSectionId);
     try{ renderSkinHeroes(); renderSkinCards(); }catch(e){}
+    ['skinTileEditBtn','buttonTileEditBtn','skinMenuEditBtn','buttonMenuEditBtn'].forEach(id=>{const el=document.getElementById(id); if(el) el.style.display=editMode?'flex':'none';});
 }
 
 /* ---------- Kéo-thả đổi thứ tự mục ở trang chủ (chỉ Admin Chủ Quyền, khi đang ở chế độ chỉnh sửa) ---------- */
@@ -3506,6 +3563,9 @@ function showToast(msg, type){
     clearTimeout(box._timer);
     box._timer = setTimeout(()=>{ box.style.opacity = '0'; }, 3000);
 }
+// Tắt hộp alert trắng của trình duyệt: mọi cảnh báo/ lỗi dùng UI của web.
+window.alert=function(msg){ try{ showToast(String(msg??''), /❌|Lỗi|Error/i.test(String(msg||''))?'error':'success'); }catch(_e){} };
+
 
 function updateAccountTopBar(){
     const label = document.getElementById('accountTopLabel');
@@ -4683,6 +4743,7 @@ listenModders();
 listenStaticModders();
 listenGuides();
 listenSettings();
+listenBuiltinTiles();
 listenModAnnouncement();
 updateAdminUI();
 
@@ -4756,7 +4817,7 @@ async function loadButtonCatalog(force=false){
   if(ngoccButtonLoadPromise&&!force) return ngoccButtonLoadPromise;
   const status=document.getElementById('buttonAdminStatus');
   if(status) status.textContent='⏳ Đang tải danh sách Nút Bấm...';
-  ngoccButtonLoadPromise=fetch(skinApiUrl('/api/button/catalog'),{cache:'no-store'})
+  ngoccButtonLoadPromise=fetch(skinApiUrl('/api/button/catalog'+(force?'?refresh=1':'')),{cache:'no-store'})
     .then(async r=>{const d=await r.json();if(!r.ok)throw new Error(d?.detail||d?.error||('HTTP '+r.status));return d;})
     .then(d=>{ngoccButtonCatalog=d||{rows:[]};ngoccButtonCatalog.ready=true;if(status)status.textContent=`✅ ${d.count||0} skin nút bấm • load theo Source của tool`;renderButtonRows();return ngoccButtonCatalog;})
     .catch(e=>{ngoccButtonCatalog={rows:[],ready:false,error:e.message};if(status)status.textContent='❌ '+e.message;renderButtonRows();return ngoccButtonCatalog;})
@@ -4777,47 +4838,48 @@ window.renderButtonRows=function(){
   const list=document.getElementById('buttonRowList'); if(!list)return;
   const q=normalizeSkinText(document.getElementById('buttonSearch')?.value||'');
   const rows=(ngoccButtonCatalog.rows||[]).filter(r=>!q||normalizeSkinText((r.hero||'')+' '+(r.name||'')).includes(q)||String(r.id).includes(q));
+  const edit=typeof isOwner==='function'&&isOwner()&&editMode;
   const c=document.getElementById('buttonCount'); if(c)c.textContent=rows.length+' mục';
-  if(!rows.length){list.innerHTML='<div class="button-empty">Chưa có Resources Nút Bấm hoặc không tìm thấy skin.</div>';return;}
-  list.innerHTML=rows.map((r,i)=>`<div class="button-row" onclick="buildButtonZip('${skinEscape(r.id)}',this)"><div class="button-row-num">${i+1}</div><div class="button-row-main"><div class="button-row-name">${skinEscape(((r.hero||'')+' '+(r.name||'')).trim()||('Skin '+r.id))}</div><div class="button-row-sub"><span class="button-row-id">ID ${skinEscape(r.id)}</span><span class="button-row-parts">${skinEscape(r.parts||'-')}</span></div></div><span class="button-row-arrow">›</span></div>`).join('');
+  if(!rows.length){list.innerHTML='<div class="button-empty">Chưa có Catalog Nút Bấm.</div>';return;}
+  list.innerHTML=rows.map((r,i)=>{
+    const ready=!!r.downloadReady;
+    const display=((r.hero||'')+' '+(r.name||'')).trim()||('Skin '+r.id);
+    return `<div class="button-row ${edit?'editable':''}" onclick="downloadButtonZip('${skinEscape(r.id)}',this)"><div class="button-row-num">${i+1}</div><div class="button-row-main"><div class="button-row-name">${skinEscape(display)}</div><div class="button-row-sub"><span class="button-row-id">ID ${skinEscape(r.id)}</span><span class="button-row-parts">${skinEscape(r.parts||'-')}</span><span class="button-row-parts">${ready?'✅ Đã có ZIP':'⏳ Chưa có ZIP'}</span></div></div>${edit?`<div class="button-edit-tools" onclick="event.stopPropagation()"><button title="Chỉnh tên" onclick="editButtonRow('${skinEscape(r.id)}')">✎</button></div>`:''}<button class="button-download-btn" type="button" onclick="event.stopPropagation();downloadButtonZip('${skinEscape(r.id)}',this)">${ready?'⬇️ Tải ZIP':'Chưa có ZIP'}</button><span class="button-row-arrow">›</span></div>`;
+  }).join('');
 };
-window.buildButtonZip=async function(skinId,row){
-  if(!skinId)return;
-  const old=row?.querySelector('.button-row-name')?.textContent||'';
-  const title=row?.querySelector('.button-row-name'); if(title)title.textContent='⏳ Đang tạo ZIP...';
+window.downloadButtonZip=async function(skinId,row){
+  await loadSkinApiConfig(); if(!NGOC_SKIN_API)return;
+  try{ const r=await fetch(skinApiUrl('/api/button/download/'+encodeURIComponent(skinId)),{cache:'no-store'}); if(!r.ok){let m='HTTP '+r.status;try{const j=await r.json();m=j?.detail||j?.error||m;}catch(_){}throw new Error(m);} const blob=await r.blob(); const cd=r.headers.get('content-disposition')||''; const m=/filename\*?=(?:UTF-8''|\")?([^\";]+)\"?/i.exec(cd); const fname=(m&&decodeURIComponent(m[1].replace(/\"/g,'')))||('Nut Bam '+skinId+'.zip'); const u=URL.createObjectURL(blob); const a=document.createElement('a');a.href=u;a.download=fname;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),30000); }catch(e){showToast('❌ '+e.message,'error');}
+};
+window.editButtonRow=async function(skinId){
+  if(!(isOwner()&&editMode))return; const row=(ngoccButtonCatalog.rows||[]).find(r=>String(r.id)===String(skinId)); if(!row)return;
+  renderModal(`<div class="mlabel">CHỈNH SỬA NÚT BẤM</div><h3>${escapeHtml(((row.hero||'')+' '+(row.name||'')).trim())}</h3><input id="buttonEditName" value="${escapeHtml(row.name||'')}" placeholder="Tên skin hiển thị"><div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Hủy</button><button class="btn-save" onclick="saveButtonRow('${skinId}')">Lưu</button></div>`);
+};
+window.saveButtonRow=async function(skinId){
+  const name=document.getElementById('buttonEditName')?.value.trim(); if(!name)return showToast('Vui lòng nhập tên skin.','error');
+  try{const r=await fetch(skinApiUrl('/api/button/catalog/row/'+encodeURIComponent(skinId)),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name})});const d=await r.json();if(!r.ok)throw new Error(d?.detail||d?.error||('HTTP '+r.status));ngoccButtonCatalog=d;ngoccButtonCatalog.ready=true;renderButtonRows();closeModal();showToast('✅ Đã lưu tên skin.','success');}catch(e){showToast('❌ '+e.message,'error');}
+};
+
+window.uploadButtonModsPackage=async function(input){
+  if(!(isOwner()&&editMode)){if(input)input.value='';return;}
+  const file=input?.files?.[0];if(!file)return; const status=document.getElementById('buttonAdminStatus');
   try{
-    await loadSkinApiConfig();
-    if(!NGOC_SKIN_API) throw new Error('Chưa cấu hình Skin API URL.');
-    // Build nút bấm có thể nặng; dùng job background để không bị timeout 500/504 trên Render.
-    const sr=await fetch(skinApiUrl('/api/button/build/start/'+encodeURIComponent(skinId)),{method:'POST',cache:'no-store'});
-    if(!sr.ok){let m='HTTP '+sr.status;try{const j=await sr.json();m=j?.detail||j?.error||m;}catch(_){}throw new Error(m);}
-    const sd=await sr.json();
-    const jobId=sd?.jobId; if(!jobId) throw new Error('Server không trả jobId.');
-    let waited=0;
-    while(true){
-      await new Promise(res=>setTimeout(res,1500)); waited+=1500;
-      const pr=await fetch(skinApiUrl('/api/button/build/status/'+encodeURIComponent(jobId)),{cache:'no-store'});
-      if(!pr.ok){let m='HTTP '+pr.status;try{const j=await pr.json();m=j?.detail||j?.error||m;}catch(_){}throw new Error(m);}
-      const d=await pr.json();
-      if(d.status==='error') throw new Error(d.error||'Build thất bại.');
-      if(d.status==='done'){
-        const r=await fetch(skinApiUrl('/api/button/build/download/'+encodeURIComponent(jobId)),{cache:'no-store'});
-        if(!r.ok){let m='HTTP '+r.status;try{const j=await r.json();m=j?.detail||j?.error||m;}catch(_){}throw new Error(m);}
-        const blob=await r.blob(); const cd=r.headers.get('content-disposition')||'';
-        const m=/filename\*?=(?:UTF-8''|")?([^";]+)"?/i.exec(cd); const fname=(m&&decodeURIComponent(m[1].replace(/"/g,'')))||('Nut Bam '+skinId+'.zip');
-        const u=URL.createObjectURL(blob); const a=document.createElement('a');a.href=u;a.download=fname;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),30000);
-        if(title)title.textContent='✅ '+old; setTimeout(()=>{if(title)title.textContent=old;},1600);
-        break;
-      }
-      if(title){
-        const pct = (d.progressIndex!=null && d.progressTotal) ? ` [${d.progressIndex}/${d.progressTotal}]` : '';
-        const elapsed = d.elapsed!=null ? ` • ${d.elapsed}s` : '';
-        title.textContent='⏳ '+(d.progress||'Đang tạo ZIP...')+pct+elapsed;
-      }
-      if(waited>15*60*1000) throw new Error('Build quá lâu (>15 phút). Trạng thái cuối: '+(d.progress||'không rõ')+'. Xem log Render.');
+    if(status)status.textContent='⏳ Đang khởi tạo upload gói ZIP Nút Bấm...';
+    const ir=await fetch(skinApiUrl('/api/button/mods/upload/init'),{method:'POST',cache:'no-store'}); const idata=await ir.json(); if(!ir.ok)throw new Error(idata?.detail||idata?.error||('HTTP '+ir.status));
+    const uploadId=idata.uploadId, chunkSize=idata.chunkSize||8*1024*1024, total=Math.ceil(file.size/chunkSize);
+    for(let i=0;i<total;i++){
+      const fd=new FormData(); fd.append('file',file.slice(i*chunkSize,Math.min(file.size,(i+1)*chunkSize)),file.name);
+      const r=await fetch(skinApiUrl('/api/button/mods/upload/chunk?'+new URLSearchParams({uploadId,index:String(i)})),{method:'POST',body:fd,cache:'no-store'}); const d=await r.json().catch(()=>({})); if(!r.ok)throw new Error(d?.detail||d?.error||('HTTP '+r.status+' ở phần '+(i+1)+'/'+total));
+      if(status)status.textContent=`⏳ Đang tải gói ZIP Nút Bấm... (${i+1}/${total})`;
     }
-  }catch(e){alert('❌ Không tạo được mod Nút Bấm: '+e.message);if(title)title.textContent=old;}
+    if(status)status.textContent='⏳ Đang đối chiếu tên file ZIP và lưu...';
+    const fr=await fetch(skinApiUrl('/api/button/mods/upload/finalize?'+new URLSearchParams({uploadId,total:String(total),filename:file.name})),{method:'POST',cache:'no-store'}); const d=await fr.json(); if(!fr.ok)throw new Error(d?.detail||d?.error||('HTTP '+fr.status));
+    ngoccButtonCatalog=d;ngoccButtonCatalog.ready=true;renderButtonRows();
+    if(status)status.textContent=`✅ Đã ghép ${d.matchedCount||0} ZIP • Chưa ghép ${d.unmatchedCount||0} • ZIP lỗi ${d.badCount||0}`;
+    showToast((d.unmatchedCount||0)||((d.badCount||0)>0)?'⚠️ Có file chưa ghép được.':'✅ Đã cập nhật ZIP Nút Bấm.',(d.unmatchedCount||0)||((d.badCount||0)>0)?'error':'success');
+  }catch(e){if(status)status.textContent='❌ '+e.message;showToast('❌ '+e.message,'error');}finally{input.value='';}
 };
+
 window.uploadButtonResources=async function(input){
   if(!(typeof isOwner==='function'&&isOwner())){input.value='';return;}
   const file=input?.files?.[0];if(!file)return;
@@ -4859,7 +4921,7 @@ window.openSkinMenu = async function(){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   const v=document.getElementById('skinMenu'); if(v) v.classList.add('active');
   try{ updateBottomNavActive('skinMenu'); }catch(e){}
-  const admin=document.getElementById('skinAdminPanel'); if(admin) admin.style.display=(typeof isOwner==='function' && isOwner())?'block':'none';
+  const admin=document.getElementById('skinAdminPanel'); if(admin) admin.style.display=(typeof isOwner==='function' && isOwner() && editMode)?'block':'none';
   const apiInput=document.getElementById('skinApiInput'); if(apiInput) apiInput.value=NGOC_SKIN_API;
   await loadSkinCatalog();
   renderSkinHeroes();
@@ -4893,11 +4955,11 @@ window.renderSkinHeroes=function(){
   grid.innerHTML=filtered.map(h=>{
     const selected=ngoccSelectedHeroIds.has(String(h.heroId));
     const tools=edit?`<div class="skin-admin-tools" onclick="event.stopPropagation()">
-      <button type="button" title="Đổi ảnh" onclick="editHeroImage('${skinEscape(h.heroId)}')">🖼️</button>
+      <button type="button" title="Chỉnh sửa" onclick="openCatalogHeroEditor('${skinEscape(h.heroId)}')">✎</button><button type="button" title="Đổi ảnh" onclick="editHeroImage('${skinEscape(h.heroId)}')">🖼️</button>
       <button type="button" title="Xoá tướng" onclick="deleteHero('${skinEscape(h.heroId)}','${skinEscape(h.heroName)}')">🗑️</button>
     </div>`:'';
     const check=edit?`<input class="skin-select-box" type="checkbox" ${selected?'checked':''} onclick="event.stopPropagation();toggleSkinHeroSelect('${skinEscape(h.heroId)}',this.checked)">`:'';
-    return `<div class="skin-hero-card" onclick="openSkinHero('${skinEscape(h.heroId)}')">${check}${tools}${h.heroImage?`<img src="${skinEscape(h.heroImage)}" alt="" loading="lazy" decoding="async">`:''}<div class="skin-hero-name">${skinEscape(h.heroName)}</div></div>`;
+    return `<div class="skin-hero-card" style="--hero-title-size:${Number(h.titleSize)||11}px;--hero-title-color:${escapeHtml(h.titleColor||'#fff')}" onclick="openSkinHero('${skinEscape(h.heroId)}')">${check}${tools}${h.heroImage?`<img src="${skinEscape(h.heroImage)}" alt="" loading="lazy" decoding="async">`:''}<div class="skin-hero-name" style="font-size:var(--hero-title-size);color:var(--hero-title-color)">${skinEscape(h.heroName)}</div></div>`;
   }).join('');
   const sc=document.getElementById('skinHeroSelectedCount'); if(sc) sc.textContent=ngoccSelectedHeroIds.size;
 };
@@ -4914,7 +4976,7 @@ window.toggleAllSkinHeroes=function(){
 window.deleteSelectedSkinHeroes=async function(){
   if(!(typeof isOwner==='function'&&isOwner()&&editMode)) return;
   const ids=[...ngoccSelectedHeroIds]; if(!ids.length) return alert('Chưa chọn tướng nào.');
-  if(!confirm(`Xoá ${ids.length} tướng đã chọn khỏi catalog?`)) return;
+  if(!(await customConfirm(`Xoá ${ids.length} tướng đã chọn khỏi catalog?`,{danger:true}))) return;
   try{
     const r=await fetch(skinApiUrl('/api/catalog/heroes/delete-many'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids})});
     const d=await r.json(); if(!r.ok) throw new Error(d?.detail||d?.error||('HTTP '+r.status));
@@ -4925,7 +4987,7 @@ window.deleteSelectedSkinHeroes=async function(){
 
 window.deleteHero=async function(heroId, heroName){
   if(!(typeof isOwner==='function' && isOwner() && editMode)) return;
-  if(!confirm(`Xoá tướng "${heroName}" khỏi catalog?`)) return;
+  if(!(await customConfirm(`Xoá tướng "${heroName}" khỏi catalog?`,{danger:true}))) return;
   try{
     const r=await fetch(skinApiUrl('/api/catalog/hero/'+encodeURIComponent(heroId)+'/delete'),{method:'POST'});
     const data=await r.json();
@@ -4936,19 +4998,7 @@ window.deleteHero=async function(heroId, heroName){
   }catch(e){ alert('❌ '+e.message); }
 };
 
-window.editHeroImage=async function(heroId){
-  if(!(typeof isOwner==='function' && isOwner() && editMode)) return;
-  const url=prompt('Dán URL ảnh mới cho tướng này:');
-  if(url===null) return;
-  try{
-    const r=await fetch(skinApiUrl('/api/catalog/hero/'+encodeURIComponent(heroId)+'/image'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({imageUrl:url})});
-    const data=await r.json();
-    if(!r.ok) throw new Error(data?.detail||data?.error||('HTTP '+r.status));
-    ngoccSkinCatalog=data; ngoccSkinCatalog.ready=true;
-    renderSkinHeroes();
-    if(data.cloudWarning) alert('⚠️ '+data.cloudWarning);
-  }catch(e){ alert('❌ '+e.message); }
-};
+window.editHeroImage=async function(heroId){ openCatalogHeroEditor(heroId); };
 
 window.openSkinHero=async function(heroId){
   const hero=(ngoccSkinCatalog.heroes||[]).find(h=>String(h.heroId)===String(heroId));
@@ -4991,11 +5041,11 @@ window.renderSkinCards=function(){
     const selected=ngoccSelectedSkinIds.has(String(s.skinId));
     const buildBtn=ok?`<button type="button" class="skin-build-btn" onclick="event.stopPropagation();buildSkinZip('${skinEscape(s.skinId)}', this)">⬇️ Tạo & tải ZIP</button>`:'';
     const tools=edit?`<div class="skin-admin-tools" onclick="event.stopPropagation()">
-      <button type="button" title="Đổi ảnh" onclick="editSkinImage('${skinEscape(ngoccSkinHero.heroId)}','${skinEscape(s.skinId)}')">🖼️</button>
+      <button type="button" title="Chỉnh sửa" onclick="openCatalogSkinEditor('${skinEscape(ngoccSkinHero.heroId)}','${skinEscape(s.skinId)}')">✎</button><button type="button" title="Đổi ảnh" onclick="editSkinImage('${skinEscape(ngoccSkinHero.heroId)}','${skinEscape(s.skinId)}')">🖼️</button>
       <button type="button" title="Xoá skin" onclick="deleteSkin('${skinEscape(ngoccSkinHero.heroId)}','${skinEscape(s.skinId)}','${skinEscape(s.skinName||s.skinId)}')">🗑️</button>
     </div>`:'';
     const check=edit?`<input class="skin-select-box" type="checkbox" ${selected?'checked':''} onclick="event.stopPropagation();toggleSkinSelect('${skinEscape(s.skinId)}',this.checked)">`:'';
-    return `<div class="skin-card" onclick="openSkinForMod('${skinEscape(s.skinId)}')">${check}${tools}${s.skinImage?`<img src="${skinEscape(s.skinImage)}" alt="" loading="lazy" decoding="async">`:'<div class="skin-card-noimg">Chưa có ảnh</div>'}<div class="skin-card-info"><div class="skin-card-name">${skinEscape(s.skinName||'Skin '+s.skinId)}</div><div class="skin-card-id">ID ${skinEscape(s.skinId)}</div><span class="skin-status ${ok?'':'locked'}">${ok?'✅ Có Resources':'🔒 Chưa hỗ trợ'}</span>${buildBtn}</div></div>`;
+    return `<div class="skin-card" style="--skin-title-size:${Number(s.titleSize)||12.5}px;--skin-title-color:${escapeHtml(s.titleColor||'#fff')}" onclick="openSkinForMod('${skinEscape(s.skinId)}')">${check}${tools}${s.skinImage?`<img src="${skinEscape(s.skinImage)}" alt="" loading="lazy" decoding="async">`:'<div class="skin-card-noimg">Chưa có ảnh</div>'}<div class="skin-card-info"><div class="skin-card-name" style="font-size:var(--skin-title-size);color:var(--skin-title-color)">${skinEscape(s.skinName||'Skin '+s.skinId)}</div><div class="skin-card-id">ID ${skinEscape(s.skinId)}</div><span class="skin-status ${ok?'':'locked'}">${ok?'✅ Có Resources':'🔒 Chưa hỗ trợ'}</span>${buildBtn}</div></div>`;
   }).join('');
   const sc=document.getElementById('skinSelectedCount'); if(sc) sc.textContent=ngoccSelectedSkinIds.size;
 };
@@ -5009,7 +5059,7 @@ window.toggleAllSkins=function(){
 window.deleteSelectedSkins=async function(){
   if(!(typeof isOwner==='function'&&isOwner()&&editMode)||!ngoccSkinHero) return;
   const ids=[...ngoccSelectedSkinIds]; if(!ids.length) return alert('Chưa chọn skin nào.');
-  if(!confirm(`Xoá ${ids.length} skin đã chọn khỏi ${ngoccSkinHero.heroName||'tướng này'}?`)) return;
+  if(!(await customConfirm(`Xoá ${ids.length} skin đã chọn khỏi ${ngoccSkinHero.heroName||'tướng này'}?`,{danger:true}))) return;
   try{
     const r=await fetch(skinApiUrl('/api/catalog/hero/'+encodeURIComponent(ngoccSkinHero.heroId)+'/skins/delete-many'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ids})});
     const d=await r.json(); if(!r.ok) throw new Error(d?.detail||d?.error||('HTTP '+r.status));
@@ -5022,7 +5072,7 @@ window.deleteSelectedSkins=async function(){
 
 window.deleteSkin=async function(heroId, skinId, skinName){
   if(!(typeof isOwner==='function' && isOwner() && editMode)) return;
-  if(!confirm(`Xoá skin "${skinName}" (ID ${skinId})?`)) return;
+  if(!(await customConfirm(`Xoá skin "${skinName}" (ID ${skinId})?`,{danger:true}))) return;
   try{
     const r=await fetch(skinApiUrl('/api/catalog/hero/'+encodeURIComponent(heroId)+'/skin/'+encodeURIComponent(skinId)+'/delete'),{method:'POST'});
     const data=await r.json();
@@ -5034,20 +5084,7 @@ window.deleteSkin=async function(heroId, skinId, skinName){
   }catch(e){ alert('❌ '+e.message); }
 };
 
-window.editSkinImage=async function(heroId, skinId){
-  if(!(typeof isOwner==='function' && isOwner() && editMode)) return;
-  const url=prompt('Dán URL ảnh mới cho skin này:');
-  if(url===null) return;
-  try{
-    const r=await fetch(skinApiUrl('/api/catalog/hero/'+encodeURIComponent(heroId)+'/skin/'+encodeURIComponent(skinId)+'/image'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({imageUrl:url})});
-    const data=await r.json();
-    if(!r.ok) throw new Error(data?.detail||data?.error||('HTTP '+r.status));
-    ngoccSkinCatalog=data; ngoccSkinCatalog.ready=true;
-    ngoccSkinHero=(data.heroes||[]).find(h=>String(h.heroId)===String(heroId))||ngoccSkinHero;
-    renderSkinCards();
-    if(data.cloudWarning) alert('⚠️ '+data.cloudWarning);
-  }catch(e){ alert('❌ '+e.message); }
-};
+window.editSkinImage=async function(heroId, skinId){ openCatalogSkinEditor(heroId, skinId); };
 
 window.buildSkinZip=async function(skinId, btn){
   if(!skinId) return;
@@ -5082,8 +5119,8 @@ window.openSkinForMod=function(skinId){
   if(!ngoccSkinHero) return;
   const skin=(ngoccSkinHero.skins||[]).find(s=>String(s.skinId)===String(skinId));
   if(!skin) return;
-  if(!skin.supported){ alert('Skin này chưa có trong Resources hiện tại nên chưa cho mod.'); return; }
-  if(typeof isAdmin==='boolean' && !isAdmin){ alert('Bạn cần tài khoản Admin để mở form đăng Mod.'); return; }
+  if(!skin.supported){ showToast('⚠️ Skin này chưa có trong Resources hiện tại nên chưa cho mod.','error'); return; }
+  if(typeof isAdmin==='boolean' && !isAdmin){ showToast('⚠️ Bạn cần tài khoản Admin để mở form đăng Mod.','error'); return; }
   if(typeof openView==='function') openView('postMod');
   setTimeout(()=>{
     const name=document.getElementById('newModName'); const img=document.getElementById('newModImage'); const vid=document.getElementById('newModVideo');
@@ -5097,6 +5134,17 @@ window.openSkinForMod=function(skinId){
     window._ngoccPendingSkin={heroId:ngoccSkinHero.heroId,heroName:ngoccSkinHero.heroName,skinId:skin.skinId,skinName:skin.skinName,skinImage:skin.skinImage};
   },50);
 };
+
+window.openCatalogHeroEditor=async function(heroId){
+  if(!(isOwner()&&editMode))return; const h=(ngoccSkinCatalog.heroes||[]).find(x=>String(x.heroId)===String(heroId)); if(!h)return;
+  renderModal(`<div class="mlabel">CHỈNH SỬA TƯỚNG</div><h3>${escapeHtml(h.heroName||'Tướng')}</h3><input id="catHeroName" value="${escapeHtml(h.heroName||'')}" placeholder="Tên tướng"><input id="catHeroImage" value="${escapeHtml(h.heroImage||'')}" placeholder="URL ảnh tướng"><div class="local-file-row"><button type="button" class="local-file-btn" onclick="document.getElementById('catHeroImageFile').click()">🖼 Chọn ảnh từ máy</button><input id="catHeroImageFile" class="local-file-input" type="file" accept="image/*" onchange="handleImageUploadToUrl(this.files[0],'catHeroImage',1)"></div><div class="section-size-grid"><label>Cỡ tên<input id="catHeroTitleSize" type="number" min="9" max="30" step="0.5" value="${Number(h.titleSize)||11}"></label><label>Màu tên<input id="catHeroTitleColor" type="color" value="${/^#[0-9a-fA-F]{6}$/.test(h.titleColor||'')?h.titleColor:'#ffffff'}"></label></div><div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Hủy</button><button class="btn-save" onclick="saveCatalogHeroEditor('${skinEscape(heroId)}')">Lưu</button></div>`);
+};
+window.saveCatalogHeroEditor=async function(heroId){try{const r=await fetch(skinApiUrl('/api/catalog/hero/'+encodeURIComponent(heroId)+'/update'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({heroName:document.getElementById('catHeroName')?.value.trim(),heroImage:document.getElementById('catHeroImage')?.value.trim(),titleSize:Number(document.getElementById('catHeroTitleSize')?.value||11),titleColor:document.getElementById('catHeroTitleColor')?.value||'#fff'})});const d=await r.json();if(!r.ok)throw new Error(d?.detail||d?.error||('HTTP '+r.status));ngoccSkinCatalog=d;ngoccSkinCatalog.ready=true;closeModal();renderSkinHeroes();showToast('✅ Đã lưu tướng.','success');}catch(e){showToast('❌ '+e.message,'error');}};
+window.openCatalogSkinEditor=async function(heroId,skinId){
+  if(!(isOwner()&&editMode))return; const h=(ngoccSkinCatalog.heroes||[]).find(x=>String(x.heroId)===String(heroId)); const s=(h?.skins||[]).find(x=>String(x.skinId)===String(skinId)); if(!s)return;
+  renderModal(`<div class="mlabel">CHỈNH SỬA SKIN</div><h3>${escapeHtml(s.skinName||skinId)}</h3><input id="catSkinName" value="${escapeHtml(s.skinName||'')}" placeholder="Tên skin"><input id="catSkinImage" value="${escapeHtml(s.skinImage||'')}" placeholder="URL ảnh skin"><div class="local-file-row"><button type="button" class="local-file-btn" onclick="document.getElementById('catSkinImageFile').click()">🖼 Chọn ảnh từ máy</button><input id="catSkinImageFile" class="local-file-input" type="file" accept="image/*" onchange="handleImageUploadToUrl(this.files[0],'catSkinImage',1)"></div><div class="section-size-grid"><label>Cỡ tên<input id="catSkinTitleSize" type="number" min="9" max="30" step="0.5" value="${Number(s.titleSize)||12.5}"></label><label>Màu tên<input id="catSkinTitleColor" type="color" value="${/^#[0-9a-fA-F]{6}$/.test(s.titleColor||'')?s.titleColor:'#ffffff'}"></label></div><div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Hủy</button><button class="btn-save" onclick="saveCatalogSkinEditor('${skinEscape(heroId)}','${skinEscape(skinId)}')">Lưu</button></div>`);
+};
+window.saveCatalogSkinEditor=async function(heroId,skinId){try{const r=await fetch(skinApiUrl('/api/catalog/hero/'+encodeURIComponent(heroId)+'/skin/'+encodeURIComponent(skinId)+'/update'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({skinName:document.getElementById('catSkinName')?.value.trim(),skinImage:document.getElementById('catSkinImage')?.value.trim(),titleSize:Number(document.getElementById('catSkinTitleSize')?.value||12.5),titleColor:document.getElementById('catSkinTitleColor')?.value||'#fff'})});const d=await r.json();if(!r.ok)throw new Error(d?.detail||d?.error||('HTTP '+r.status));ngoccSkinCatalog=d;ngoccSkinCatalog.ready=true;ngoccSkinHero=(d.heroes||[]).find(x=>String(x.heroId)===String(heroId))||ngoccSkinHero;closeModal();renderSkinHeroes();renderSkinCards();showToast('✅ Đã lưu skin.','success');}catch(e){showToast('❌ '+e.message,'error');}};
 
 window.openAddSkinModal=function(){
   if(!(typeof isOwner==='function' && isOwner() && editMode) || !ngoccSkinHero) return;
