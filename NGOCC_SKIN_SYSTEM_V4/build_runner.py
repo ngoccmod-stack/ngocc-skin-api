@@ -1,5 +1,5 @@
 from __future__ import annotations
-import json, os, shutil, subprocess, tempfile, zipfile
+import json, os, re, shutil, subprocess, tempfile, zipfile
 from pathlib import Path
 from typing import Optional
 
@@ -115,6 +115,9 @@ def build_skin(skin_id: str, resources_version: Optional[str] = None, display_na
         root=roots[0]
         android=root/'Android/files'
         if not android.is_dir(): raise RuntimeError('AutoMod không tạo Android/files output.')
+        # Không dùng root.name làm tên thư mục trong ZIP: AutoMod tự đặt tên bằng cách
+        # đọc dữ liệu nhị phân, việc này không đáng tin cậy (có thể ra rỗng => "[DiaoChan]"
+        # trơ trọi). Luôn dùng đúng tên tướng+skin đã biết từ catalog (pack_name) để đặt tên.
         out=BUILDS/f'{skin_id}_{version}.zip'
         tmp=out.with_suffix('.tmp')
         with zipfile.ZipFile(tmp,'w',zipfile.ZIP_DEFLATED) as z:
@@ -125,7 +128,7 @@ def build_skin(skin_id: str, resources_version: Optional[str] = None, display_na
                     continue  # file thừa, không cần đóng gói theo yêu cầu
                 rel = f.relative_to(android).as_posix()
                 # Giữ đúng cấu trúc chuẩn: <Tên gói>/files/Resources/... (bỏ lớp "Android"
-                # trung gian mà AutoMod tạo ra, vì các tool khác không dùng lớp này).
-                z.write(f, f"{root.name}/files/{rel}")
+                # trung gian mà AutoMod tạo ra). Dùng pack_name (tên thật) thay vì root.name.
+                z.write(f, f"{pack_name}/files/{rel}")
         tmp.replace(out)
         return out, version

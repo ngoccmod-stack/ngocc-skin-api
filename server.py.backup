@@ -9,6 +9,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import threading
 import unicodedata
 import zipfile
 import uuid
@@ -35,8 +36,16 @@ CATALOG = DATA / "skin_catalog.json"
 ACTIVE = DATA / "active_resources.json"
 RESOURCE_MANIFEST = DATA / "resources_manifest.json"
 CLOUDINARY_FOLDER = os.environ.get("NGOCC_CLOUDINARY_FOLDER", "ngocc_resources").strip("/")
-GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "").strip()
-GITHUB_REPO = os.environ.get("GITHUB_REPO", "ngoccmod-stack/ngocc-skin-api").strip()
+def _clean_env(v: str) -> str:
+    # Loại bỏ các ký tự Unicode vô hình (LRM/RLM/zero-width/BOM...) hay bị dính
+    # khi copy-paste trên điện thoại, vì chúng làm hỏng HTTP header (latin-1 only).
+    if not v:
+        return v
+    v = re.sub(r'[\u200b-\u200f\u202a-\u202e\u2060\ufeff]', '', v)
+    return v.strip()
+
+GITHUB_TOKEN = _clean_env(os.environ.get("GITHUB_TOKEN", ""))
+GITHUB_REPO = _clean_env(os.environ.get("GITHUB_REPO", "ngoccmod-stack/ngocc-skin-api"))
 CHUNK_DIR = UPLOADS / "resource_chunks"
 CHUNK_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -132,7 +141,12 @@ def extract_hero_page(hero_url: str, hero_name: str) -> tuple[str, list[dict[str
         hero_img = absurl(hero_url, imgs[0].get("src"))
 
     skins: list[dict[str, str]] = []
-    # Garena pages expose skin names as headings and the corresponding image in nearby markup.
+    # Ưu tiên lấy ẢNH LỚN nằm ngay dưới tên mỗi skin (ảnh chính giữa trang), theo đúng
+    # yêu cầu — không dùng ảnh thumbnail nhỏ trong mục "Trang phục".
+    # Lưu ý: heading thường có kèm 1 icon rank/tier (vd "S+ HỮU HẠN") nằm NGAY BÊN TRONG
+    # heading đó; heading.find_next("img") mặc định sẽ dính luôn icon này (vì nó nằm
+    # trong chính heading nên vẫn được coi là "next" trong cây DOM). Phải bỏ qua các
+    # <img> nằm bên trong heading, chỉ lấy <img> thật sự nằm SAU heading.
     for heading in soup.find_all(["h2", "h3", "h4"]):
         text = " ".join(heading.stripped_strings).strip()
         if not text or not norm(text).startswith(norm(hero_name)):
@@ -140,10 +154,37 @@ def extract_hero_page(hero_url: str, hero_name: str) -> tuple[str, list[dict[str
         skin_name = re.sub(rf"^{re.escape(hero_name)}\s*", "", text, flags=re.I).strip()
         if not skin_name or norm(skin_name) in {"trang phuc", "ky nang"}:
             continue
-        img = heading.find_next("img")
+        img = None
+        for cand in heading.find_all_next("img"):
+            if heading in cand.parents:
+                continue  # ảnh badge/icon nằm bên trong heading, bỏ qua
+            img = cand
+            break
         src = absurl(hero_url, img.get("src") if img else "")
         if src:
             skins.append({"skinNameSource": skin_name, "skinImage": src})
+
+    # Nếu không tìm được ảnh theo cách trên (trang đổi cấu trúc), rơi về mục
+    # "Trang phục" (gallery nhỏ) để ít nhất vẫn có ảnh, còn hơn không có.
+    if not skins:
+        outfit_heading = None
+        for h in soup.find_all(["h2", "h3", "h4"]):
+            if norm(" ".join(h.stripped_strings)) == "trang phuc":
+                outfit_heading = h
+                break
+        if outfit_heading is not None:
+            container = outfit_heading.find_next(["ul", "ol", "div"])
+            anchors = container.find_all("a", href=re.compile(r"#heroSkin-\d+")) if container else []
+            for a in anchors:
+                img = a.find("img")
+                if not img:
+                    continue
+                full_name = (a.get("title") or img.get("alt") or img.get("title") or "").strip()
+                src = absurl(hero_url, img.get("src"))
+                if not full_name or not src:
+                    continue
+                skin_name = re.sub(rf"^{re.escape(hero_name)}\s*", "", full_name, flags=re.I).strip() or full_name
+                skins.append({"skinNameSource": skin_name, "skinImage": src})
     # De-duplicate exact names.
     seen_names = set()
     uniq = []
@@ -507,6 +548,113 @@ def scan_catalog():
     return {"ok": True, **catalog_data}
 
 
+SCAN_LOCK = threading.Lock()
+SCAN_STATE: dict[str, Any] = {"running": False, "progress": "", "error": "", "done": False, "result": None}
+
+
+def _set_scan_state(**kw):
+    with SCAN_LOCK:
+        SCAN_STATE.update(kw)
+
+
+def _run_scan_job():
+    """Chạy toàn bộ logic quét Garena + Resources trong 1 luồng nền,
+    để request HTTP ban đầu trả lời ngay lập tức và không bị Render/trình
+    duyệt cắt kết nối giữa chừng khi quét lâu."""
+    _set_scan_state(running=True, progress="Đang kiểm tra Resources...", error="", done=False, result=None)
+    try:
+        ensure_local_resources_from_cloud()
+        version_dir = find_latest_version(RESOURCES)
+    except Exception as e:
+        _set_scan_state(running=False, done=True, error=str(e))
+        return
+
+    _set_scan_state(progress="Đang đọc dữ liệu Resources (AutoMod)...")
+    try:
+        auto_data = scan(RESOURCES, keep_unresolved=False)
+    except Exception as e:
+        _set_scan_state(running=False, done=True, error=f"Lỗi đọc Resources: {e}")
+        return
+
+    try:
+        _set_scan_state(progress="Đang tải danh sách tướng từ Garena...")
+        main_html = fetch_with_fallback(GARNA_MAIN)
+        heroes = extract_hero_links(main_html)
+        garena_names = {norm(h.get('heroName', '')) for h in heroes}
+        auto_data['heroes'] = [h for h in auto_data.get('heroes', []) if norm(h.get('heroName', '')) in garena_names]
+        auto_data['records'] = [r for r in auto_data.get('records', []) if norm(r.get('heroName', '')) in garena_names]
+        enriched: list[dict[str, Any]] = []
+        total = len(heroes)
+        counter = {"n": 0}
+
+        def one(h):
+            try:
+                hi, skins = extract_hero_page(absurl(GARNA_MAIN, f"/hoc-vien/tuong-skin/d/{h['slug']}/"), h["heroName"])
+                item = dict(h)
+                item["heroImage"] = item.get("heroImage") or hi
+                item["_skins"] = skins
+                return item
+            except Exception as e:
+                item = dict(h)
+                item["_skins"] = []
+                item["scanError"] = str(e)
+                return item
+            finally:
+                counter["n"] += 1
+                _set_scan_state(progress=f"Đang quét skin từng tướng... ({counter['n']}/{total})")
+
+        with ThreadPoolExecutor(max_workers=8) as ex:
+            futures = [ex.submit(one, h) for h in heroes]
+            for fut in as_completed(futures):
+                enriched.append(fut.result())
+        enriched.sort(key=lambda x: norm(x.get('heroName', '')))
+        catalog_data = merge_catalog(auto_data, enriched)
+    except Exception as e:
+        catalog_data = {
+            "schemaVersion": 2,
+            "resourcesVersion": auto_data.get("resourcesVersion", version_dir.name),
+            "generatedAt": auto_data.get("generatedAt", ""),
+            "heroCount": len(auto_data.get("heroes", [])),
+            "skinCount": sum(len(h.get("skins", [])) for h in auto_data.get("heroes", [])),
+            "garenaScanError": str(e),
+            "heroes": [
+                {**h, "heroImage": "", "garenaSlug": "", "skins": [
+                    {**s, "skinImage": ""} for s in h.get("skins", [])
+                ]} for h in auto_data.get("heroes", [])
+            ],
+        }
+
+    _set_scan_state(progress="Đang lưu catalog...")
+    save_json(CATALOG, catalog_data)
+    try:
+        persist_catalog_to_cloud(catalog_data)
+    except Exception:
+        pass
+    save_json(ACTIVE, {"version": version_dir.name, "scannedAt": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat()})
+    _set_scan_state(running=False, done=True, progress="Hoàn tất", error="", result=catalog_data)
+
+
+@app.post("/api/scan/start")
+def scan_start():
+    with SCAN_LOCK:
+        if SCAN_STATE.get("running"):
+            return {"ok": True, "alreadyRunning": True}
+    t = threading.Thread(target=_run_scan_job, daemon=True)
+    t.start()
+    return {"ok": True, "started": True}
+
+
+@app.get("/api/scan/status")
+def scan_status():
+    with SCAN_LOCK:
+        state = dict(SCAN_STATE)
+    result = state.pop("result", None)
+    out = {"ok": True, **state}
+    if state.get("done") and not state.get("error") and result:
+        out.update(result)
+    return out
+
+
 @app.post("/api/check")
 def check_ids(payload: dict[str, Any]):
     ids = [str(x) for x in payload.get("ids", [])]
@@ -515,6 +663,69 @@ def check_ids(payload: dict[str, Any]):
     return {"resourcesVersion": data.get("resourcesVersion", ""), "results": [
         {"skinId": sid, "found": sid in idx, **(idx.get(sid, {}))} for sid in ids
     ]}
+
+
+PREMOD_LOCK = threading.Lock()
+PREMOD_STATE: dict[str, Any] = {"running": False, "done": False, "progress": "", "total": 0, "doneCount": 0, "okCount": 0, "failCount": 0, "stopRequested": False}
+
+
+def _set_premod_state(**kw):
+    with PREMOD_LOCK:
+        PREMOD_STATE.update(kw)
+
+
+def _run_premod_job():
+    """Build sẵn (và lưu cache) toàn bộ skin đang được Resources hỗ trợ, để người
+    dùng bình thường bấm 'Tạo & tải ZIP' là có file ngay, không phải chờ build."""
+    data = load_json(CATALOG, {})
+    if not data and cloudinary_ready():
+        data = restore_catalog_from_cloud()
+    version = data.get("resourcesVersion") or load_json(ACTIVE, {}).get("version", "")
+    all_skins = [(h, s) for h in data.get("heroes", []) for s in h.get("skins", []) if s.get("supported")]
+    total = len(all_skins)
+    _set_premod_state(running=True, done=False, total=total, doneCount=0, okCount=0, failCount=0, progress="Đang chuẩn bị...", stopRequested=False)
+    ok = 0
+    fail = 0
+    for i, (hero, skin) in enumerate(all_skins, start=1):
+        with PREMOD_LOCK:
+            if PREMOD_STATE.get("stopRequested"):
+                break
+        skin_id = str(skin.get("skinId"))
+        display_name = f"{hero.get('heroName','').strip()} {skin.get('skinName','').strip()}".strip() or skin_id
+        display_name = re.sub(r'[\\/:*?"<>|]', '', display_name).strip() or skin_id
+        cached = BUILDS / f"{skin_id}_{version}.zip"
+        _set_premod_state(progress=f"Đang mod: {display_name} ({i}/{total})")
+        try:
+            if not (cached.is_file() and cached.stat().st_size > 0):
+                run_build(skin_id, version, display_name)
+            ok += 1
+        except Exception:
+            fail += 1
+        _set_premod_state(doneCount=i, okCount=ok, failCount=fail)
+    stopped = PREMOD_STATE.get("stopRequested")
+    _set_premod_state(running=False, done=True, progress=("Đã dừng." if stopped else f"Hoàn tất: {ok} thành công, {fail} lỗi."))
+
+
+@app.post("/api/premod/start")
+def premod_start():
+    with PREMOD_LOCK:
+        if PREMOD_STATE.get("running"):
+            return {"ok": True, "alreadyRunning": True}
+    t = threading.Thread(target=_run_premod_job, daemon=True)
+    t.start()
+    return {"ok": True, "started": True}
+
+
+@app.post("/api/premod/stop")
+def premod_stop():
+    _set_premod_state(stopRequested=True)
+    return {"ok": True}
+
+
+@app.get("/api/premod/status")
+def premod_status():
+    with PREMOD_LOCK:
+        return {"ok": True, **PREMOD_STATE}
 
 
 @app.post("/api/build/{skin_id}")
@@ -529,19 +740,30 @@ def build_skin(skin_id: str):
     skins = {str(s.get("skinId")): (h, s) for h in data.get("heroes", []) for s in h.get("skins", [])}
     if skin_id not in skins:
         raise HTTPException(404, "Skin ID chưa có trong catalog.")
+    hero, skin = skins[skin_id]
     version = data.get("resourcesVersion") or load_json(ACTIVE, {}).get("version", "")
-    if not skins[skin_id][1].get("supported", False):
+    if not skin.get("supported", False):
         raise HTTPException(409, f"Skin chưa được Resources {version or 'hiện tại'} hỗ trợ.")
+    # Tên tướng + tên skin thật (vd "Billow Okarun"), dùng làm tên gói bên trong ZIP
+    # và tên file tải về, thay vì chỉ dùng số Skin ID trần trụi.
+    display_name = f"{hero.get('heroName','').strip()} {skin.get('skinName','').strip()}".strip() or skin_id
+    display_name = re.sub(r'[\\/:*?"<>|]', '', display_name).strip() or skin_id
     cached = BUILDS / f"{skin_id}_{version}.zip"
     if cached.is_file() and cached.stat().st_size > 0:
-        return {"ok": True, "cached": True, "resourcesVersion": version, "downloadUrl": f"/download/{cached.name}"}
-    try:
-        out, used_version = run_build(skin_id, version)
-        return {"ok": True, "cached": False, "resourcesVersion": used_version, "downloadUrl": f"/download/{out.name}"}
-    except subprocess.TimeoutExpired:
-        raise HTTPException(504, "Build mod quá lâu, đã dừng.")
-    except Exception as e:
-        raise HTTPException(500, f"Build mod thất bại: {e}")
+        out = cached
+    else:
+        try:
+            out, version = run_build(skin_id, version, display_name)
+        except subprocess.TimeoutExpired:
+            raise HTTPException(504, "Build mod quá lâu, đã dừng.")
+        except Exception as e:
+            raise HTTPException(500, f"Build mod thất bại: {e}")
+    # Trả thẳng file ZIP ngay trong response này (không bắt trình duyệt gọi thêm
+    # 1 request /download riêng), để tránh trường hợp request tải sau đó bị lệch
+    # sang một instance/tiến trình khác (hoặc ổ đĩa tạm đã dọn) không còn thấy file.
+    if not out.is_file():
+        raise HTTPException(500, "Build xong nhưng không tìm thấy file ZIP để trả về.")
+    return FileResponse(str(out), filename=f"{display_name}.zip", media_type="application/zip")
 
 
 app.mount("/", StaticFiles(directory=str(ROOT / "web"), html=True), name="web")
@@ -552,3 +774,4 @@ def download(name: str):
     if not p.is_file() or not str(p).startswith(str(BUILDS.resolve())):
         raise HTTPException(404, "Không tìm thấy file.")
     return FileResponse(str(p), filename=p.name)
+

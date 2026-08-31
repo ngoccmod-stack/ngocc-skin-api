@@ -665,6 +665,69 @@ def check_ids(payload: dict[str, Any]):
     ]}
 
 
+PREMOD_LOCK = threading.Lock()
+PREMOD_STATE: dict[str, Any] = {"running": False, "done": False, "progress": "", "total": 0, "doneCount": 0, "okCount": 0, "failCount": 0, "stopRequested": False}
+
+
+def _set_premod_state(**kw):
+    with PREMOD_LOCK:
+        PREMOD_STATE.update(kw)
+
+
+def _run_premod_job():
+    """Build sẵn (và lưu cache) toàn bộ skin đang được Resources hỗ trợ, để người
+    dùng bình thường bấm 'Tạo & tải ZIP' là có file ngay, không phải chờ build."""
+    data = load_json(CATALOG, {})
+    if not data and cloudinary_ready():
+        data = restore_catalog_from_cloud()
+    version = data.get("resourcesVersion") or load_json(ACTIVE, {}).get("version", "")
+    all_skins = [(h, s) for h in data.get("heroes", []) for s in h.get("skins", []) if s.get("supported")]
+    total = len(all_skins)
+    _set_premod_state(running=True, done=False, total=total, doneCount=0, okCount=0, failCount=0, progress="Đang chuẩn bị...", stopRequested=False)
+    ok = 0
+    fail = 0
+    for i, (hero, skin) in enumerate(all_skins, start=1):
+        with PREMOD_LOCK:
+            if PREMOD_STATE.get("stopRequested"):
+                break
+        skin_id = str(skin.get("skinId"))
+        display_name = f"{hero.get('heroName','').strip()} {skin.get('skinName','').strip()}".strip() or skin_id
+        display_name = re.sub(r'[\\/:*?"<>|]', '', display_name).strip() or skin_id
+        cached = BUILDS / f"{skin_id}_{version}.zip"
+        _set_premod_state(progress=f"Đang mod: {display_name} ({i}/{total})")
+        try:
+            if not (cached.is_file() and cached.stat().st_size > 0):
+                run_build(skin_id, version, display_name)
+            ok += 1
+        except Exception:
+            fail += 1
+        _set_premod_state(doneCount=i, okCount=ok, failCount=fail)
+    stopped = PREMOD_STATE.get("stopRequested")
+    _set_premod_state(running=False, done=True, progress=("Đã dừng." if stopped else f"Hoàn tất: {ok} thành công, {fail} lỗi."))
+
+
+@app.post("/api/premod/start")
+def premod_start():
+    with PREMOD_LOCK:
+        if PREMOD_STATE.get("running"):
+            return {"ok": True, "alreadyRunning": True}
+    t = threading.Thread(target=_run_premod_job, daemon=True)
+    t.start()
+    return {"ok": True, "started": True}
+
+
+@app.post("/api/premod/stop")
+def premod_stop():
+    _set_premod_state(stopRequested=True)
+    return {"ok": True}
+
+
+@app.get("/api/premod/status")
+def premod_status():
+    with PREMOD_LOCK:
+        return {"ok": True, **PREMOD_STATE}
+
+
 @app.post("/api/build/{skin_id}")
 def build_skin(skin_id: str):
     data = load_json(CATALOG, {})
