@@ -297,6 +297,31 @@ def filter_auto_catalog(auto_data: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
+def merge_manual_skins(catalog_data: dict[str, Any], old_data: dict[str, Any]) -> dict[str, Any]:
+    """Preserve skins that the admin manually added and that the official scanner cannot see."""
+    if not isinstance(old_data, dict):
+        return catalog_data
+    old_by_hero = {str(h.get("heroId", "")).strip(): h for h in old_data.get("heroes", [])}
+    for hero in catalog_data.get("heroes", []):
+        old_hero = old_by_hero.get(str(hero.get("heroId", "")).strip())
+        if not old_hero:
+            continue
+        existing = {str(x.get("skinId", "")).strip() for x in hero.get("skins", [])}
+        for skin in old_hero.get("skins", []):
+            if not skin.get("manualAdded"):
+                continue
+            sid = str(skin.get("skinId", "")).strip()
+            if not sid or sid in existing or is_hidden_skin_name(str(skin.get("skinName", ""))):
+                continue
+            if not re.fullmatch(r"\d{5}", sid):
+                continue
+            hero.setdefault("skins", []).append(dict(skin))
+            existing.add(sid)
+        hero["skinCount"] = len(hero.get("skins", []))
+    catalog_data["skinCount"] = sum(len(h.get("skins", [])) for h in catalog_data.get("heroes", []))
+    return catalog_data
+
+
 def merge_catalog(auto_data: dict[str, Any], garena_heroes: list[dict[str, str]]) -> dict[str, Any]:
     auto_data = filter_auto_catalog(auto_data)
     by_name = {norm(h.get("heroName", "")): h for h in garena_heroes if is_valid_hero_name(h.get("heroName", ""))}
@@ -847,6 +872,7 @@ def scan_catalog():
                 enriched.append(fut.result())
         enriched.sort(key=lambda x: norm(x.get('heroName','')))
         catalog_data = merge_catalog(auto_data, enriched)
+        catalog_data = merge_manual_skins(catalog_data, load_json(CATALOG, {}))
     except Exception as e:
         # Still save Auto-only catalog so admin can see ID/name support even if Garena is temporarily unavailable.
         safe_auto = filter_auto_catalog(auto_data)
@@ -863,6 +889,7 @@ def scan_catalog():
                 ]} for h in safe_auto.get("heroes", [])
             ],
         }
+    catalog_data = merge_manual_skins(catalog_data, load_json(CATALOG, {}))
     cloud_warning = _save_catalog_and_persist(catalog_data)
     save_json(ACTIVE, {"version": version_dir.name, "scannedAt": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat()})
     return {"ok": True, "cloudWarning": cloud_warning, **catalog_data}
@@ -1106,6 +1133,48 @@ def delete_skins_many(hero_id: str, payload: BulkDeletePayload):
     data["skinCount"] = sum(len(h.get("skins", [])) for h in data.get("heroes", []))
     warn = _save_catalog_and_persist(data) if deleted else ""
     return {"ok": True, "deleted": deleted, "cloudWarning": warn, **data}
+
+
+class AddSkinPayload(BaseModel):
+    skinName: str
+    skinId: str
+    imageUrl: str
+
+
+@app.post("/api/catalog/hero/{hero_id}/skin/add")
+def add_skin(hero_id: str, payload: AddSkinPayload):
+    data = load_json(CATALOG, {})
+    hero = next((h for h in data.get("heroes", []) if str(h.get("heroId")) == str(hero_id)), None)
+    if not hero:
+        raise HTTPException(404, "Không tìm thấy tướng trong catalog.")
+    sid = str(payload.skinId or "").strip()
+    name = str(payload.skinName or "").strip()
+    image = str(payload.imageUrl or "").strip()
+    if not re.fullmatch(r"\d{5}", sid):
+        raise HTTPException(400, "ID skin phải đúng 5 chữ số, ví dụ 59903.")
+    if not name:
+        raise HTTPException(400, "Vui lòng nhập tên skin.")
+    if not image:
+        raise HTTPException(400, "Vui lòng nhập URL ảnh hoặc tải ảnh từ máy.")
+    if is_hidden_skin_name(name):
+        raise HTTPException(400, "Tên skin dạng [EX]/Mặc định không được thêm vào catalog Auto Mod.")
+    if any(str(s.get("skinId")) == sid for s in hero.get("skins", [])):
+        raise HTTPException(409, f"Skin ID {sid} đã tồn tại trong tướng này.")
+    version = data.get("resourcesVersion") or load_json(ACTIVE, {}).get("version", "")
+    hero.setdefault("skins", []).append({
+        "skinId": sid,
+        "skinName": name,
+        "skinImage": image,
+        "resolved": True,
+        "supported": True,
+        "manualAdded": True,
+        "resourcesVersion": version,
+        "imageMissing": False,
+    })
+    hero["skinCount"] = len(hero.get("skins", []))
+    data["skinCount"] = sum(len(h.get("skins", [])) for h in data.get("heroes", []))
+    warn = _save_catalog_and_persist(data)
+    return {"ok": True, "cloudWarning": warn, **data}
 
 
 class ImageEditPayload(BaseModel):

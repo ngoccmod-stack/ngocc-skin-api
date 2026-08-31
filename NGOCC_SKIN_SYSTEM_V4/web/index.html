@@ -859,7 +859,7 @@ body.editmode #mainTileEditBtn{display:flex}
       <div class="skin-hero-title"><b id="skinHeroTitle">Tướng</b><small id="skinHeroMeta"></small></div>
     </div>
     <div id="skinCurrentNotice" class="skin-current-banner" style="display:none"></div>
-    <div class="skin-toolbar"><input id="skinSearch" placeholder="Tìm skin..." autocomplete="off" oninput="renderSkinCards()"></div><div id="skinBulkBar" class="skin-edit-controls"><button type="button" class="skin-filter" onclick="toggleAllSkins()">☑ Chọn tất cả</button><button type="button" class="skin-filter" onclick="deleteSelectedSkins()">🗑 Xoá đã chọn (<span id="skinSelectedCount">0</span>)</button></div>
+    <div class="skin-toolbar"><input id="skinSearch" placeholder="Tìm skin..." autocomplete="off" oninput="renderSkinCards()"></div><div id="skinBulkBar" class="skin-edit-controls"><button type="button" class="skin-filter" onclick="openAddSkinModal()">➕ Thêm Skin</button><button type="button" class="skin-filter" onclick="toggleAllSkins()">☑ Chọn tất cả</button><button type="button" class="skin-filter" onclick="deleteSelectedSkins()">🗑 Xoá đã chọn (<span id="skinSelectedCount">0</span>)</button></div>
     <div id="skinGrid" class="skin-grid-skin"></div>
   </div>
 </section>
@@ -4938,12 +4938,52 @@ window.openSkinForMod=function(skinId){
     const name=document.getElementById('newModName'); const img=document.getElementById('newModImage'); const vid=document.getElementById('newModVideo');
     if(name) name.value=skin.skinName||'';
     if(img) img.value=skin.skinImage||'';
+    const desc=document.getElementById('newModDesc'); if(desc) desc.value=String(skin.skinId||'');
     if(vid) vid.value='';
     const label=document.getElementById('newModVideoLabel'); if(label) label.style.display='none';
     if(vid) vid.style.display='none';
     const vf=document.getElementById('newModVideoFile'); if(vf&&vf.parentElement) vf.parentElement.style.display='none';
     window._ngoccPendingSkin={heroId:ngoccSkinHero.heroId,heroName:ngoccSkinHero.heroName,skinId:skin.skinId,skinName:skin.skinName,skinImage:skin.skinImage};
   },50);
+};
+
+window.openAddSkinModal=function(){
+  if(!(typeof isOwner==='function' && isOwner() && editMode) || !ngoccSkinHero) return;
+  renderModal(`
+    <div class="mlabel">THÊM SKIN THỦ CÔNG</div>
+    <h3>Thêm Skin vào ${escapeHtml(ngoccSkinHero.heroName||'Tướng')}</h3>
+    <div class="mlabel">ẢNH SKIN</div>
+    <input id="addSkinImage" placeholder="Dán URL ảnh (https://...)" autocomplete="off">
+    <div class="local-file-row"><button type="button" class="local-file-btn" onclick="document.getElementById('addSkinImageFile').click()">🖼 Chọn ảnh từ máy</button><input id="addSkinImageFile" class="local-file-input" type="file" accept="image/*" onchange="uploadAddSkinImage(this)"></div>
+    <div class="mlabel">TÊN SKIN</div>
+    <input id="addSkinName" placeholder="Ví dụ: Okarun">
+    <div class="mlabel">ID SKIN (5 SỐ)</div>
+    <input id="addSkinId" inputmode="numeric" maxlength="5" placeholder="Ví dụ: 59903">
+    <div style="font-size:11.5px;color:#9296a2;line-height:1.5;margin:-3px 0 12px">Skin thêm tay sẽ được đánh dấu cho Auto Mod. Tool sẽ dùng đúng ID 5 số bạn nhập.</div>
+    <div class="modal-actions"><button type="button" class="btn-cancel" onclick="closeModal()">Hủy</button><button type="button" class="btn-save" onclick="submitAddSkin()">💾 Thêm Skin</button></div>
+  `);
+};
+window.uploadAddSkinImage=function(input){
+  const f=input?.files?.[0]; if(input) input.value='';
+  if(f) handleImageUploadToUrl(f,'addSkinImage',1);
+};
+window.submitAddSkin=async function(){
+  if(!(typeof isOwner==='function' && isOwner() && editMode) || !ngoccSkinHero) return;
+  const image=(document.getElementById('addSkinImage')?.value||'').trim();
+  const name=(document.getElementById('addSkinName')?.value||'').trim();
+  const sid=(document.getElementById('addSkinId')?.value||'').trim();
+  if(!image) return showToast('Vui lòng nhập URL ảnh hoặc chọn ảnh từ máy.','error');
+  if(!name) return showToast('Vui lòng nhập tên skin.','error');
+  if(!/^\d{5}$/.test(sid)) return showToast('ID skin phải đúng 5 chữ số, ví dụ 59903.','error');
+  try{
+    const r=await fetch(skinApiUrl('/api/catalog/hero/'+encodeURIComponent(ngoccSkinHero.heroId)+'/skin/add'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({skinName:name,skinId:sid,imageUrl:image})});
+    const d=await r.json(); if(!r.ok) throw new Error(d?.detail||d?.error||('HTTP '+r.status));
+    ngoccSkinCatalog=d; ngoccSkinCatalog.ready=true;
+    ngoccSkinHero=(d.heroes||[]).find(h=>String(h.heroId)===String(ngoccSkinHero.heroId))||ngoccSkinHero;
+    closeModal(); renderSkinCards();
+    if(d.cloudWarning) alert('⚠️ '+d.cloudWarning);
+    showToast('✅ Đã thêm skin '+sid+'.','success');
+  }catch(e){showToast('❌ '+e.message,'error');}
 };
 
 window.scanSkinCatalog=async function(){
