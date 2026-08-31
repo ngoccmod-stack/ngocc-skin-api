@@ -22,6 +22,7 @@ import cloudinary.uploader
 import cloudinary.utils
 from bs4 import BeautifulSoup
 from fastapi import FastAPI, File, HTTPException, UploadFile
+from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -67,7 +68,11 @@ HEADERS = {"User-Agent": "Mozilla/5.0 (NGOCC Skin Scanner)"}
 
 
 def norm(s: str) -> str:
-    s = unicodedata.normalize("NFKD", s or "").encode("ascii", "ignore").decode().lower()
+    # "đ"/"Đ" không tự chuyển thành "d"/"D" qua NFKD (đây là 1 chữ cái riêng trong
+    # tiếng Việt, không phải "d" + dấu), nếu không xử lý riêng thì encode ascii sẽ
+    # XOÁ MẤT chữ này, dễ gây trùng/lệch tên giữa các tướng·skin khác nhau.
+    s = (s or "").replace("đ", "d").replace("Đ", "D")
+    s = unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode().lower()
     s = re.sub(r"[^a-z0-9]+", " ", s).strip()
     return s
 
@@ -229,24 +234,40 @@ def merge_catalog(auto_data: dict[str, Any], garena_heroes: list[dict[str, str]]
             })
         result["heroes"].append(hero)
 
-    # Match skin images by normalized source name, then by page order as a safe fallback.
+    # Match skin images by normalized source name; nếu không khớp tuyệt đối thì thử
+    # khớp gần đúng (tên bên này chứa tên bên kia) — KHÔNG bao giờ đoán bừa theo vị
+    # trí nữa, vì đoán theo vị trí từng gây lấy nhầm ảnh của một skin khác hẳn.
     for hero in result["heroes"]:
         garena = next((x for x in garena_heroes if x.get("slug") == hero.get("garenaSlug")), None)
         if not garena or not garena.get("_skins"):
             continue
         source_skins = garena["_skins"]
-        by_skin_name = {norm(x["skinNameSource"]): x["skinImage"] for x in source_skins}
-        used = set()
-        for idx, s in enumerate(hero["skins"]):
+        by_skin_name: dict[str, list[dict[str, str]]] = {}
+        for x in source_skins:
+            by_skin_name.setdefault(norm(x["skinNameSource"]), []).append(x)
+        used_images: set[str] = set()
+        for s in hero["skins"]:
             key = norm(s["skinName"])
-            img = by_skin_name.get(key, "")
-            if not img and idx < len(source_skins):
-                # Order is the fallback because Garena renders skins in the same sequence used by the page.
-                img = source_skins[idx].get("skinImage", "")
-            s["skinImage"] = img
+            img = ""
+            for c in by_skin_name.get(key, []):
+                if c["skinImage"] not in used_images:
+                    img = c["skinImage"]
+                    break
+            if not img and key:
+                best = None
+                for c in source_skins:
+                    if c["skinImage"] in used_images:
+                        continue
+                    ck = norm(c["skinNameSource"])
+                    if ck and (ck in key or key in ck):
+                        if best is None or len(ck) > len(norm(best["skinNameSource"])):
+                            best = c
+                if best:
+                    img = best["skinImage"]
             if img:
-                used.add(img)
-            if not s["skinImage"]:
+                used_images.add(img)
+            s["skinImage"] = img
+            if not img:
                 s["imageMissing"] = True
         hero["skinCount"] = len(hero["skins"])
     result["heroCount"] = len(result["heroes"])
@@ -540,12 +561,13 @@ def scan_catalog():
             ],
         }
     save_json(CATALOG, catalog_data)
+    cloud_warning = ""
     try:
         persist_catalog_to_cloud(catalog_data)
-    except Exception:
-        pass
+    except Exception as e:
+        cloud_warning = f"Quét xong nhưng backup catalog lên Cloudinary thất bại: {e}"
     save_json(ACTIVE, {"version": version_dir.name, "scannedAt": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat()})
-    return {"ok": True, **catalog_data}
+    return {"ok": True, "cloudWarning": cloud_warning, **catalog_data}
 
 
 SCAN_LOCK = threading.Lock()
@@ -626,12 +648,13 @@ def _run_scan_job():
 
     _set_scan_state(progress="Đang lưu catalog...")
     save_json(CATALOG, catalog_data)
+    cloud_warning = ""
     try:
         persist_catalog_to_cloud(catalog_data)
-    except Exception:
-        pass
+    except Exception as e:
+        cloud_warning = f"⚠️ Quét xong nhưng backup catalog lên Cloudinary thất bại: {e}"
     save_json(ACTIVE, {"version": version_dir.name, "scannedAt": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat()})
-    _set_scan_state(running=False, done=True, progress="Hoàn tất", error="", result=catalog_data)
+    _set_scan_state(running=False, done=True, progress=(cloud_warning or "Hoàn tất"), error="", result=catalog_data)
 
 
 @app.post("/api/scan/start")
@@ -704,6 +727,77 @@ def _run_premod_job():
         _set_premod_state(doneCount=i, okCount=ok, failCount=fail)
     stopped = PREMOD_STATE.get("stopRequested")
     _set_premod_state(running=False, done=True, progress=("Đã dừng." if stopped else f"Hoàn tất: {ok} thành công, {fail} lỗi."))
+
+
+def _save_catalog_and_persist(data: dict[str, Any]) -> str:
+    save_json(CATALOG, data)
+    warn = ""
+    try:
+        persist_catalog_to_cloud(data)
+    except Exception as e:
+        warn = f"Đã lưu cục bộ nhưng backup lên Cloudinary thất bại: {e}"
+    return warn
+
+
+@app.post("/api/catalog/hero/{hero_id}/delete")
+def delete_hero(hero_id: str):
+    data = load_json(CATALOG, {})
+    heroes = data.get("heroes", [])
+    before = len(heroes)
+    heroes = [h for h in heroes if str(h.get("heroId")) != str(hero_id)]
+    if len(heroes) == before:
+        raise HTTPException(404, "Không tìm thấy tướng trong catalog.")
+    data["heroes"] = heroes
+    data["heroCount"] = len(heroes)
+    data["skinCount"] = sum(len(h.get("skins", [])) for h in heroes)
+    warn = _save_catalog_and_persist(data)
+    return {"ok": True, "cloudWarning": warn, **data}
+
+
+@app.post("/api/catalog/hero/{hero_id}/skin/{skin_id}/delete")
+def delete_skin(hero_id: str, skin_id: str):
+    data = load_json(CATALOG, {})
+    hero = next((h for h in data.get("heroes", []) if str(h.get("heroId")) == str(hero_id)), None)
+    if not hero:
+        raise HTTPException(404, "Không tìm thấy tướng trong catalog.")
+    before = len(hero.get("skins", []))
+    hero["skins"] = [s for s in hero.get("skins", []) if str(s.get("skinId")) != str(skin_id)]
+    if len(hero["skins"]) == before:
+        raise HTTPException(404, "Không tìm thấy skin trong tướng này.")
+    hero["skinCount"] = len(hero["skins"])
+    data["skinCount"] = sum(len(h.get("skins", [])) for h in data.get("heroes", []))
+    warn = _save_catalog_and_persist(data)
+    return {"ok": True, "cloudWarning": warn, **data}
+
+
+class ImageEditPayload(BaseModel):
+    imageUrl: str
+
+
+@app.post("/api/catalog/hero/{hero_id}/image")
+def set_hero_image(hero_id: str, payload: ImageEditPayload):
+    data = load_json(CATALOG, {})
+    hero = next((h for h in data.get("heroes", []) if str(h.get("heroId")) == str(hero_id)), None)
+    if not hero:
+        raise HTTPException(404, "Không tìm thấy tướng trong catalog.")
+    hero["heroImage"] = payload.imageUrl.strip()
+    warn = _save_catalog_and_persist(data)
+    return {"ok": True, "cloudWarning": warn, **data}
+
+
+@app.post("/api/catalog/hero/{hero_id}/skin/{skin_id}/image")
+def set_skin_image(hero_id: str, skin_id: str, payload: ImageEditPayload):
+    data = load_json(CATALOG, {})
+    hero = next((h for h in data.get("heroes", []) if str(h.get("heroId")) == str(hero_id)), None)
+    if not hero:
+        raise HTTPException(404, "Không tìm thấy tướng trong catalog.")
+    skin = next((s for s in hero.get("skins", []) if str(s.get("skinId")) == str(skin_id)), None)
+    if not skin:
+        raise HTTPException(404, "Không tìm thấy skin trong tướng này.")
+    skin["skinImage"] = payload.imageUrl.strip()
+    skin["imageMissing"] = not bool(skin["skinImage"])
+    warn = _save_catalog_and_persist(data)
+    return {"ok": True, "cloudWarning": warn, **data}
 
 
 @app.post("/api/premod/start")

@@ -2637,6 +2637,8 @@ while True:
                 try:
                     Max = Read[4] + (Read[5]*256)
                     Max0 = str(hex(Max))
+                    if len(Max0) == 3:
+                        Max0 = "0" + Max0[2] + "00"
                     if len(Max0) == 4:
                         Max0 = Max0[2:4] + "00"
                     if len(Max0) == 5:
@@ -2657,6 +2659,8 @@ while True:
                     else:
                         CT = CT.replace(ALL_ID[i-1],ALL_ID[i])
                     CTN = str(hex(Max0[0]+(Max0[1]*256)+1))
+                    if len(CTN) == 3:
+                        CTN = "0" + CTN[2]
                     if len(CTN) == 4:
                         CTN = CTN[2:4]
                     if len(CTN) == 5:
