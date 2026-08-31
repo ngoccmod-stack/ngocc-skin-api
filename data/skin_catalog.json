@@ -3,7 +3,7 @@
   "resourcesVersion": "1.63.1",
   "generatedAt": "2026-08-31T11:38:55.657871+00:00",
   "heroCount": 120,
-  "skinCount": 1108,
+  "skinCount": 1107,
   "heroes": [
     {
       "heroId": "105",
@@ -8582,19 +8582,9 @@
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/54507.jpg",
           "supported": true,
           "resourcesVersion": "1.63.1"
-        },
-        {
-          "skinId": "54509",
-          "skinName": "V",
-          "skinImage": "https://i.ibb.co/93zLJcSW/ngocc-image.webp",
-          "resolved": true,
-          "supported": true,
-          "manualAdded": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 7
+      "skinCount": 6
     },
     {
       "heroId": "546",
