@@ -4741,6 +4741,17 @@ window.saveSkinApiConfig=async function(){
 let ngoccButtonCatalog={rows:[],ready:false};
 let ngoccButtonLoadPromise=null;
 async function loadButtonCatalog(force=false){
+  // Quan trọng: Netlify là frontend khác origin, nên phải lấy Skin API URL từ Firestore
+  // trước khi fetch /api/button/catalog. Trước đây openButtonMenu gọi thẳng nên URL rỗng
+  // và request bị gửi nhầm về /api/button/catalog của Netlify.
+  await loadSkinApiConfig();
+  if(!NGOC_SKIN_API){
+    const err='Chưa cấu hình Skin API URL trong Firestore (siteConfig/skinApi).';
+    ngoccButtonCatalog={rows:[],ready:false,error:err};
+    const status=document.getElementById('buttonAdminStatus'); if(status) status.textContent='❌ '+err;
+    renderButtonRows();
+    return ngoccButtonCatalog;
+  }
   if(!force&&ngoccButtonCatalog.ready) return ngoccButtonCatalog;
   if(ngoccButtonLoadPromise&&!force) return ngoccButtonLoadPromise;
   const status=document.getElementById('buttonAdminStatus');
@@ -4753,6 +4764,8 @@ async function loadButtonCatalog(force=false){
   return ngoccButtonLoadPromise;
 }
 window.openButtonMenu=async function(){
+  // Đợi cấu hình API trước khi tải catalog để frontend Netlify không fetch nhầm origin.
+  await loadSkinApiConfig();
   const home=document.getElementById('home'); if(home)home.classList.add('hidden');
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   const v=document.getElementById('buttonMenu'); if(v)v.classList.add('active');
@@ -4773,12 +4786,32 @@ window.buildButtonZip=async function(skinId,row){
   const old=row?.querySelector('.button-row-name')?.textContent||'';
   const title=row?.querySelector('.button-row-name'); if(title)title.textContent='⏳ Đang tạo ZIP...';
   try{
-    const r=await fetch(skinApiUrl('/api/button/build/'+encodeURIComponent(skinId)),{method:'POST'});
-    if(!r.ok){let m='HTTP '+r.status;try{const j=await r.json();m=j?.detail||j?.error||m;}catch(_){}throw new Error(m);}
-    const blob=await r.blob(); const cd=r.headers.get('content-disposition')||'';
-    const m=/filename\*?=(?:UTF-8''|")?([^";]+)"?/i.exec(cd); const fname=(m&&decodeURIComponent(m[1].replace(/"/g,'')))||('Nut Bam '+skinId+'.zip');
-    const u=URL.createObjectURL(blob); const a=document.createElement('a');a.href=u;a.download=fname;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),30000);
-    if(title)title.textContent='✅ '+old; setTimeout(()=>{if(title)title.textContent=old;},1600);
+    await loadSkinApiConfig();
+    if(!NGOC_SKIN_API) throw new Error('Chưa cấu hình Skin API URL.');
+    // Build nút bấm có thể nặng; dùng job background để không bị timeout 500/504 trên Render.
+    const sr=await fetch(skinApiUrl('/api/button/build/start/'+encodeURIComponent(skinId)),{method:'POST',cache:'no-store'});
+    if(!sr.ok){let m='HTTP '+sr.status;try{const j=await sr.json();m=j?.detail||j?.error||m;}catch(_){}throw new Error(m);}
+    const sd=await sr.json();
+    const jobId=sd?.jobId; if(!jobId) throw new Error('Server không trả jobId.');
+    let waited=0;
+    while(true){
+      await new Promise(res=>setTimeout(res,1500)); waited+=1500;
+      const pr=await fetch(skinApiUrl('/api/button/build/status/'+encodeURIComponent(jobId)),{cache:'no-store'});
+      if(!pr.ok){let m='HTTP '+pr.status;try{const j=await pr.json();m=j?.detail||j?.error||m;}catch(_){}throw new Error(m);}
+      const d=await pr.json();
+      if(d.status==='error') throw new Error(d.error||'Build thất bại.');
+      if(d.status==='done'){
+        const r=await fetch(skinApiUrl('/api/button/build/download/'+encodeURIComponent(jobId)),{cache:'no-store'});
+        if(!r.ok){let m='HTTP '+r.status;try{const j=await r.json();m=j?.detail||j?.error||m;}catch(_){}throw new Error(m);}
+        const blob=await r.blob(); const cd=r.headers.get('content-disposition')||'';
+        const m=/filename\*?=(?:UTF-8''|")?([^";]+)"?/i.exec(cd); const fname=(m&&decodeURIComponent(m[1].replace(/"/g,'')))||('Nut Bam '+skinId+'.zip');
+        const u=URL.createObjectURL(blob); const a=document.createElement('a');a.href=u;a.download=fname;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),30000);
+        if(title)title.textContent='✅ '+old; setTimeout(()=>{if(title)title.textContent=old;},1600);
+        break;
+      }
+      if(title) title.textContent='⏳ '+(d.progress||'Đang tạo ZIP...');
+      if(waited>15*60*1000) throw new Error('Build quá lâu (>15 phút). Kiểm tra log Render.');
+    }
   }catch(e){alert('❌ Không tạo được mod Nút Bấm: '+e.message);if(title)title.textContent=old;}
 };
 window.uploadButtonResources=async function(input){

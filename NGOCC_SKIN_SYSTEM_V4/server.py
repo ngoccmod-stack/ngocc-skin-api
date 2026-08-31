@@ -46,6 +46,9 @@ CLOUDINARY_FOLDER = os.environ.get("NGOCC_CLOUDINARY_FOLDER", "ngocc_resources")
 BUTTON_ENGINE_READY = BUTTON_DATA / ".engine_ready"
 BUTTON_OVERRIDE_MARKER = BUTTON_DATA / ".cloud_override"
 BUTTON_PREP_LOCK = threading.Lock()
+BUTTON_BUILD_EXECUTOR = ThreadPoolExecutor(max_workers=1)
+BUTTON_JOBS: dict[str, dict[str, Any]] = {}
+BUTTON_JOBS_LOCK = threading.Lock()
 def _clean_env(v: str) -> str:
     # Loại bỏ các ký tự Unicode vô hình (LRM/RLM/zero-width/BOM...) hay bị dính
     # khi copy-paste trên điện thoại, vì chúng làm hỏng HTTP header (latin-1 only).
@@ -930,31 +933,47 @@ async def button_resources_upload(file: UploadFile = File(...)):
         raise HTTPException(500,f'Cập nhật Resources Nút Bấm thất bại: {e}')
 
 
-@app.post('/api/button/build/{skin_id}')
-def build_button(skin_id: str):
-    import importlib, sys as _sys
+def _button_build_sync(skin_id: str, job_id: str | None = None):
+    import importlib, sys as _sys, traceback
     try:
         ensure_button_resources()
-        cat=_button_catalog(); row=next((r for r in cat['rows'] if str(r['id'])==str(skin_id)),None)
-        if not row: raise HTTPException(404,'Nút bấm ID chưa có trong Resources.')
+        cat=_button_catalog()
+        row=next((r for r in cat['rows'] if str(r['id'])==str(skin_id)),None)
+        if not row:
+            raise HTTPException(404,'Nút bấm ID chưa có trong Resources.')
         files=_button_scan_source(BUTTON_SOURCE).get(str(skin_id))
-        if not files: raise HTTPException(404,'Không tìm thấy Source cho ID nút này.')
-        # Import the exact engine bundled from #1Nút Bấm.zip.
-        if str(BUTTON_DATA) not in _sys.path: _sys.path.insert(0,str(BUTTON_DATA))
-        # Avoid name collision if core already imported elsewhere.
+        if not files:
+            raise HTTPException(404,'Không tìm thấy Source cho ID nút này.')
+        if not (BUTTON_DIR/'battleotherui.assetbundle').is_file():
+            raise HTTPException(409,'Thiếu Button/battleotherui.assetbundle.')
+
+        # Luôn ưu tiên đúng engine bundled trong button_resources; tránh collision với
+        # module tên "core" của package khác đã import trước đó.
+        button_root = str(BUTTON_DATA)
+        if button_root not in _sys.path:
+            _sys.path.insert(0, button_root)
+        for _name in [x for x in list(_sys.modules) if x == 'core' or x.startswith('core.')]:
+            _sys.modules.pop(_name, None)
         graft_mod=importlib.import_module('core.graft')
-        btn_bundle=str(BUTTON_DIR/'battleotherui.assetbundle')
-        if not Path(btn_bundle).is_file(): raise HTTPException(409,'Thiếu Button/battleotherui.assetbundle.')
+
         out_dir=BUILDS/'buttons'/str(skin_id)
+        shutil.rmtree(out_dir, ignore_errors=True)
         work=out_dir/'Resources'/'1.63.1'/'assetbundle'/'uisystem'/'battle'
         work.mkdir(parents=True,exist_ok=True)
         out_bundle=work/'battleotherui.assetbundle'
         logs=[]
-        graft_mod.build_one(str(skin_id),files,btn_bundle,str(out_bundle),log=logs.append,step=lambda:None,
-                            button_dir=str(BUTTON_DIR),out_dir=str(work))
+        if job_id:
+            with BUTTON_JOBS_LOCK:
+                BUTTON_JOBS[job_id].update(progress='Đang graft FX + joystick...', log=[])
+
+        graft_mod.build_one(
+            str(skin_id), files, str(BUTTON_DIR/'battleotherui.assetbundle'), str(out_bundle),
+            log=logs.append, step=lambda: None,
+            button_dir=str(BUTTON_DIR), out_dir=str(work)
+        )
         raw_src=BUTTON_DIR/'battleotherui_raw.assetbundle'
-        if raw_src.is_file(): shutil.copy2(raw_src,work/'battleotherui_raw.assetbundle')
-        # Copy shop bundles when present (graft already writes them to work); add raw source if present.
+        if raw_src.is_file():
+            shutil.copy2(raw_src,work/'battleotherui_raw.assetbundle')
         pack_name=(row.get('hero','')+' '+row.get('name','')).strip() or str(skin_id)
         pack_name=re.sub(r'[\\/:*?"<>|]','',pack_name).strip() or str(skin_id)
         zip_path=BUILDS/f'button_{skin_id}.zip'
@@ -965,8 +984,82 @@ def build_button(skin_id: str):
                 rel=f.relative_to(out_dir).as_posix()
                 z.write(f,f'{pack_name}/files/{rel}')
         tmp.replace(zip_path)
-        return FileResponse(str(zip_path),filename=f'{pack_name}.zip',media_type='application/zip')
-    except HTTPException: raise
+        if job_id:
+            with BUTTON_JOBS_LOCK:
+                BUTTON_JOBS[job_id].update(status='done', progress='Hoàn tất', file=str(zip_path), filename=f'{pack_name}.zip', log=logs[-80:])
+        return zip_path, f'{pack_name}.zip', logs
+    except HTTPException as e:
+        if job_id:
+            with BUTTON_JOBS_LOCK:
+                BUTTON_JOBS[job_id].update(status='error', error=e.detail if isinstance(e.detail,str) else str(e.detail))
+        raise
+    except Exception as e:
+        detail=f'{type(e).__name__}: {e}'
+        if job_id:
+            with BUTTON_JOBS_LOCK:
+                BUTTON_JOBS[job_id].update(status='error', error=detail, log=logs[-80:] if 'logs' in locals() else [])
+        raise RuntimeError(detail + ('\n' + '\n'.join(logs[-40:]) if 'logs' in locals() and logs else '')) from e
+
+
+@app.post('/api/button/build/start/{skin_id}')
+def start_button_build(skin_id: str):
+    # Kiểm tra nhanh trước khi đưa build nặng sang background worker.
+    ensure_button_resources()
+    cat=_button_catalog()
+    row=next((r for r in cat['rows'] if str(r['id'])==str(skin_id)),None)
+    if not row:
+        raise HTTPException(404,'Nút bấm ID chưa có trong Resources.')
+    files=_button_scan_source(BUTTON_SOURCE).get(str(skin_id))
+    if not files:
+        raise HTTPException(404,'Không tìm thấy Source cho ID nút này.')
+    job_id=uuid.uuid4().hex
+    with BUTTON_JOBS_LOCK:
+        BUTTON_JOBS[job_id]={'status':'queued','skinId':str(skin_id),'progress':'Đang xếp hàng...', 'error':'', 'file':'', 'filename':'', 'log':[]}
+    def runner():
+        with BUTTON_JOBS_LOCK:
+            BUTTON_JOBS[job_id]['status']='running'
+            BUTTON_JOBS[job_id]['progress']='Đang tạo ZIP...'
+        try:
+            _button_build_sync(str(skin_id), job_id=job_id)
+        except Exception:
+            # _button_build_sync already records the useful error.
+            pass
+    BUTTON_BUILD_EXECUTOR.submit(runner)
+    return {'ok':True,'jobId':job_id,'skinId':str(skin_id)}
+
+
+@app.get('/api/button/build/status/{job_id}')
+def button_build_status(job_id: str):
+    with BUTTON_JOBS_LOCK:
+        job=BUTTON_JOBS.get(job_id)
+        if not job:
+            raise HTTPException(404,'Không tìm thấy phiên build.')
+        return {'ok':True, **{k:v for k,v in job.items() if k != 'file'}}
+
+
+@app.get('/api/button/build/download/{job_id}')
+def button_build_download(job_id: str):
+    with BUTTON_JOBS_LOCK:
+        job=BUTTON_JOBS.get(job_id)
+        if not job:
+            raise HTTPException(404,'Không tìm thấy phiên build.')
+        if job.get('status') != 'done':
+            raise HTTPException(409,job.get('error') or 'ZIP chưa tạo xong.')
+        file_path=job.get('file',''); filename=job.get('filename') or (f'Nút Bấm {job.get("skinId")}.zip')
+    if not file_path or not Path(file_path).is_file():
+        raise HTTPException(404,'File ZIP không còn trên server.')
+    return FileResponse(file_path,filename=filename,media_type='application/zip')
+
+
+# Endpoint cũ vẫn giữ để tương thích; nó dùng cùng builder nhưng có thể chịu timeout ở
+# proxy nếu build quá lâu. Frontend mới dùng start/status/download ở trên.
+@app.post('/api/button/build/{skin_id}')
+def build_button(skin_id: str):
+    try:
+        zip_path, filename, _ = _button_build_sync(str(skin_id))
+        return FileResponse(str(zip_path),filename=filename,media_type='application/zip')
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(500,f'Tạo mod Nút Bấm thất bại: {e}')
 
