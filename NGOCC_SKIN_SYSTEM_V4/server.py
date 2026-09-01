@@ -27,6 +27,7 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.background import BackgroundTask
 
 ROOT = Path(__file__).resolve().parent
 RESOURCES = ROOT / "Resources"
@@ -953,19 +954,35 @@ async def button_mod_cloudinary_finalize(payload: dict[str, Any]):
         raw.unlink(missing_ok=True)
 
 
-def _button_mods_cloud_public_id() -> str:
-    return f"{CLOUDINARY_FOLDER}/button_mods.zip"
+def _button_mods_cloud_public_id(skin_id: str | None = None) -> str:
+    # Mỗi skin có một raw asset riêng. Không dùng tên hiển thị làm public_id để
+    # đổi tên trên Catalog không ảnh hưởng tới file ZIP đã upload.
+    if skin_id is None:
+        return f"{CLOUDINARY_FOLDER}/button_mods.zip"
+    return f"{CLOUDINARY_FOLDER}/button_mods/{str(skin_id)}.zip"
 
 
-def _button_mods_cloud_url() -> str:
+def _button_mod_secure_url(skin_id: str) -> str:
     if not cloudinary_ready(): return ''
     try:
-        return cloudinary.utils.cloudinary_url(_button_mods_cloud_public_id(), resource_type='raw', type='upload', secure=True)[0]
+        return cloudinary.utils.cloudinary_url(_button_mods_cloud_public_id(skin_id), resource_type='raw', type='upload', secure=True)[0]
     except Exception:
         return ''
 
 
+def _persist_button_mod_file_cloud(path: Path, skin_id: str) -> str:
+    if not path.is_file() or not cloudinary_ready():
+        return ''
+    try:
+        cloudinary.uploader.upload(str(path), resource_type='raw', public_id=_button_mods_cloud_public_id(skin_id), overwrite=True)
+        return ''
+    except Exception as e:
+        return str(e)
+
+
 def _persist_button_mods_cloud() -> str:
+    # Giữ endpoint cũ tương thích: tạo một archive tổng, nhưng file tải thực tế
+    # được lưu riêng theo ID ở _persist_button_mod_file_cloud().
     if not cloudinary_ready(): return ''
     try:
         tmp=DATA/'button_mods_archive.zip'
@@ -981,8 +998,12 @@ def _persist_button_mods_cloud() -> str:
 
 
 def _restore_button_mods_cloud() -> bool:
+    # Backward compatibility với archive tổng cũ nếu Render còn cache local rỗng.
     if any(BUTTON_MODS_DIR.rglob('*.zip')): return True
-    url=_button_mods_cloud_url()
+    url=''
+    if cloudinary_ready():
+        try: url=cloudinary.utils.cloudinary_url(_button_mods_cloud_public_id(), resource_type='raw', type='upload', secure=True)[0]
+        except Exception: url=''
     if not url: return False
     try:
         tmp=UPLOADS/'button_mods_restore.zip'
@@ -1222,10 +1243,15 @@ async def _button_save_uploaded_archive(raw: Path) -> dict:
                 if old != dest: old.unlink(missing_ok=True)
             row['downloadReady']=True; row['downloadFilename']=safe_name
             matched.append({'id':sid,'name':row.get('name',''),'filename':safe_name})
+            cloud_warn = _persist_button_mod_file_cloud(dest, sid)
+            if cloud_warn:
+                matched[-1]['cloudWarning']=cloud_warn
         _save_button_cache({'ready':bool(rows),'count':len(rows),'rows':rows})
         warn_catalog=_persist_button_catalog_cloud()
+        # Tạo archive tổng chỉ như bản sao dự phòng; tải xuống ưu tiên file riêng.
         warn_mods=_persist_button_mods_cloud()
-        warn=warn_catalog or warn_mods
+        per_file_warnings=[m.get('cloudWarning') for m in matched if m.get('cloudWarning')]
+        warn=warn_catalog or warn_mods or ('; '.join(per_file_warnings) if per_file_warnings else '')
         return {'ok':True,'matched':matched,'matchedCount':len(matched),'unmatched':unmatched,'unmatchedCount':len(unmatched),'bad':bad,'badCount':len(bad),'cloudWarning':warn,**_button_catalog(refresh=False)}
     finally:
         shutil.rmtree(extract, ignore_errors=True)
@@ -1297,11 +1323,31 @@ def button_download_ready(skin_id: str):
     row=next((r for r in cat.get('rows',[]) if str(r.get('id'))==str(skin_id)),None)
     if not row or not row.get('downloadReady'):
         raise HTTPException(404,'Skin này chưa có ZIP nút bấm thành phẩm.')
-    name=str(row.get('downloadFilename') or '').strip()
+    name=str(row.get('downloadFilename') or '').strip() or f'Nut Bam {skin_id}.zip'
     path=BUTTON_MODS_DIR/str(skin_id)/name
-    if not path.is_file():
-        raise HTTPException(404,'File ZIP nút bấm không còn trên server.')
-    return FileResponse(path,filename=path.name,media_type='application/zip')
+    if path.is_file():
+        return FileResponse(path,filename=path.name,media_type='application/zip')
+
+    # Render filesystem có thể mất sau restart/spin-down. Khôi phục đúng ZIP
+    # theo ID từ Cloudinary, nhưng vẫn trả tên file gốc đã upload trong Catalog.
+    url=_button_mod_secure_url(skin_id)
+    if not url:
+        raise HTTPException(404,'File ZIP nút bấm không còn trên server/Cloudinary.')
+    restore_dir=BUTTON_MOD_UPLOAD_DIR/f'download_{uuid.uuid4().hex}'
+    restore_dir.mkdir(parents=True,exist_ok=True)
+    restore=restore_dir/name
+    try:
+        r=requests.get(url,headers=HEADERS,timeout=180,stream=True)
+        r.raise_for_status()
+        with restore.open('wb') as f:
+            for ch in r.iter_content(1024*1024):
+                if ch: f.write(ch)
+        if not restore.is_file() or restore.stat().st_size <= 0:
+            raise RuntimeError('Cloudinary trả về file rỗng.')
+        return FileResponse(restore,filename=name,media_type='application/zip',background=BackgroundTask(lambda: shutil.rmtree(restore_dir,ignore_errors=True)))
+    except Exception as e:
+        restore.unlink(missing_ok=True); shutil.rmtree(restore_dir,ignore_errors=True)
+        raise HTTPException(502,f'Không tải được ZIP từ Cloudinary: {e}')
 
 
 @app.post('/api/button/catalog/row/{skin_id}')
