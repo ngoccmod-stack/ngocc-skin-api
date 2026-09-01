@@ -184,7 +184,9 @@
           "resourcesVersion": "1.63.1"
         }
       ],
-      "skinCount": 15
+      "skinCount": 15,
+      "titleSize": 11.0,
+      "titleColor": "#ffff00"
     },
     {
       "heroId": "107",
