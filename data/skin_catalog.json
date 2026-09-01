@@ -2398,13 +2398,10 @@
         },
         {
           "skinId": "13311",
-          "skinName": "[ ERROR ]",
+          "skinName": "Xạ thần Kagutsuchi",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/aeabcb95ae4c3df43b90c0dba0fa9fdc6593d684d781a1.jpg",
           "supported": true,
-          "resourcesVersion": "1.63.1",
-          "titleSize": 12.5,
-          "titleColor": "#ff0000",
-          "imageMissing": false
+          "resourcesVersion": "1.63.1"
         },
         {
           "skinId": "13312",
