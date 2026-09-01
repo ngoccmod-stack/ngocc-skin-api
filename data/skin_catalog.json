@@ -1091,11 +1091,11 @@
         },
         {
           "skinId": "11620",
-          "skinName": "Bình Minh Tận Thế",
+          "skinName": "[ ERROR ]",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/11620.jpg",
           "supported": true,
           "resourcesVersion": "1.63.1",
-          "titleSize": 13.0,
+          "titleSize": 12.5,
           "titleColor": "#ff0000",
           "imageMissing": false
         },
