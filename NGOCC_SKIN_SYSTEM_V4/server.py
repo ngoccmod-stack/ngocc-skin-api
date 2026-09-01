@@ -45,6 +45,7 @@ BUTTON_DIR = BUTTON_DATA / "Button"
 BUTTON_MODS_DIR = BUTTON_DATA / "ButtonMods"
 BUTTON_MOD_UPLOAD_DIR = BUTTON_DATA / "ButtonModUploads"
 BUTTON_MOD_CHUNK_DIR = BUTTON_MOD_UPLOAD_DIR / "chunks"
+BUTTON_CATALOG_CACHE = BUTTON_DATA / "button_catalog.json"
 CLOUDINARY_FOLDER = os.environ.get("NGOCC_CLOUDINARY_FOLDER", "ngocc_resources").strip("/")
 BUTTON_ENGINE_READY = BUTTON_DATA / ".engine_ready"
 BUTTON_OVERRIDE_MARKER = BUTTON_DATA / ".cloud_override"
