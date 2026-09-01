@@ -1057,11 +1057,29 @@ def _button_mods_cloud_public_id(skin_id: str | None = None) -> str:
 
 
 def _button_mod_secure_url(skin_id: str) -> str:
-    if not cloudinary_ready(): return ''
-    try:
-        return cloudinary.utils.cloudinary_url(_button_mods_cloud_public_id(skin_id), resource_type='raw', type='upload', secure=True)[0]
-    except Exception:
+    """Return a Cloudinary URL usable for button ZIP delivery.
+
+    Some Cloudinary product environments can restrict direct raw delivery, which
+    makes a plain /raw/upload URL return 401 even though the upload succeeded.
+    Use the SDK's time-limited signed download URL first; keep the normal delivery
+    URL only as a fallback for environments where public raw delivery is enabled.
+    """
+    if not cloudinary_ready():
         return ''
+    public_id = _button_mods_cloud_public_id(skin_id)
+    try:
+        # private_download_url creates a signed API download request and works for
+        # raw assets while keeping the API secret on Render only.
+        return cloudinary.utils.private_download_url(
+            public_id, 'zip', resource_type='raw', type='upload', attachment=True
+        )
+    except Exception:
+        try:
+            return cloudinary.utils.cloudinary_url(
+                public_id, resource_type='raw', type='upload', secure=True, sign_url=True
+            )[0]
+        except Exception:
+            return ''
 
 
 def _persist_button_mod_file_cloud(path: Path, skin_id: str) -> str:
@@ -1096,8 +1114,10 @@ def _restore_button_mods_cloud() -> bool:
     if any(BUTTON_MODS_DIR.rglob('*.zip')): return True
     url=''
     if cloudinary_ready():
-        try: url=cloudinary.utils.cloudinary_url(_button_mods_cloud_public_id(), resource_type='raw', type='upload', secure=True)[0]
-        except Exception: url=''
+        try: url=cloudinary.utils.private_download_url(_button_mods_cloud_public_id(), 'zip', resource_type='raw', type='upload', attachment=True)
+        except Exception:
+            try: url=cloudinary.utils.cloudinary_url(_button_mods_cloud_public_id(), resource_type='raw', type='upload', secure=True, sign_url=True)[0]
+            except Exception: url=''
     if not url: return False
     try:
         tmp=UPLOADS/'button_mods_restore.zip'
@@ -1428,9 +1448,16 @@ def button_download_ready(skin_id: str):
     url=''
     if cloudinary_ready():
         try:
-            url=cloudinary.utils.cloudinary_url(cloud_public_id, resource_type='raw', type='upload', secure=True)[0]
+            url=cloudinary.utils.private_download_url(
+                cloud_public_id, 'zip', resource_type='raw', type='upload', attachment=True
+            )
         except Exception:
-            url=''
+            try:
+                url=cloudinary.utils.cloudinary_url(
+                    cloud_public_id, resource_type='raw', type='upload', secure=True, sign_url=True
+                )[0]
+            except Exception:
+                url=''
     if not url:
         raise HTTPException(404,'File ZIP nút bấm không còn trên server/Cloudinary.')
     restore_dir=BUTTON_MOD_UPLOAD_DIR/f'download_{uuid.uuid4().hex}'
