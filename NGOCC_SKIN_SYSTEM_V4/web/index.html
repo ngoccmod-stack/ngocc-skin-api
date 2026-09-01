@@ -648,6 +648,7 @@ body.editmode .button-admin-panel{display:block}
 @media(max-width:350px){.skin-grid-hero{grid-template-columns:repeat(3,minmax(0,1fr))}}
 
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body>
 <header class="topbar">
@@ -4862,80 +4863,97 @@ window.saveButtonRow=async function(skinId){
 
 window.uploadButtonModsPackage=async function(input){
   if(!(isOwner()&&editMode)){if(input)input.value='';return;}
-  const file=input?.files?.[0];if(!file)return;
+  const file=input?.files?.[0]; if(!file)return;
   const status=document.getElementById('buttonAdminStatus');
   const setStatus=t=>{if(status)status.textContent=t;};
   try{
+    if(typeof JSZip==='undefined') throw new Error('Không tải được thư viện đọc ZIP. Hãy tải lại trang rồi thử lại.');
     if(file.size<=0) throw new Error('File ZIP rỗng.');
-    setStatus(`⏳ Đang xin quyền upload Cloudinary...`);
-    const sr=await fetch(skinApiUrl('/api/button/mods/upload/cloudinary/sign'),{method:'GET',cache:'no-store'});
+    setStatus('⏳ Đang đọc ZIP tổng trên thiết bị...');
+    const outer=await JSZip.loadAsync(file,{checkCRC32:false});
+    const entries=Object.values(outer.files||{}).filter(x=>!x.dir && String(x.name||'').toLowerCase().endsWith('.zip'));
+    if(!entries.length) throw new Error('ZIP tổng không chứa ZIP nút bấm nào.');
+    setStatus(`📦 Đã tìm thấy ${entries.length} ZIP con • đang đối chiếu Catalog...`);
+
+    const filenames=entries.map(x=>x.name.split('/').pop());
+    const sr=await fetch(skinApiUrl('/api/button/mods/upload/cloudinary/sign-batch'),{
+      method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',
+      body:JSON.stringify({filenames})
+    });
     const sd=await sr.json().catch(()=>({}));
-    if(!sr.ok)throw new Error(sd?.detail||sd?.error||('HTTP '+sr.status));
-    if(!sd.apiKey||!sd.cloudName||!sd.signature||!sd.timestamp||!sd.publicId)
-      throw new Error('Cloudinary trả về thông tin ký upload không đầy đủ.');
+    if(!sr.ok) throw new Error(sd?.detail||sd?.error||('HTTP '+sr.status));
+    const signByName=new Map((sd.items||[]).map(x=>[String(x.filename),x]));
+    const jobs=[]; let unmatched=0;
+    for(const entry of entries){
+      const fn=entry.name.split('/').pop();
+      const meta=signByName.get(fn);
+      if(meta?.matched) jobs.push({entry,meta,filename:fn}); else unmatched++;
+    }
+    if(!jobs.length) throw new Error(`Không có ZIP con nào khớp Catalog. ${unmatched} file chưa ghép được.`);
 
-    // Cloudinary yêu cầu chunked upload cho file >100 MB.
-    // Dùng 20 MB/chunk, retry từng chunk tối đa 3 lần.
-    const CHUNK_SIZE=20*1024*1024;
-    const total=Math.ceil(file.size/CHUNK_SIZE);
-    const uploadId=(crypto?.randomUUID?crypto.randomUUID():('ngocc-'+Date.now()+'-'+Math.random().toString(16).slice(2)));
-    let finalResponse=null;
-
-    for(let i=0;i<total;i++){
-      const startByte=i*CHUNK_SIZE;
-      const endByte=Math.min(file.size,startByte+CHUNK_SIZE)-1;
-      const chunk=file.slice(startByte,endByte+1);
-      let ok=false,lastErr='';
-      for(let attempt=1;attempt<=3&&!ok;attempt++){
+    const uploaded=[]; const failed=[]; let done=0;
+    // Cloudinary Free has a 10 MB raw-file limit, so each nested skin ZIP is
+    // uploaded separately. The current tool produces ZIPs well below that size.
+    const MAX_RAW=10*1024*1024;
+    const queue=jobs.slice();
+    const worker=async()=>{
+      while(queue.length){
+        const job=queue.shift(); if(!job) return;
         try{
-          setStatus(`⏳ Upload Cloudinary... ${i+1}/${total} (${Math.round((startByte/file.size)*100)}%)`+(attempt>1?` • thử lại ${attempt}/3`:'')); 
+          const blob=await job.entry.async('blob');
+          if(blob.size>MAX_RAW){
+            throw new Error(`ZIP con ${job.filename} lớn ${(blob.size/1048576).toFixed(1)} MB, vượt giới hạn Cloudinary Free 10 MB.`);
+          }
           const fd=new FormData();
-          fd.append('file',chunk,file.name);
-          fd.append('api_key',sd.apiKey);
-          fd.append('timestamp',String(sd.timestamp));
-          fd.append('signature',sd.signature);
-          fd.append('public_id',sd.publicId);
-          const cr=await fetch(`https://api.cloudinary.com/v1_1/${encodeURIComponent(sd.cloudName)}/raw/upload`,{
-            method:'POST',
-            headers:{
-              'X-Unique-Upload-Id':uploadId,
-              'Content-Range':`bytes ${startByte}-${endByte}/${file.size}`
-            },
-            body:fd,
-            cache:'no-store'
+          fd.append('file',blob,job.filename);
+          fd.append('api_key',job.meta.apiKey);
+          fd.append('timestamp',String(job.meta.timestamp));
+          fd.append('signature',job.meta.signature);
+          fd.append('public_id',job.meta.publicId);
+          const cr=await fetch(`https://api.cloudinary.com/v1_1/${encodeURIComponent(job.meta.cloudName)}/raw/upload`,{
+            method:'POST',body:fd,cache:'no-store'
           });
           const cd=await cr.json().catch(()=>({}));
-          if(!cr.ok) throw new Error(cd?.error?.message||cd?.detail||(`Cloudinary HTTP ${cr.status}`));
-          finalResponse=cd;
-          ok=true;
+          if(!cr.ok) throw new Error(cd?.error?.message||`Cloudinary HTTP ${cr.status}`);
+          uploaded.push({skinId:job.meta.skinId,filename:job.filename,publicId:job.meta.publicId});
         }catch(e){
-          lastErr=e?.message||String(e);
-          if(attempt<3) await new Promise(r=>setTimeout(r,1200*attempt));
+          failed.push({filename:job.filename,error:e?.message||String(e)});
+        }finally{
+          done++;
+          const pct=Math.round(done/jobs.length*100);
+          setStatus(`⏳ Upload ZIP con lên Cloudinary... ${done}/${jobs.length} (${pct}%) • ✅ ${uploaded.length} • ❌ ${failed.length}`);
         }
       }
-      if(!ok) throw new Error(`Upload Cloudinary thất bại ở phần ${i+1}/${total}: ${lastErr}`);
-    }
+    };
+    await Promise.all([worker(),worker(),worker()]);
 
-    if(!finalResponse || finalResponse.done===false)
-      throw new Error('Cloudinary chưa xác nhận hoàn tất upload.');
-    const publicId=finalResponse.public_id||sd.publicId;
-    const secureUrl=finalResponse.secure_url||'';
-    setStatus('⏳ Upload xong Cloudinary • đang đối chiếu tên file ZIP...');
-    const pr=await fetch(skinApiUrl('/api/button/mods/upload/cloudinary'),{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({secureUrl,publicId,filename:file.name}),
-      cache:'no-store'
-    });
-    const d=await pr.json().catch(()=>({}));
-    if(!pr.ok)throw new Error(d?.detail||d?.error||('HTTP '+pr.status));
-    ngoccButtonCatalog=d;ngoccButtonCatalog.ready=true;renderButtonRows();
-    setStatus(`✅ Đã ghép ${d.matchedCount||0} ZIP • Chưa ghép ${d.unmatchedCount||0} • ZIP lỗi ${d.badCount||0}`);
-    showToast((d.unmatchedCount||0)||((d.badCount||0)>0)?'⚠️ Có file chưa ghép được.':'✅ Đã cập nhật ZIP Nút Bấm.',(d.unmatchedCount||0)||((d.badCount||0)>0)?'error':'success');
+    if(uploaded.length){
+      setStatus(`⏳ Đã upload ${uploaded.length}/${jobs.length} ZIP • đang lưu Catalog...`);
+      const rr=await fetch(skinApiUrl('/api/button/mods/upload/cloudinary/register'),{
+        method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',
+        body:JSON.stringify({uploads:uploaded})
+      });
+      const rd=await rr.json().catch(()=>({}));
+      if(!rr.ok) throw new Error(rd?.detail||rd?.error||('HTTP '+rr.status));
+      ngoccButtonCatalog=rd; ngoccButtonCatalog.ready=true; renderButtonRows();
+      const matched=rd.matchedCount||0;
+      const rej=(rd.rejectedCount||0)+unmatched+failed.length;
+      setStatus(`✅ Đã lưu ${matched} ZIP • ⚠️ Chưa ghép/thất bại ${rej}`);
+      if(unmatched||failed.length||rd.rejectedCount){
+        showToast(`⚠️ Đã lưu ${matched} ZIP, còn ${rej} file chưa ghép/đang lỗi.`, 'error');
+      }else{
+        showToast('✅ Đã cập nhật toàn bộ ZIP Nút Bấm.', 'success');
+      }
+      if((failed.length||unmatched)>0){
+        console.warn('Button package upload details',{unmatched,failed});
+      }
+    }else{
+      throw new Error(`Không upload được ZIP nào. ${unmatched} file không khớp, ${failed.length} file lỗi.`);
+    }
   }catch(e){
     setStatus('❌ '+(e?.message||e));
     showToast('❌ '+(e?.message||e),'error');
-    console.error('Cloudinary button upload:',e);
+    console.error('Cloudinary button package upload:',e);
   }finally{input.value='';}
 };
 window.uploadButtonResources=async function(input){

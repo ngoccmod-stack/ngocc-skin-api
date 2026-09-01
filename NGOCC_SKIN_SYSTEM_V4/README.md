@@ -35,3 +35,7 @@ AutoMod gốc là CLI và có các nhánh xử lý đặc biệt. V2 chạy mộ
 - Nakroth killboard: Không
 
 Builder dùng một workspace riêng để không sửa Resources master.
+
+
+## Button ZIP upload (V13)
+The web upload button expects one outer ZIP containing many per-skin ZIP files. The browser reads the outer ZIP locally, matches each inner ZIP name to the saved button catalog, and uploads each inner ZIP directly to Cloudinary as an individual `raw` asset. This avoids the Cloudinary Free 10 MB raw-file limit on the outer archive and avoids long uploads through Render. The catalog stores the original inner ZIP filename so downloads keep the exact filename supplied by the uploader.

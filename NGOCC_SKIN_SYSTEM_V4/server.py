@@ -827,17 +827,24 @@ def _match_button_mod_file(filename: str, rows: list[dict]) -> dict | None:
 
 
 def _button_update_rows_with_files(rows: list[dict]) -> list[dict]:
+    # A button ZIP can live only on Cloudinary after a Render restart. Keep the
+    # original upload filename in the catalog and mark it ready when either a
+    # local copy or the corresponding Cloudinary asset is known.
     for r in rows:
-        p = BUTTON_MODS_DIR / str(r.get('id')) / (str(r.get('downloadFilename') or ''))
-        # Also support the legacy flat layout.
-        flat = BUTTON_MODS_DIR / str(r.get('downloadFilename') or '')
-        found = p if p.is_file() else flat if flat.is_file() else None
+        name = str(r.get('downloadFilename') or '').strip()
+        p = BUTTON_MODS_DIR / str(r.get('id')) / name
+        flat = BUTTON_MODS_DIR / name
+        found = p if name and p.is_file() else flat if name and flat.is_file() else None
+        cloud_id = str(r.get('buttonCloudPublicId') or '').strip()
         if found:
             r['downloadReady']=True
             r['downloadFilename']=found.name
+        elif cloud_id and cloudinary_ready() and name:
+            r['downloadReady']=True
         else:
             r['downloadReady']=False
-            r.pop('downloadFilename', None)
+            if not found and not cloud_id:
+                r.pop('downloadFilename', None)
     return rows
 
 
@@ -887,19 +894,106 @@ def _cloudinary_credentials() -> tuple[str, str]:
     return api_key, cloud_name
 
 
+@app.post('/api/button/mods/upload/cloudinary/sign-batch')
+async def button_mod_cloudinary_sign_batch(payload: dict[str, Any]):
+    """Sign one Cloudinary raw upload per nested ZIP in the user's package.
+
+    The outer package is never uploaded to Cloudinary. Each inner skin ZIP is
+    uploaded directly from the browser as its own raw asset, which keeps every
+    asset under the 10 MB raw-file limit of the Cloudinary Free plan.
+    """
+    if not cloudinary_ready():
+        raise HTTPException(503, 'Render chưa có CLOUDINARY_URL.')
+    filenames = payload.get('filenames') or []
+    if not isinstance(filenames, list):
+        raise HTTPException(400, 'filenames phải là danh sách.')
+    if len(filenames) > 500:
+        raise HTTPException(400, 'Gói ZIP có quá nhiều file ZIP con (tối đa 500).')
+    try:
+        import time as _time
+        api_key, cloud_name = _cloudinary_credentials()
+        api_secret = cloudinary.config().api_secret
+        if not api_secret:
+            raise RuntimeError('Không đọc được API Secret từ CLOUDINARY_URL.')
+        cat = _button_catalog(refresh=False)
+        rows = [dict(r) for r in cat.get('rows', [])]
+        timestamp = int(_time.time())
+        items=[]
+        for raw_name in filenames:
+            filename = Path(str(raw_name or '')).name
+            if not filename.lower().endswith('.zip'):
+                items.append({'filename': filename, 'matched': False, 'reason': 'Không phải ZIP'})
+                continue
+            row = _match_button_mod_file(filename, rows)
+            if not row:
+                items.append({'filename': filename, 'matched': False, 'reason': 'Không tìm thấy skin tương ứng'})
+                continue
+            sid = str(row['id'])
+            public_id = _button_mods_cloud_public_id(sid)
+            params={'public_id':public_id,'timestamp':timestamp}
+            signature=cloudinary.utils.api_sign_request(params, api_secret)
+            items.append({'filename':filename,'matched':True,'skinId':sid,'hero':row.get('hero',''),'name':row.get('name',''),
+                          'cloudName':cloud_name,'apiKey':api_key,'timestamp':timestamp,'signature':signature,'publicId':public_id})
+        return {'ok':True,'timestamp':timestamp,'items':items}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(500, f'Không tạo được chữ ký Cloudinary: {e}')
+
+
+@app.post('/api/button/mods/upload/cloudinary/register')
+async def button_mod_cloudinary_register(payload: dict[str, Any]):
+    """Register successfully uploaded per-skin Cloudinary assets without
+    downloading the outer ZIP to Render."""
+    if not cloudinary_ready():
+        raise HTTPException(503, 'Render chưa có CLOUDINARY_URL.')
+    uploads = payload.get('uploads') or []
+    if not isinstance(uploads, list):
+        raise HTTPException(400, 'uploads phải là danh sách.')
+    cat = _button_catalog(refresh=False)
+    rows = [dict(r) for r in cat.get('rows', [])]
+    by_id = {str(r.get('id')): r for r in rows}
+    matched=[]; rejected=[]
+    for item in uploads:
+        sid=str(item.get('skinId') or '').strip()
+        filename=Path(str(item.get('filename') or '')).name
+        public_id=str(item.get('publicId') or '').strip()
+        if not sid or not filename.lower().endswith('.zip'):
+            rejected.append({'filename':filename,'reason':'Dữ liệu upload không hợp lệ.'}); continue
+        row=by_id.get(sid)
+        expected=_button_mods_cloud_public_id(sid)
+        if not row:
+            rejected.append({'filename':filename,'reason':f'Không có skin ID {sid}.'}); continue
+        if public_id != expected:
+            rejected.append({'filename':filename,'reason':'public_id Cloudinary không khớp skin ID.'}); continue
+        row['downloadReady']=True
+        row['downloadFilename']=filename
+        row['buttonCloudPublicId']=public_id
+        matched.append({'id':sid,'name':row.get('name',''),'filename':filename,'publicId':public_id})
+    _save_button_cache({'ready':bool(rows),'count':len(rows),'rows':rows})
+    cloud_warn=_persist_button_catalog_cloud()
+    # Do not rebuild or upload a giant aggregate archive. Individual ZIPs are
+    # already persisted on Cloudinary under their skin IDs.
+    return {'ok':True,'matched':matched,'matchedCount':len(matched),
+            'rejected':rejected,'rejectedCount':len(rejected),
+            'unmatchedCount':len(rejected), 'cloudWarning':cloud_warn,
+            **_button_catalog(refresh=False)}
+
+
 @app.get('/api/button/mods/upload/cloudinary/sign')
-def button_mod_cloudinary_sign():
+def button_mod_cloudinary_sign(skinId: str | None = None):
     """Create a short-lived signed Cloudinary upload request.
 
-    The API secret never leaves Render. The browser uploads the large ZIP directly
-    to Cloudinary, avoiding Render's slow/free-instance request timeout.
+    If skinId is supplied, the upload is assigned permanently to that skin.
+    Otherwise the legacy random incoming public_id is returned for backwards
+    compatibility with older frontends.
     """
     if not cloudinary_ready():
         raise HTTPException(503, 'Render chưa có CLOUDINARY_URL.')
     try:
         import time as _time
         api_key, cloud_name = _cloudinary_credentials()
-        public_id = f"{CLOUDINARY_FOLDER}/incoming/button_{uuid.uuid4().hex}.zip"
+        public_id = _button_mods_cloud_public_id(skinId) if skinId else f"{CLOUDINARY_FOLDER}/incoming/button_{uuid.uuid4().hex}.zip"
         timestamp = int(_time.time())
         params = {'public_id': public_id, 'timestamp': timestamp}
         api_secret = cloudinary.config().api_secret
@@ -1036,9 +1130,9 @@ def _persist_button_resources_cloud() -> str:
                 if not base.is_dir(): continue
                 for f in base.rglob('*'):
                     if f.is_file(): z.write(f, f'{base_name}/{f.relative_to(base).as_posix()}')
-            if BUTTON_MODS_DIR.is_dir():
-                for f in BUTTON_MODS_DIR.rglob('*.zip'):
-                    z.write(f, f'ButtonMods/{f.relative_to(BUTTON_MODS_DIR).as_posix()}')
+            # ButtonMods are stored as individual Cloudinary raw assets by skin ID;
+            # do not pack them into the Resources aggregate (which can exceed the
+            # Cloudinary Free 10 MB raw-file limit).
             if BUTTON_CATALOG_CACHE.is_file(): z.write(BUTTON_CATALOG_CACHE, 'button_catalog.json')
         if cloudinary_ready():
             cloudinary.uploader.upload(str(local), resource_type='raw', public_id=_button_cloud_public_id(), overwrite=True)
@@ -1241,7 +1335,7 @@ async def _button_save_uploaded_archive(raw: Path) -> dict:
             # Remove older attached ZIPs for this ID to keep one canonical download.
             for old in dest_dir.glob('*.zip'):
                 if old != dest: old.unlink(missing_ok=True)
-            row['downloadReady']=True; row['downloadFilename']=safe_name
+            row['downloadReady']=True; row['downloadFilename']=safe_name; row['buttonCloudPublicId']=_button_mods_cloud_public_id(sid)
             matched.append({'id':sid,'name':row.get('name',''),'filename':safe_name})
             cloud_warn = _persist_button_mod_file_cloud(dest, sid)
             if cloud_warn:
@@ -1330,7 +1424,13 @@ def button_download_ready(skin_id: str):
 
     # Render filesystem có thể mất sau restart/spin-down. Khôi phục đúng ZIP
     # theo ID từ Cloudinary, nhưng vẫn trả tên file gốc đã upload trong Catalog.
-    url=_button_mod_secure_url(skin_id)
+    cloud_public_id=str(row.get('buttonCloudPublicId') or '').strip() or _button_mods_cloud_public_id(skin_id)
+    url=''
+    if cloudinary_ready():
+        try:
+            url=cloudinary.utils.cloudinary_url(cloud_public_id, resource_type='raw', type='upload', secure=True)[0]
+        except Exception:
+            url=''
     if not url:
         raise HTTPException(404,'File ZIP nút bấm không còn trên server/Cloudinary.')
     restore_dir=BUTTON_MOD_UPLOAD_DIR/f'download_{uuid.uuid4().hex}'
