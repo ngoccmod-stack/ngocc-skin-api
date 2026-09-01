@@ -872,6 +872,87 @@ def _restore_button_catalog_cloud() -> bool:
         return False
 
 
+def _cloudinary_credentials() -> tuple[str, str]:
+    """Return (api_key, cloud_name) from CLOUDINARY_URL without exposing the secret."""
+    raw = str(os.environ.get("CLOUDINARY_URL", "")).strip()
+    if not raw.startswith("cloudinary://"):
+        raise RuntimeError("CLOUDINARY_URL chưa được cấu hình trên Render.")
+    from urllib.parse import urlparse
+    u = urlparse(raw)
+    api_key = u.username or ""
+    cloud_name = u.hostname or ""
+    if not api_key or not cloud_name:
+        raise RuntimeError("CLOUDINARY_URL không hợp lệ.")
+    return api_key, cloud_name
+
+
+@app.get('/api/button/mods/upload/cloudinary/sign')
+def button_mod_cloudinary_sign():
+    """Create a short-lived signed Cloudinary upload request.
+
+    The API secret never leaves Render. The browser uploads the large ZIP directly
+    to Cloudinary, avoiding Render's slow/free-instance request timeout.
+    """
+    if not cloudinary_ready():
+        raise HTTPException(503, 'Render chưa có CLOUDINARY_URL.')
+    try:
+        import time as _time
+        api_key, cloud_name = _cloudinary_credentials()
+        public_id = f"{CLOUDINARY_FOLDER}/incoming/button_{uuid.uuid4().hex}.zip"
+        timestamp = int(_time.time())
+        params = {'public_id': public_id, 'timestamp': timestamp}
+        api_secret = cloudinary.config().api_secret
+        if not api_secret:
+            raise RuntimeError('Không đọc được API Secret từ CLOUDINARY_URL.')
+        signature = cloudinary.utils.api_sign_request(params, api_secret)
+        return {'ok': True, 'cloudName': cloud_name, 'apiKey': api_key,
+                'timestamp': timestamp, 'signature': signature, 'publicId': public_id}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(500, f'Không tạo được chữ ký Cloudinary: {e}')
+
+
+@app.post('/api/button/mods/upload/cloudinary')
+async def button_mod_cloudinary_finalize(payload: dict[str, Any]):
+    """Download the already-uploaded Cloudinary ZIP and run the normal matcher."""
+    if not cloudinary_ready():
+        raise HTTPException(503, 'Render chưa có CLOUDINARY_URL.')
+    url = str(payload.get('secureUrl') or '').strip()
+    public_id = str(payload.get('publicId') or '').strip()
+    filename = Path(str(payload.get('filename') or 'button_mods.zip')).name
+    if not filename.lower().endswith('.zip'):
+        raise HTTPException(400, 'Chỉ nhận file ZIP chứa các ZIP nút bấm thành phẩm.')
+    if not url and public_id:
+        try:
+            url = cloudinary.utils.cloudinary_url(public_id, resource_type='raw', type='upload', secure=True)[0]
+        except Exception:
+            url = ''
+    if not url:
+        raise HTTPException(400, 'Thiếu secureUrl/publicId của Cloudinary.')
+    raw = BUTTON_MOD_UPLOAD_DIR / f'cloudinary_{uuid.uuid4().hex}.zip'
+    try:
+        r = requests.get(url, headers=HEADERS, timeout=900, stream=True)
+        r.raise_for_status()
+        with raw.open('wb') as f:
+            for ch in r.iter_content(1024 * 1024):
+                if ch:
+                    f.write(ch)
+        if not raw.is_file() or raw.stat().st_size <= 0:
+            raise RuntimeError('Cloudinary trả về file rỗng.')
+        result = _button_save_uploaded_archive(raw)
+        result['cloudinaryUrl'] = url
+        return result
+    except zipfile.BadZipFile:
+        raise HTTPException(400, 'File Cloudinary không phải ZIP hợp lệ.')
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(500, f'Xử lý ZIP Nút Bấm từ Cloudinary thất bại: {e}')
+    finally:
+        raw.unlink(missing_ok=True)
+
+
 def _button_mods_cloud_public_id() -> str:
     return f"{CLOUDINARY_FOLDER}/button_mods.zip"
 
