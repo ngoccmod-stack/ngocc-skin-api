@@ -184,9 +184,7 @@
           "resourcesVersion": "1.63.1"
         }
       ],
-      "skinCount": 15,
-      "titleSize": 11.0,
-      "titleColor": "#ffffff"
+      "skinCount": 15
     },
     {
       "heroId": "107",
@@ -1096,7 +1094,10 @@
           "skinName": "Bình Minh Tận Thế",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/11620.jpg",
           "supported": true,
-          "resourcesVersion": "1.63.1"
+          "resourcesVersion": "1.63.1",
+          "titleSize": 13.0,
+          "titleColor": "#ff0000",
+          "imageMissing": false
         },
         {
           "skinId": "11621",
