@@ -4866,6 +4866,34 @@ window.uploadButtonModsPackage=async function(input){
   const file=input?.files?.[0]; if(!file)return;
   const status=document.getElementById('buttonAdminStatus');
   const setStatus=t=>{if(status)status.textContent=t;};
+  const uploadOne=({blob,meta,filename})=>new Promise((resolve,reject)=>{
+    const xhr=new XMLHttpRequest();
+    const url=`https://api.cloudinary.com/v1_1/${encodeURIComponent(meta.cloudName)}/raw/upload`;
+    let finished=false;
+    const fail=(msg)=>{if(finished)return;finished=true;reject(new Error(msg||'Cloudinary upload thất bại.'));};
+    xhr.open('POST',url,true);
+    xhr.responseType='text';
+    xhr.timeout=10*60*1000;
+    xhr.upload.onprogress=e=>{
+      if(e.lengthComputable){ meta._progress=e.loaded/e.total; }
+    };
+    xhr.onerror=()=>fail('Không kết nối được Cloudinary (CORS/mạng).');
+    xhr.ontimeout=()=>fail('Cloudinary upload timeout (>10 phút).');
+    xhr.onload=()=>{
+      let data={}; try{data=JSON.parse(xhr.responseText||'{}')}catch(_e){}
+      if(xhr.status>=200&&xhr.status<300){finished=true;resolve(data);return;}
+      const msg=data?.error?.message || xhr.getResponseHeader('X-Cld-Error') || `Cloudinary HTTP ${xhr.status}`;
+      fail(msg);
+    };
+    const fd=new FormData();
+    fd.append('file',blob,filename);
+    fd.append('api_key',meta.apiKey);
+    fd.append('timestamp',String(meta.timestamp));
+    fd.append('signature',meta.signature);
+    fd.append('public_id',meta.publicId);
+    fd.append('overwrite','true');
+    xhr.send(fd);
+  });
   try{
     if(typeof JSZip==='undefined') throw new Error('Không tải được thư viện đọc ZIP. Hãy tải lại trang rồi thử lại.');
     if(file.size<=0) throw new Error('File ZIP rỗng.');
@@ -4892,40 +4920,36 @@ window.uploadButtonModsPackage=async function(input){
     if(!jobs.length) throw new Error(`Không có ZIP con nào khớp Catalog. ${unmatched} file chưa ghép được.`);
 
     const uploaded=[]; const failed=[]; let done=0;
-    // Cloudinary Free has a 10 MB raw-file limit, so each nested skin ZIP is
-    // uploaded separately. The current tool produces ZIPs well below that size.
-    const MAX_RAW=10*1024*1024;
     const queue=jobs.slice();
+    // 2 workers is intentional: stable on mobile networks and avoids creating
+    // a burst of 77 simultaneous Cloudinary requests.
     const worker=async()=>{
       while(queue.length){
-        const job=queue.shift(); if(!job) return;
+        const job=queue.shift(); if(!job)return;
         try{
           const blob=await job.entry.async('blob');
-          if(blob.size>MAX_RAW){
-            throw new Error(`ZIP con ${job.filename} lớn ${(blob.size/1048576).toFixed(1)} MB, vượt giới hạn Cloudinary Free 10 MB.`);
+          const MAX_RAW=10*1024*1024;
+          if(blob.size>MAX_RAW) throw new Error(`ZIP con lớn ${(blob.size/1048576).toFixed(1)} MB, vượt giới hạn Cloudinary Free 10 MB.`);
+          let lastErr='';
+          for(let retry=0;retry<3;retry++){
+            try{
+              await uploadOne({blob,meta:job.meta,filename:job.filename});
+              uploaded.push({skinId:job.meta.skinId,filename:job.filename,publicId:job.meta.publicId});
+              lastErr=''; break;
+            }catch(e){
+              lastErr=e?.message||String(e);
+              if(retry<2) await new Promise(r=>setTimeout(r,1200*(retry+1)));
+            }
           }
-          const fd=new FormData();
-          fd.append('file',blob,job.filename);
-          fd.append('api_key',job.meta.apiKey);
-          fd.append('timestamp',String(job.meta.timestamp));
-          fd.append('signature',job.meta.signature);
-          fd.append('public_id',job.meta.publicId);
-          const cr=await fetch(`https://api.cloudinary.com/v1_1/${encodeURIComponent(job.meta.cloudName)}/raw/upload`,{
-            method:'POST',body:fd,cache:'no-store'
-          });
-          const cd=await cr.json().catch(()=>({}));
-          if(!cr.ok) throw new Error(cd?.error?.message||`Cloudinary HTTP ${cr.status}`);
-          uploaded.push({skinId:job.meta.skinId,filename:job.filename,publicId:job.meta.publicId});
-        }catch(e){
-          failed.push({filename:job.filename,error:e?.message||String(e)});
-        }finally{
+          if(lastErr) failed.push({filename:job.filename,error:lastErr});
+        }catch(e){failed.push({filename:job.filename,error:e?.message||String(e)});}
+        finally{
           done++;
-          const pct=Math.round(done/jobs.length*100);
-          setStatus(`⏳ Upload ZIP con lên Cloudinary... ${done}/${jobs.length} (${pct}%) • ✅ ${uploaded.length} • ❌ ${failed.length}`);
+          setStatus(`⏳ Upload Cloudinary... ${done}/${jobs.length} (${Math.round(done/jobs.length*100)}%) • ✅ ${uploaded.length} • ❌ ${failed.length}`);
         }
       }
     };
-    await Promise.all([worker(),worker(),worker()]);
+    await Promise.all([worker(),worker()]);
 
     if(uploaded.length){
       setStatus(`⏳ Đã upload ${uploaded.length}/${jobs.length} ZIP • đang lưu Catalog...`);
@@ -4940,15 +4964,13 @@ window.uploadButtonModsPackage=async function(input){
       const rej=(rd.rejectedCount||0)+unmatched+failed.length;
       setStatus(`✅ Đã lưu ${matched} ZIP • ⚠️ Chưa ghép/thất bại ${rej}`);
       if(unmatched||failed.length||rd.rejectedCount){
-        showToast(`⚠️ Đã lưu ${matched} ZIP, còn ${rej} file chưa ghép/đang lỗi.`, 'error');
-      }else{
-        showToast('✅ Đã cập nhật toàn bộ ZIP Nút Bấm.', 'success');
-      }
-      if((failed.length||unmatched)>0){
-        console.warn('Button package upload details',{unmatched,failed});
-      }
+        const firstErr=failed[0]?.error?` • Lỗi mẫu: ${failed[0].error}`:'';
+        showToast(`⚠️ Đã lưu ${matched} ZIP, còn ${rej} file chưa ghép/lỗi${firstErr}`,'error');
+        console.warn('Button package upload details',{unmatched,failed,rejected:rd.rejected});
+      }else showToast('✅ Đã cập nhật toàn bộ ZIP Nút Bấm.','success');
     }else{
-      throw new Error(`Không upload được ZIP nào. ${unmatched} file không khớp, ${failed.length} file lỗi.`);
+      const sample=failed.slice(0,3).map(x=>`${x.filename}: ${x.error}`).join(' | ');
+      throw new Error(`Không upload được ZIP nào. ${unmatched} file không khớp, ${failed.length} file lỗi.${sample?` Lỗi: ${sample}`:''}`);
     }
   }catch(e){
     setStatus('❌ '+(e?.message||e));

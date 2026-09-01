@@ -930,7 +930,7 @@ async def button_mod_cloudinary_sign_batch(payload: dict[str, Any]):
                 continue
             sid = str(row['id'])
             public_id = _button_mods_cloud_public_id(sid)
-            params={'public_id':public_id,'timestamp':timestamp}
+            params={'public_id':public_id,'timestamp':timestamp,'overwrite':'true'}
             signature=cloudinary.utils.api_sign_request(params, api_secret)
             items.append({'filename':filename,'matched':True,'skinId':sid,'hero':row.get('hero',''),'name':row.get('name',''),
                           'cloudName':cloud_name,'apiKey':api_key,'timestamp':timestamp,'signature':signature,'publicId':public_id})
