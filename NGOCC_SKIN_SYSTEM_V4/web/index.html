@@ -4862,30 +4862,82 @@ window.saveButtonRow=async function(skinId){
 
 window.uploadButtonModsPackage=async function(input){
   if(!(isOwner()&&editMode)){if(input)input.value='';return;}
-  const file=input?.files?.[0];if(!file)return; const status=document.getElementById('buttonAdminStatus');
+  const file=input?.files?.[0];if(!file)return;
+  const status=document.getElementById('buttonAdminStatus');
+  const setStatus=t=>{if(status)status.textContent=t;};
   try{
-    if(status)status.textContent='⏳ Đang kết nối Cloudinary...';
+    if(file.size<=0) throw new Error('File ZIP rỗng.');
+    setStatus(`⏳ Đang xin quyền upload Cloudinary...`);
     const sr=await fetch(skinApiUrl('/api/button/mods/upload/cloudinary/sign'),{method:'GET',cache:'no-store'});
     const sd=await sr.json().catch(()=>({}));
     if(!sr.ok)throw new Error(sd?.detail||sd?.error||('HTTP '+sr.status));
-    const fd=new FormData();
-    fd.append('file',file,file.name);
-    fd.append('api_key',sd.apiKey); fd.append('timestamp',String(sd.timestamp));
-    fd.append('signature',sd.signature); fd.append('public_id',sd.publicId);
-    if(status)status.textContent='⏳ Đang upload ZIP trực tiếp lên Cloudinary...';
-    const cr=await fetch(`https://api.cloudinary.com/v1_1/${encodeURIComponent(sd.cloudName)}/raw/upload`,{method:'POST',body:fd});
-    const cd=await cr.json().catch(()=>({}));
-    if(!cr.ok)throw new Error(cd?.error?.message||cd?.detail||('Cloudinary HTTP '+cr.status));
-    if(status)status.textContent='⏳ Đã upload Cloudinary • đang đối chiếu tên file ZIP...';
-    const pr=await fetch(skinApiUrl('/api/button/mods/upload/cloudinary'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({secureUrl:cd.secure_url,publicId:cd.public_id,filename:file.name}),cache:'no-store'});
+    if(!sd.apiKey||!sd.cloudName||!sd.signature||!sd.timestamp||!sd.publicId)
+      throw new Error('Cloudinary trả về thông tin ký upload không đầy đủ.');
+
+    // Cloudinary yêu cầu chunked upload cho file >100 MB.
+    // Dùng 20 MB/chunk, retry từng chunk tối đa 3 lần.
+    const CHUNK_SIZE=20*1024*1024;
+    const total=Math.ceil(file.size/CHUNK_SIZE);
+    const uploadId=(crypto?.randomUUID?crypto.randomUUID():('ngocc-'+Date.now()+'-'+Math.random().toString(16).slice(2)));
+    let finalResponse=null;
+
+    for(let i=0;i<total;i++){
+      const startByte=i*CHUNK_SIZE;
+      const endByte=Math.min(file.size,startByte+CHUNK_SIZE)-1;
+      const chunk=file.slice(startByte,endByte+1);
+      let ok=false,lastErr='';
+      for(let attempt=1;attempt<=3&&!ok;attempt++){
+        try{
+          setStatus(`⏳ Upload Cloudinary... ${i+1}/${total} (${Math.round((startByte/file.size)*100)}%)`+(attempt>1?` • thử lại ${attempt}/3`:'')); 
+          const fd=new FormData();
+          fd.append('file',chunk,file.name);
+          fd.append('api_key',sd.apiKey);
+          fd.append('timestamp',String(sd.timestamp));
+          fd.append('signature',sd.signature);
+          fd.append('public_id',sd.publicId);
+          const cr=await fetch(`https://api.cloudinary.com/v1_1/${encodeURIComponent(sd.cloudName)}/raw/upload`,{
+            method:'POST',
+            headers:{
+              'X-Unique-Upload-Id':uploadId,
+              'Content-Range':`bytes ${startByte}-${endByte}/${file.size}`
+            },
+            body:fd,
+            cache:'no-store'
+          });
+          const cd=await cr.json().catch(()=>({}));
+          if(!cr.ok) throw new Error(cd?.error?.message||cd?.detail||(`Cloudinary HTTP ${cr.status}`));
+          finalResponse=cd;
+          ok=true;
+        }catch(e){
+          lastErr=e?.message||String(e);
+          if(attempt<3) await new Promise(r=>setTimeout(r,1200*attempt));
+        }
+      }
+      if(!ok) throw new Error(`Upload Cloudinary thất bại ở phần ${i+1}/${total}: ${lastErr}`);
+    }
+
+    if(!finalResponse || finalResponse.done===false)
+      throw new Error('Cloudinary chưa xác nhận hoàn tất upload.');
+    const publicId=finalResponse.public_id||sd.publicId;
+    const secureUrl=finalResponse.secure_url||'';
+    setStatus('⏳ Upload xong Cloudinary • đang đối chiếu tên file ZIP...');
+    const pr=await fetch(skinApiUrl('/api/button/mods/upload/cloudinary'),{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({secureUrl,publicId,filename:file.name}),
+      cache:'no-store'
+    });
     const d=await pr.json().catch(()=>({}));
     if(!pr.ok)throw new Error(d?.detail||d?.error||('HTTP '+pr.status));
     ngoccButtonCatalog=d;ngoccButtonCatalog.ready=true;renderButtonRows();
-    if(status)status.textContent=`✅ Đã ghép ${d.matchedCount||0} ZIP • Chưa ghép ${d.unmatchedCount||0} • ZIP lỗi ${d.badCount||0}`;
+    setStatus(`✅ Đã ghép ${d.matchedCount||0} ZIP • Chưa ghép ${d.unmatchedCount||0} • ZIP lỗi ${d.badCount||0}`);
     showToast((d.unmatchedCount||0)||((d.badCount||0)>0)?'⚠️ Có file chưa ghép được.':'✅ Đã cập nhật ZIP Nút Bấm.',(d.unmatchedCount||0)||((d.badCount||0)>0)?'error':'success');
-  }catch(e){if(status)status.textContent='❌ '+e.message;showToast('❌ '+e.message,'error');}finally{input.value='';}
+  }catch(e){
+    setStatus('❌ '+(e?.message||e));
+    showToast('❌ '+(e?.message||e),'error');
+    console.error('Cloudinary button upload:',e);
+  }finally{input.value='';}
 };
-
 window.uploadButtonResources=async function(input){
   if(!(typeof isOwner==='function'&&isOwner())){input.value='';return;}
   const file=input?.files?.[0];if(!file)return;
