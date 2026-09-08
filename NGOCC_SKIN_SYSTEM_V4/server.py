@@ -164,8 +164,17 @@ def _image_candidates(img, base_url: str) -> list[str]:
 
 def _is_bad_small_image(url: str) -> bool:
     x=url.lower()
-    bad=("skinlabel", "/label/", "logo", "icon", "sprite", "favicon", "avatarborder")
+    bad=("skinlabel", "/label/", "logo", "icon", "sprite", "favicon", "avatarborder", "skin_icon", "skill_")
     return any(k in x for k in bad)
+
+
+def _is_likely_wide_skin_image(url: str) -> bool:
+    x=url.lower()
+    wide_tokens=(
+        'skin_', 'skin-', '/skin/', 'skinhd', 'skin_hd', 'hero-skin',
+        'heroeskin', 'bigpic', 'banner', 'splash', 'showcase', 'jpg', 'jpeg', 'webp'
+    )
+    return any(t in x for t in wide_tokens) and not _is_bad_small_image(url)
 
 
 def _pick_image(elements, base_url: str) -> str:
@@ -178,25 +187,34 @@ def _pick_image(elements, base_url: str) -> str:
             for u in _image_candidates(img, base_url):
                 score=0
                 x=u.lower()
-                if _is_bad_small_image(u): score-=100
+                if _is_bad_small_image(u): score-=140
+                if _is_likely_wide_skin_image(u): score+=16
                 if '/wp-content/uploads/' in x: score+=20
-                if 'dl.ops.kgvn.garenanow.com' in x: score+=12
+                if 'dl.ops.kgvn.garenanow.com' in x: score+=8
                 if '/skin/' in x or 'skin' in x: score+=8
                 if 'hero' in x: score+=4
-                for attr in ('width','height'):
-                    try:
-                        if int(re.sub(r'[^0-9]','',str(img.get(attr) or '0')) or 0)>=300: score+=4
-                    except Exception: pass
-                if img.get('data-src') or img.get('data-lazy-src') or img.get('data-original'): score+=5
+                # Prefer explicit large/wide dimensions when Garena exposes them.
+                try:
+                    w=int(re.sub(r'[^0-9]','',str(img.get('width') or '0')) or 0)
+                    h=int(re.sub(r'[^0-9]','',str(img.get('height') or '0')) or 0)
+                    if w>=500: score+=7
+                    if h>=250: score+=4
+                    if w>=500 and h>=250 and w/max(h,1)>=1.45: score+=12
+                except Exception: pass
+                # data-src / lazy attributes are commonly the actual full-size image.
+                if img.get('data-src') or img.get('data-lazy-src') or img.get('data-original'): score+=8
+                # Avoid obvious square/avatar derivatives when filename advertises a tiny crop.
+                if re.search(r'(?:thumb|thumbnail|small|_sm(?:\.|_|-)|_xs(?:\.|_|-)|_avatar(?:\.|_|-))', x): score-=18
                 ranked.append((score,u))
         style=str(el.get('style') or '') if hasattr(el,'get') else ''
         for u0 in re.findall(r"url\(\s*['\"]?([^'\")]+)", style, flags=re.I):
-            u=absurl(base_url,u0); score=10
-            if _is_bad_small_image(u): score-=100
+            u=absurl(base_url,u0); score=12
+            if _is_bad_small_image(u): score-=140
+            if _is_likely_wide_skin_image(u): score+=12
             ranked.append((score,u))
     if not ranked: return ''
-    ranked.sort(key=lambda x:x[0], reverse=True)
-    return ranked[0][1] if ranked[0][0] > -50 else ''
+    ranked.sort(key=lambda x:(x[0], -len(x[1])), reverse=True)
+    return ranked[0][1] if ranked[0][0] > -60 else ''
 
 
 def _extract_5digit_id(text: str) -> str:
@@ -312,7 +330,7 @@ def extract_hero_page(hero_url: str, hero_name: str) -> tuple[str, list[dict[str
                 if cand and not is_hidden_skin_name(cand) and norm(cand) not in {'trang phuc','ky nang'}:
                     name=cand
             if not img:
-                img=_pick_image([im],hero_url)
+                img=_pick_image([im, im.parent, getattr(im.parent,'parent',None)],hero_url)
             if not sid:
                 sid=_extract_5digit_id(json.dumps(getattr(im,'attrs',{}),ensure_ascii=False,default=str))
         if not name:
@@ -342,7 +360,7 @@ def extract_hero_page(hero_url: str, hero_name: str) -> tuple[str, list[dict[str
         if not name or is_hidden_skin_name(name) or norm(name) in {'trang phuc','ky nang'} or len(name)>100:
             continue
         sid=_extract_5digit_id(json.dumps(getattr(img,'attrs',{}),ensure_ascii=False,default=str))
-        skins.append({'skinNameSource':name,'skinImage':_pick_image([img,img.parent],hero_url),'skinId':sid,'garenaSlot':''})
+        skins.append({'skinNameSource':name,'skinImage':_pick_image([img,img.parent,getattr(img.parent,'parent',None)],hero_url),'skinId':sid,'garenaSlot':''})
 
     # Dedupe by real ID first, otherwise by normalized skin name. A Garena slot is
     # never treated as a skin ID because #heroSkin-N is only a page anchor.
@@ -494,6 +512,16 @@ def preserve_previous_catalog_data(new_data: dict[str, Any], old_data: dict[str,
         for sk in h.get('skins',[]):
             prev=old_skins.get(str(sk.get('skinId','')).strip()) or old_by_name_skin.get(norm(sk.get('skinName','')))
             if not prev: continue
+            # A manually assigned real ID is authoritative and must survive later Garena rescans.
+            if prev.get('manualId') and re.fullmatch(r'\d{5}',str(prev.get('skinId','')).strip()):
+                manual_sid=str(prev.get('skinId')).strip()
+                sk['skinId']=manual_sid
+                sk['garenaRealSkinId']=manual_sid
+                sk['manualId']=True
+                sk['skinIdSource']='manual'
+                # Keep the current Resources support result when available; otherwise retain the previous flag.
+                if not sk.get('supported') and prev.get('supported'):
+                    sk['supported']=True
             if prev.get('imageManual'):
                 sk['skinImage']=prev.get('skinImage',''); sk['imageManual']=True
             elif not sk.get('skinImage') and prev.get('skinImage'):
@@ -510,26 +538,158 @@ def preserve_previous_catalog_data(new_data: dict[str, Any], old_data: dict[str,
     return new_data
 
 
-def merge_catalog(auto_data: dict[str, Any], garena_heroes: list[dict[str, str]]) -> dict[str, Any]:
-    """Make Garena's hero list authoritative while using Resources only for support/build data.
+_SKIN_TXT_CACHE = {"path": "", "mtime": 0.0, "by_key": {}, "by_id": {}}
 
-    This intentionally does NOT append every AutoMod-discovered hero. The Resources scanner
-    can contain internal/test/unresolved records; those are the source of the old 159-hero
-    garbage list. The public catalog should contain the official Garena heroes only.
+def _read_skin_txt_text() -> str:
+    """Read the supplied button-tool Skin/skin.txt without requiring the button UI to be opened."""
+    try:
+        if BUTTON_SKIN_TXT.is_file():
+            return BUTTON_SKIN_TXT.read_text(encoding='utf-8', errors='replace')
+    except Exception:
+        pass
+    try:
+        if BUTTON_ENGINE_ZIP.is_file():
+            with zipfile.ZipFile(BUTTON_ENGINE_ZIP) as z:
+                target='#1Nút Bấm/Skin/skin.txt'
+                if target in z.namelist():
+                    return z.read(target).decode('utf-8', errors='replace')
+    except Exception:
+        pass
+    return ''
+
+
+def _skin_txt_maps(force: bool = False) -> tuple[dict[tuple[str,str], list[str]], dict[str, tuple[str,str]]]:
+    path = str(BUTTON_SKIN_TXT) if BUTTON_SKIN_TXT.is_file() else str(BUTTON_ENGINE_ZIP)
+    try:
+        mtime = BUTTON_SKIN_TXT.stat().st_mtime if BUTTON_SKIN_TXT.is_file() else BUTTON_ENGINE_ZIP.stat().st_mtime
+    except Exception:
+        mtime = 0.0
+    if not force and _SKIN_TXT_CACHE.get('path') == path and _SKIN_TXT_CACHE.get('mtime') == mtime:
+        return _SKIN_TXT_CACHE['by_key'], _SKIN_TXT_CACHE['by_id']
+    by_key: dict[tuple[str,str], list[str]] = {}
+    by_id: dict[str, tuple[str,str]] = {}
+    hero=''
+    txt=_read_skin_txt_text()
+    id_re=re.compile(r'^\s*(\d{5})\s*[-–—:]\s*(.+?)\s*$')
+    hero_re=re.compile(r'^\s*(\S.*?)\s*:\s*$')
+    for line in txt.splitlines():
+        m=id_re.match(line)
+        if m:
+            sid=m.group(1); name=m.group(2).strip()
+            by_id[sid]=(hero,name)
+            by_key.setdefault((norm(hero),norm(name)),[]).append(sid)
+            continue
+        m=hero_re.match(line)
+        if m and not m.group(1).isdigit():
+            hero=m.group(1).strip()
+    _SKIN_TXT_CACHE.update({'path':path,'mtime':mtime,'by_key':by_key,'by_id':by_id})
+    return by_key, by_id
+
+
+def _skin_txt_id_for(hero_name: str, skin_name: str) -> str:
+    by_key,_=_skin_txt_maps()
+    vals=by_key.get((norm(hero_name),norm(skin_name))) or []
+    vals=[x for x in vals if re.fullmatch(r'\d{5}',x)]
+    return vals[0] if len(vals)==1 else (vals[0] if vals else '')
+
+
+def _hero_id_from_skin_id(sid: str) -> str:
+    sid=str(sid or '').strip()
+    return sid[:3] if re.fullmatch(r'\d{5}',sid) and 100 <= int(sid[:3]) <= 999 else ''
+
+
+def _apply_skin_txt_ids(garena_heroes: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Fill Garena skin IDs from the supplied Skin/skin.txt when the official page does not expose them."""
+    by_key,_=_skin_txt_maps()
+    for h in garena_heroes:
+        hero_name=str(h.get('heroName') or '').strip()
+        hero_key=norm(hero_name)
+        for src in h.get('_skins') or []:
+            nm=str(src.get('skinNameSource') or '').strip()
+            sid=str(src.get('skinId') or '').strip()
+            if not re.fullmatch(r'\d{5}',sid):
+                vals=by_key.get((hero_key,norm(nm))) or []
+                if vals:
+                    src['skinId']=vals[0]
+                    src['skinIdSource']='skin.txt'
+                    sid=vals[0]
+            if re.fullmatch(r'\d{5}',sid):
+                src['skinIdValidForHero']=(_hero_id_from_skin_id(sid) == str(h.get('_heroId') or _hero_id_from_skin_id(sid)))
+                if not src.get('skinIdSource'): src['skinIdSource']='garena'
+    return garena_heroes
+
+
+def build_catalog_id_issues(auto_data: dict[str, Any], garena_heroes: list[dict[str, Any]], catalog_data: dict[str, Any], ignored_ids: set[str] | None = None) -> dict[str, Any]:
+    """Build the three admin-only issue buckets.
+
+    mismatch: a numeric Resource skin ID whose hero prefix disagrees with the official hero page
+              the same skin name appears on; unresolved: official skin with no usable 5-digit ID;
+              no_image: catalog skin with a numeric ID but no image URL.
     """
+    ignored_ids=ignored_ids or set()
+    mismatch_by_key: dict[str, dict[str, Any]] = {}
+    official_skin_owner: dict[str, dict[str, Any]] = {}
+    for h in garena_heroes:
+        hn=str(h.get('heroName') or '').strip(); slug=str(h.get('slug') or '').strip()
+        hero_entry=next((x for x in catalog_data.get('heroes',[]) if norm(x.get('heroName',''))==norm(hn)),None)
+        hid=str((hero_entry or {}).get('heroId') or h.get('_heroId') or '').strip()
+        for src in h.get('_skins') or []:
+            nm=str(src.get('skinNameSource') or '').strip(); sid=str(src.get('skinId') or '').strip()
+            if not nm: continue
+            official_skin_owner[norm(nm)]={'heroId':hid,'heroName':hn,'skinName':nm,'slug':slug,'officialId':sid}
+            if re.fullmatch(r'\d{5}',sid) and re.fullmatch(r'\d{3}',hid or '') and sid[:3] != hid:
+                key=sid+'|'+norm(hn)+'|'+norm(nm)
+                mismatch_by_key[key]={'heroId':hid,'heroName':hn,'skinName':nm,'skinId':sid,'reason':'Garena skin ID không khớp ID tướng'}
+    # Also catch a Resource entry placed under the wrong hero but sharing the official skin name.
+    for ah in auto_data.get('heroes',[]):
+        ahid=str(ah.get('heroId') or '').strip()
+        for sk in ah.get('skins',[]):
+            sid=str(sk.get('skinId') or '').strip(); nm=str(sk.get('skinName') or '').strip()
+            if not re.fullmatch(r'\d{5}',sid) or sid in ignored_ids or not nm: continue
+            own=official_skin_owner.get(norm(nm))
+            if own and re.fullmatch(r'\d{3}',str(own.get('heroId') or '')) and ahid != str(own.get('heroId')):
+                key=sid+'|'+norm(own['heroName'])+'|'+norm(nm)
+                mismatch_by_key.setdefault(key,{'heroId':own['heroId'],'heroName':own['heroName'],'skinName':nm,'skinId':sid,'reason':f'Resources xếp ID {sid[:3]} cho tướng {ahid}'})
+    mismatch_groups={}
+    for item in mismatch_by_key.values():
+        k=str(item['heroId'])+'|'+norm(item['heroName'])
+        mismatch_groups.setdefault(k,{'heroId':item['heroId'],'heroName':item['heroName'],'items':[]})['items'].append(item)
+    for g in mismatch_groups.values(): g['items'].sort(key=lambda x:int(x['skinId']))
+
+    unresolved=[]
+    no_image=[]
+    for h in catalog_data.get('heroes',[]):
+        hid=str(h.get('heroId') or '').strip(); hn=str(h.get('heroName') or '').strip()
+        for sk in h.get('skins',[]):
+            sid=str(sk.get('skinId') or '').strip()
+            if sid in ignored_ids: continue
+            if not re.fullmatch(r'\d{5}',sid):
+                unresolved.append({'heroId':hid,'heroName':hn,'skinId':sid,'skinName':str(sk.get('skinName') or ''),'imageUrl':str(sk.get('skinImage') or '')})
+            elif not str(sk.get('skinImage') or '').strip():
+                no_image.append({'heroId':hid,'heroName':hn,'skinId':sid,'skinName':str(sk.get('skinName') or '')})
+    unresolved.sort(key=lambda x:(norm(x['heroName']),norm(x['skinName'])))
+    no_image.sort(key=lambda x:(norm(x['heroName']),int(x['skinId'])))
+    mismatch=list(mismatch_groups.values()); mismatch.sort(key=lambda x:norm(x['heroName']))
+    return {'mismatch':mismatch,'unresolved':unresolved,'noImage':no_image}
+
+
+def merge_catalog(auto_data: dict[str, Any], garena_heroes: list[dict[str, str]], ignored_ids: set[str] | None = None) -> dict[str, Any]:
+    """Make Garena's hero list authoritative while using Resources + Skin/skin.txt for real IDs/support."""
+    ignored_ids=ignored_ids or set()
     auto=filter_auto_catalog(auto_data)
-    auto_by_name={}
-    auto_by_id={}
+    auto_by_name={}; auto_by_id={}
     for h in auto.get('heroes',[]):
-        name=norm(h.get('heroName',''))
-        hid=str(h.get('heroId','')).strip()
+        name=norm(h.get('heroName','')); hid=str(h.get('heroId','')).strip()
         if name: auto_by_name[name]=h
         if hid: auto_by_id[hid]=h
 
-    result={'schemaVersion':5,'resourcesVersion':auto.get('resourcesVersion',''),'generatedAt':auto.get('generatedAt',''),'heroCount':0,'skinCount':0,'heroes':[]}
-    auto_support_ids={str(sk.get('skinId')).strip() for hh in auto.get('heroes',[]) for sk in hh.get('skins',[]) if re.fullmatch(r'\d{5}',str(sk.get('skinId','')).strip())}
+    # Fill official-page IDs from the supplied Skin/skin.txt before merging.
+    garena_heroes=_apply_skin_txt_ids(garena_heroes)
+    result={'schemaVersion':6,'resourcesVersion':auto.get('resourcesVersion',''),'generatedAt':auto.get('generatedAt',''),'heroCount':0,'skinCount':0,'heroes':[],
+            'resourceSkinIds':sorted({str(sk.get('skinId')).strip() for hh in auto.get('heroes',[]) for sk in hh.get('skins',[]) if re.fullmatch(r'\d{5}',str(sk.get('skinId','')).strip())}),
+            'ignoredSkinIds':sorted(ignored_ids)}
+    auto_support_ids=set(result['resourceSkinIds'])
 
-    # One official hero entry per Garena page.
     seen_heroes=set()
     for g in garena_heroes:
         name=str(g.get('heroName','')).strip(); slug=str(g.get('slug','')).strip()
@@ -537,56 +697,48 @@ def merge_catalog(auto_data: dict[str, Any], garena_heroes: list[dict[str, str]]
         if not name or key in seen_heroes or not is_valid_hero_name(name): continue
         seen_heroes.add(key)
         ah=auto_by_name.get(key)
-        if ah is None:
-            # Resources may use a numeric hero id while the display name differs slightly.
-            for candidate in auto.get('heroes',[]):
-                if str(candidate.get('heroId','')).strip() and str(candidate.get('heroId','')).strip() == key:
-                    ah=candidate; break
         hero_id=str(ah.get('heroId','')).strip() if ah else ''
         if not is_valid_hero_id(hero_id):
-            # Derive a real numeric hero id only from a real 5-digit Garena skin id.
             real=next((str(x.get('skinId','')).strip() for x in (g.get('_skins') or []) if re.fullmatch(r'\d{5}',str(x.get('skinId','')).strip())), '')
             hero_id=real[:3] if real and 100 <= int(real[:3]) <= 999 else f'garena:{slug or re.sub(r"[^a-z0-9._-]+","-",key)}'
+        g['_heroId']=hero_id
         hero={'heroId':hero_id,'heroName':name,'heroImage':str(g.get('heroImage') or ''),'garenaSlug':slug,'skins':[]}
         if not ah: hero['officialOnly']=True
 
-        # Start with Resources skins that belong to this hero. They retain real IDs/support flags.
         existing_ids=set(); existing_names=set()
         for sk in (ah or {}).get('skins',[]):
             sid=str(sk.get('skinId','')).strip(); nm=str(sk.get('skinName','')).strip()
-            if not sid or sid in existing_ids or is_hidden_skin_name(nm): continue
+            if not sid or sid in existing_ids or sid in ignored_ids or is_hidden_skin_name(nm): continue
             existing_ids.add(sid); existing_names.add(norm(nm))
-            hero['skins'].append({'skinId':sid,'skinName':nm or ('Skin '+sid),'skinImage':'','supported':sid in auto_support_ids or bool(sk.get('resolved')),'resolved':bool(sk.get('resolved')),'resourcesVersion':sk.get('resourcesVersion',result['resourcesVersion'])})
+            hero['skins'].append({'skinId':sid,'skinName':nm or ('Skin '+sid),'skinImage':'','supported':sid in auto_support_ids or bool(sk.get('resolved')),'resolved':bool(sk.get('resolved')),'resourcesVersion':sk.get('resourcesVersion',result['resourcesVersion']),'imageMissing':True})
 
         source=[x for x in (g.get('_skins') or []) if str(x.get('skinNameSource','')).strip() and not is_hidden_skin_name(str(x.get('skinNameSource','')))]
         by_id={str(x.get('skinId')).strip():x for x in source if re.fullmatch(r'\d{5}',str(x.get('skinId','')).strip())}
         by_name={}
         for x in source: by_name.setdefault(norm(x.get('skinNameSource','')),[]).append(x)
 
-        # Enrich Resources skins from Garena by real ID, then exact name.
-        matched=set()
         for sk in hero['skins']:
             sid=str(sk.get('skinId','')).strip(); nm=norm(sk.get('skinName',''))
-            src=by_id.get(sid)
-            if src is None:
-                srcs=by_name.get(nm,[])
-                src=srcs[0] if srcs else None
+            src=by_id.get(sid) or ((by_name.get(nm) or [None])[0])
             if src:
                 if src.get('skinImage'): sk['skinImage']=src['skinImage']
-                if not sk.get('skinName') and src.get('skinNameSource'): sk['skinName']=src['skinNameSource']
-                matched.add(str(src.get('skinId') or 'name:'+norm(src.get('skinNameSource',''))))
+                if src.get('skinNameSource'): sk['skinName']=src['skinNameSource']
+                if src.get('skinId'): sk['garenaRealSkinId']=str(src['skinId'])
             sk['supported']=sid in auto_support_ids or bool(sk.get('supported'))
             sk['imageMissing']=not bool(sk.get('skinImage'))
 
-        # Append Garena skins missing from Resources. Never invent a numeric ID from #heroSkin-N.
         for src in source:
-            sid=str(src.get('skinId') or '').strip()
-            nm=str(src.get('skinNameSource') or '').strip()
-            real_key=('id:'+sid) if re.fullmatch(r'\d{5}',sid) else ('name:'+norm(nm))
-            if (sid and sid in existing_ids) or (not sid and norm(nm) in existing_names):
-                continue
+            sid=str(src.get('skinId') or '').strip(); nm=str(src.get('skinNameSource') or '').strip()
+            if sid in ignored_ids: continue
+            if sid and sid in existing_ids: continue
+            if not sid and norm(nm) in existing_names: continue
             internal_id=sid if sid else f'garena:{slug or "hero"}:name:{norm(nm).replace(" ","-")}'
-            hero['skins'].append({'skinId':internal_id,'skinName':nm,'skinImage':str(src.get('skinImage') or ''),'supported':sid in auto_support_ids,'resolved':False,'officialGarena':True,'garenaRealSkinId':sid,'garenaSlot':str(src.get('garenaSlot') or ''),'resourcesVersion':result['resourcesVersion'],'imageMissing':not bool(src.get('skinImage'))})
+            # Real ID from skin.txt or Garena is now stored directly in skinId, so the auto builder can use it.
+            hero['skins'].append({'skinId':internal_id,'skinName':nm,'skinImage':str(src.get('skinImage') or ''),
+                                  'supported':sid in auto_support_ids,'resolved':False,'officialGarena':True,
+                                  'garenaRealSkinId':sid,'garenaSlot':str(src.get('garenaSlot') or ''),
+                                  'skinIdSource':str(src.get('skinIdSource') or ('garena' if sid else '')),
+                                  'resourcesVersion':result['resourcesVersion'],'imageMissing':not bool(src.get('skinImage'))})
             if sid: existing_ids.add(sid)
             existing_names.add(norm(nm))
         hero['skinCount']=len(hero['skins'])
@@ -594,6 +746,7 @@ def merge_catalog(auto_data: dict[str, Any], garena_heroes: list[dict[str, str]]
 
     result['heroCount']=len(result['heroes'])
     result['skinCount']=sum(len(h.get('skins',[])) for h in result['heroes'])
+    result['idIssues']=build_catalog_id_issues(auto_data,garena_heroes,result,ignored_ids)
     return result
 
 def load_json(path: Path, default: Any):
@@ -1988,6 +2141,12 @@ def resources_upload_finalize(uploadId: str, total: int, filename: str):
 async def upload_resources_legacy(file: UploadFile = File(...)):
     raise HTTPException(400, "Hãy dùng giao diện upload Resources mới (chunked upload).")
 
+def _catalog_ignored_ids(data: dict[str, Any] | None = None) -> set[str]:
+    d=data if isinstance(data,dict) else load_json(CATALOG,{})
+    vals=d.get('ignoredSkinIds',[]) if isinstance(d,dict) else []
+    return {str(x).strip() for x in vals if re.fullmatch(r'\d{5}',str(x).strip())}
+
+
 @app.post("/api/scan")
 def scan_catalog():
     try:
@@ -2019,7 +2178,7 @@ def scan_catalog():
             for fut in as_completed(futures):
                 enriched.append(fut.result())
         enriched.sort(key=lambda x: norm(x.get('heroName','')))
-        catalog_data = merge_catalog(auto_data, enriched)
+        catalog_data = merge_catalog(auto_data, enriched, _catalog_ignored_ids(load_json(CATALOG, {})))
         catalog_data = preserve_previous_catalog_data(catalog_data, load_json(CATALOG, {}))
         catalog_data = merge_manual_skins(catalog_data, load_json(CATALOG, {}))
     except Exception as e:
@@ -2102,7 +2261,7 @@ def _run_scan_job():
             for fut in as_completed(futures):
                 enriched.append(fut.result())
         enriched.sort(key=lambda x: norm(x.get('heroName', '')))
-        catalog_data = merge_catalog(auto_data, enriched)
+        catalog_data = merge_catalog(auto_data, enriched, _catalog_ignored_ids(load_json(CATALOG, {})))
         catalog_data = preserve_previous_catalog_data(catalog_data, load_json(CATALOG, {}))
     except Exception as e:
         safe_auto = filter_auto_catalog(auto_data)
@@ -2249,6 +2408,95 @@ def delete_skin(hero_id: str, skin_id: str):
 
 class BulkDeletePayload(BaseModel):
     ids: list[str] = []
+
+
+class CatalogIssueDeletePayload(BaseModel):
+    ids: list[str] = []
+
+
+class CatalogIdUpdatePayload(BaseModel):
+    newSkinId: str
+
+
+class CatalogImageUrlPayload(BaseModel):
+    imageUrl: str
+
+
+@app.get('/api/catalog/issues')
+def catalog_issues():
+    data=load_json(CATALOG,{})
+    data=sanitize_catalog(data)
+    return {'ok':True,'resourcesVersion':data.get('resourcesVersion',''),'issues':data.get('idIssues') or {'mismatch':[],'unresolved':[],'noImage':[]},'ignoredSkinIds':sorted(_catalog_ignored_ids(data))}
+
+
+@app.post('/api/catalog/issues/mismatch/delete-many')
+def delete_mismatch_skin_ids(payload: CatalogIssueDeletePayload):
+    wanted={str(x).strip() for x in (payload.ids or []) if re.fullmatch(r'\d{5}',str(x).strip())}
+    if not wanted:
+        return {'ok':True,'deleted':0,**catalog_issues()}
+    data=load_json(CATALOG,{})
+    ignored=_catalog_ignored_ids(data)|wanted
+    deleted=0
+    for h in data.get('heroes',[]):
+        before=len(h.get('skins',[]))
+        h['skins']=[s for s in h.get('skins',[]) if str(s.get('skinId','')).strip() not in wanted and str(s.get('garenaRealSkinId','')).strip() not in wanted]
+        deleted += before-len(h['skins'])
+        h['skinCount']=len(h.get('skins',[]))
+    data['ignoredSkinIds']=sorted(ignored)
+    data['skinCount']=sum(len(h.get('skins',[])) for h in data.get('heroes',[]))
+    issues=data.get('idIssues') or {'mismatch':[],'unresolved':[],'noImage':[]}
+    issues['mismatch']=[g | {'items':[i for i in g.get('items',[]) if str(i.get('skinId')) not in wanted]} for g in issues.get('mismatch',[]) if any(str(i.get('skinId')) not in wanted for i in g.get('items',[]))]
+    data['idIssues']=issues
+    warn=_save_catalog_and_persist(data)
+    return {'ok':True,'deleted':deleted,'cloudWarning':warn,'issues':issues,'ignoredSkinIds':sorted(ignored)}
+
+
+@app.post('/api/catalog/hero/{hero_id}/skin/{skin_id}/set-id')
+def set_catalog_skin_id(hero_id: str, skin_id: str, payload: CatalogIdUpdatePayload):
+    data=load_json(CATALOG,{})
+    hero=next((h for h in data.get('heroes',[]) if str(h.get('heroId'))==str(hero_id)),None)
+    if not hero: raise HTTPException(404,'Không tìm thấy tướng trong catalog.')
+    skin=next((x for x in hero.get('skins',[]) if str(x.get('skinId'))==str(skin_id)),None)
+    if not skin: raise HTTPException(404,'Không tìm thấy skin trong tướng này.')
+    new_id=str(payload.newSkinId or '').strip()
+    if not re.fullmatch(r'\d{5}',new_id): raise HTTPException(400,'ID skin phải đúng 5 chữ số, ví dụ 14111.')
+    hid=str(hero_id).strip()
+    if re.fullmatch(r'\d{3}',hid) and new_id[:3] != hid:
+        raise HTTPException(400,f'ID {new_id} không thuộc tướng {hid}. Hãy nhập ID có 3 số đầu là {hid}.')
+    if any(str(x.get('skinId'))==new_id for x in hero.get('skins',[]) if x is not skin):
+        raise HTTPException(409,f'ID skin {new_id} đã tồn tại trong tướng này.')
+    old_id=str(skin.get('skinId') or '')
+    skin['skinId']=new_id
+    skin['garenaRealSkinId']=new_id
+    skin['manualId']=True
+    skin['skinIdSource']='manual'
+    resource_ids={str(x).strip() for x in data.get('resourceSkinIds',[]) if re.fullmatch(r'\d{5}',str(x).strip())}
+    # Supported/build-ready is true when the new ID exists in the current Resources scanner index.
+    # Existing support is retained only as a fallback for older catalogs that lack resourceSkinIds.
+    skin['supported']=new_id in resource_ids if resource_ids else bool(skin.get('supported'))
+    skin['imageMissing']=not bool(skin.get('skinImage'))
+    if isinstance(data.get('idIssues'),dict):
+        data['idIssues']['unresolved']=[x for x in data['idIssues'].get('unresolved',[]) if not (str(x.get('heroId'))==str(hero_id) and str(x.get('skinId'))==old_id)]
+        data['idIssues']['noImage']=[x for x in data['idIssues'].get('noImage',[]) if not (str(x.get('heroId'))==str(hero_id) and str(x.get('skinId'))==new_id)]
+    data['heroCount']=len(data.get('heroes',[])); data['skinCount']=sum(len(h.get('skins',[])) for h in data.get('heroes',[]))
+    if old_id in _catalog_ignored_ids(data):
+        data['ignoredSkinIds']=[x for x in _catalog_ignored_ids(data) if x != old_id]
+    warn=_save_catalog_and_persist(data)
+    return {'ok':True,'cloudWarning':warn,'skin':skin,**data}
+
+
+@app.post('/api/catalog/hero/{hero_id}/skin/{skin_id}/set-image')
+def set_catalog_skin_image(hero_id: str, skin_id: str, payload: CatalogImageUrlPayload):
+    data=load_json(CATALOG,{})
+    hero=next((h for h in data.get('heroes',[]) if str(h.get('heroId'))==str(hero_id)),None)
+    if not hero: raise HTTPException(404,'Không tìm thấy tướng trong catalog.')
+    skin=next((x for x in hero.get('skins',[]) if str(x.get('skinId'))==str(skin_id)),None)
+    if not skin: raise HTTPException(404,'Không tìm thấy skin trong tướng này.')
+    skin['skinImage']=str(payload.imageUrl or '').strip(); skin['imageManual']=True; skin['imageMissing']=not bool(skin['skinImage'])
+    if isinstance(data.get('idIssues'),dict) and skin.get('skinImage'):
+        data['idIssues']['noImage']=[x for x in data['idIssues'].get('noImage',[]) if not (str(x.get('heroId'))==str(hero_id) and str(x.get('skinId'))==str(skin_id))]
+    warn=_save_catalog_and_persist(data)
+    return {'ok':True,'cloudWarning':warn,'skin':skin,**data}
 
 
 @app.post("/api/catalog/heroes/delete-many")
