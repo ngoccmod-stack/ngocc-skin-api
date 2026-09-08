@@ -110,6 +110,65 @@ def absurl(base: str, src: str | None) -> str:
     return urljoin(base, src)
 
 
+def image_url_from_tag(base: str, img) -> str:
+    """Return the best real image URL from normal/lazy-loaded HTML attributes."""
+    if img is None:
+        return ""
+    attrs = (
+        "src", "data-src", "data-lazy-src", "data-original", "data-url",
+        "data-image", "data-fancybox-href", "href"
+    )
+    for attr in attrs:
+        value = str(img.get(attr) or "").strip()
+        if value:
+            return absurl(base, value)
+    srcset = str(img.get("srcset") or img.get("data-srcset") or "").strip()
+    if srcset:
+        # Prefer the last candidate, which is normally the largest resolution.
+        candidates = []
+        for part in srcset.split(","):
+            bits = part.strip().split()
+            if bits:
+                candidates.append(absurl(base, bits[0]))
+        if candidates:
+            return candidates[-1]
+    style = str(img.get("style") or "")
+    m = re.search(r"url\\([\\\"']?([^\\\"')]+)", style, flags=re.I)
+    if m:
+        return absurl(base, m.group(1).strip())
+    return ""
+
+
+def image_score(url: str, tag=None) -> int:
+    u = str(url or "").lower()
+    if not u:
+        return -10_000
+    bad = ("skinlabel/", "/icon", "icon_", "logo", "avatar", "rank", "badge")
+    if any(x in u for x in bad):
+        return -5000
+    score = 100
+    if "wp-content/uploads" in u:
+        score += 300
+    if any(x in u for x in (".jpg", ".jpeg", ".png", ".webp")):
+        score += 50
+    if tag is not None:
+        try:
+            w = int(re.sub(r"\\D", "", str(tag.get("width") or "0")) or 0)
+            h = int(re.sub(r"\\D", "", str(tag.get("height") or "0")) or 0)
+            score += min(1000, (w * h) // 1000)
+        except Exception:
+            pass
+    return score
+
+
+def derive_skin_id_from_image(url: str) -> str:
+    """Garena skin artwork commonly carries the 5-digit skin ID in its filename."""
+    path = str(url or "").split("?", 1)[0].split("#", 1)[0]
+    name = path.rsplit("/", 1)[-1]
+    m = re.search(r"(?<!\\d)(\\d{5})(?:\\.[A-Za-z0-9]+)?$", name)
+    return m.group(1) if m else ""
+
+
 def fetch_html(url: str) -> str:
     r = requests.get(url, headers=HEADERS, timeout=25)
     r.raise_for_status()
@@ -144,167 +203,131 @@ def extract_hero_links(main_html: str) -> list[dict[str, str]]:
             img = a.find("img")
             text = (img.get("alt") if img else "") or slug
         img = a.find("img")
-        thumb = absurl(GARNA_MAIN, img.get("src") if img else "")
+        thumb = image_url_from_tag(GARNA_MAIN, img)
         out.append({"slug": slug, "heroName": text.strip(), "heroImage": thumb})
         seen.add(slug)
     return out
 
 
 def extract_hero_page(hero_url: str, hero_name: str) -> tuple[str, list[dict[str, str]]]:
-    """Quét trang Garena và lấy TOÀN BỘ skin có anchor #heroSkin-xxxxx.
-
-    Không phụ thuộc vào việc ảnh thumbnail có tồn tại. Skin vẫn được giữ lại nếu
-    Garena trả title/alt nhưng ảnh đang lỗi hoặc HTML đổi nhẹ.
-    """
     html = fetch_with_fallback(hero_url)
     soup = BeautifulSoup(html, "html.parser")
 
+    # Hero image: prefer an image whose alt/title mentions the hero, and support lazy images.
     imgs = soup.find_all("img")
     hero_img = ""
+    best_score = -10_000
     for img in imgs:
-        alt = norm(img.get("alt") or "")
-        src = absurl(hero_url, img.get("src"))
-        if src and hero_name and norm(hero_name) in alt:
-            hero_img = src
-            break
-    if not hero_img:
-        # Ưu tiên ảnh có alt/title liên quan hero trước khi dùng ảnh đầu tiên.
-        for img in imgs:
-            blob = norm(" ".join([
-                str(img.get("alt") or ""),
-                str(img.get("title") or ""),
-                str(img.get("class") or ""),
-            ]))
-            src = absurl(hero_url, img.get("src"))
-            if src and hero_name and norm(hero_name) in blob:
-                hero_img = src
-                break
-    if not hero_img and imgs:
-        hero_img = absurl(hero_url, imgs[0].get("src"))
+        alt = norm(str(img.get("alt") or img.get("title") or ""))
+        src = image_url_from_tag(hero_url, img)
+        if not src:
+            continue
+        score = image_score(src, img)
+        if hero_name and norm(hero_name) in alt:
+            score += 1000
+        if score > best_score:
+            hero_img, best_score = src, score
 
-    skins: list[dict[str, str]] = []
+    # We use Garena's #heroSkin-N anchors as the authoritative list of skin slots.
+    # The hash itself is NOT an image URL; it only tells us which skin block to inspect.
+    discovered: dict[str, dict[str, str]] = {}
 
-    def clean_skin_name(raw: str) -> str:
-        raw = str(raw or "").strip()
-        if not raw:
-            return ""
-        # Garena often repeats the hero name in the link title/alt.
-        raw = re.sub(rf"^{re.escape(hero_name)}\s*", "", raw, flags=re.I).strip()
-        return raw
+    def add_skin(name: str, image: str = "", fragment: str = ""):
+        name = str(name or "").strip()
+        if name:
+            name = re.sub(rf"^{re.escape(hero_name)}\s*", "", name, flags=re.I).strip()
+        if not name or is_hidden_skin_name(name):
+            return
+        key = norm(name)
+        if not key:
+            return
+        sid = derive_skin_id_from_image(image)
+        old = discovered.get(key)
+        if old is None:
+            discovered[key] = {
+                "skinNameSource": name,
+                "skinImage": image,
+                "skinId": sid,
+                "fragment": fragment,
+            }
+            return
+        if image and image_score(image) > image_score(old.get("skinImage", "")):
+            old["skinImage"] = image
+            if sid:
+                old["skinId"] = sid
+        if sid and not old.get("skinId"):
+            old["skinId"] = sid
 
-    def skin_id_from_href(href: str) -> str:
-        m = re.search(r"#heroSkin-(\d{5})", str(href or ""), flags=re.I)
-        return m.group(1) if m else ""
-
-    # Primary source: EVERY official skin anchor on the page.
-    # This avoids the old behavior where we only fell back to the gallery when
-    # the heading-image scan returned zero skins.
+    # 1) Skin anchors (#heroSkin-1, #heroSkin-2, ...): gives us ALL skin slots even
+    # when the large image uses lazy-loading or the heading markup changes.
     for a in soup.find_all("a", href=True):
         href = str(a.get("href") or "")
-        sid = skin_id_from_href(href)
-        if not sid:
+        m = re.search(r"#heroSkin-(\d+)", href, flags=re.I)
+        if not m:
             continue
-
+        frag = f"heroSkin-{m.group(1)}"
         img = a.find("img")
-        raw_name = (
-            a.get("title")
-            or a.get("data-title")
-            or a.get("aria-label")
-            or (img.get("alt") if img else "")
-            or (img.get("title") if img else "")
-            or ""
-        )
-        skin_name = clean_skin_name(raw_name)
+        image = image_url_from_tag(hero_url, img)
+        name = str(a.get("title") or a.get("aria-label") or "").strip()
+        if not name and img is not None:
+            name = str(img.get("alt") or img.get("title") or "").strip()
+        if not name:
+            name = " ".join(a.stripped_strings).strip()
+        add_skin(name, image, frag)
 
-        # Some builds put the name as text inside the anchor.
-        if not skin_name:
-            text_name = " ".join(a.stripped_strings).strip()
-            skin_name = clean_skin_name(text_name)
-
-        # Last fallback: inspect nearby heading before the anchor.
-        if not skin_name:
-            heading = a.find_previous(["h2", "h3", "h4"])
-            if heading:
-                skin_name = clean_skin_name(" ".join(heading.stripped_strings))
-
-        if not skin_name:
-            skin_name = f"Skin {sid}"
-
-        src = absurl(hero_url, img.get("src")) if img else ""
-        if not src:
-            # The official page can put the image in a nearby sibling/container.
-            parent = getattr(a, "parent", None)
-            if parent is not None:
-                near = parent.find("img")
-                if near:
-                    src = absurl(hero_url, near.get("src"))
-
-        skins.append({
-            "skinNameSource": skin_name,
-            "skinImage": src,
-            "skinId": sid,
-        })
-
-    # Secondary source: heading-based large images for skins whose anchor/title
-    # changed but which are still visible on the page.
-    for heading in soup.find_all(["h2", "h3", "h4"]):
-        text_h = " ".join(heading.stripped_strings).strip()
-        if not text_h or not norm(text_h).startswith(norm(hero_name)):
-            continue
-        skin_name = re.sub(rf"^{re.escape(hero_name)}\s*", "", text_h, flags=re.I).strip()
-        if not skin_name or norm(skin_name) in {"trang phuc", "ky nang"}:
-            continue
-
-        img = None
-        sid = ""
-        # Look for a nearby official skin anchor first.
-        for cand in heading.find_all_next("a", limit=10):
-            sid2 = skin_id_from_href(cand.get("href"))
-            if sid2:
-                sid = sid2
-                cand_img = cand.find("img")
-                if cand_img:
-                    img = cand_img
-                break
-        if img is None:
-            for cand in heading.find_all_next("img", limit=8):
-                if heading in cand.parents:
+        target = soup.find(id=frag)
+        if target is not None:
+            # Inspect the target's immediate container and nearby siblings; pick the
+            # largest non-label image instead of the tiny rank/badge image.
+            containers = [target]
+            if getattr(target, "parent", None) is not None:
+                containers.append(target.parent)
+            if getattr(target.parent, "parent", None) is not None:
+                containers.append(target.parent.parent)
+            for container in containers:
+                if not container:
                     continue
-                img = cand
+                for im in container.find_all("img"):
+                    u = image_url_from_tag(hero_url, im)
+                    if image_score(u, im) < 0:
+                        continue
+                    cur = discovered.get(norm(name or ""))
+                    if cur is None and name:
+                        cur = discovered.get(norm(re.sub(rf"^{re.escape(hero_name)}\s*", "", name, flags=re.I).strip()))
+                    if cur is not None and image_score(u, im) > image_score(cur.get("skinImage", ""), None):
+                        cur["skinImage"] = u
+                        cur["skinId"] = derive_skin_id_from_image(u) or cur.get("skinId", "")
+
+    # 2) Headings contain the official Vietnamese skin names and usually sit directly
+    # above the large artwork. Scan each heading's section up to the next heading.
+    headings = soup.find_all(["h2", "h3", "h4"])
+    for i, heading in enumerate(headings):
+        text = " ".join(heading.stripped_strings).strip()
+        if not text or not norm(text).startswith(norm(hero_name)):
+            continue
+        skin_name = re.sub(rf"^{re.escape(hero_name)}\s*", "", text, flags=re.I).strip()
+        if not skin_name or is_hidden_skin_name(skin_name) or norm(skin_name) in {"trang phuc", "ky nang"}:
+            continue
+        best = ""
+        best_sc = -10_000
+        stop_tags = {"h2", "h3", "h4"}
+        for node in heading.find_all_next():
+            if node is not heading and getattr(node, "name", "") in stop_tags:
                 break
-        src = absurl(hero_url, img.get("src") if img else "")
-        if skin_name:
-            skins.append({
-                "skinNameSource": skin_name,
-                "skinImage": src,
-                "skinId": sid,
-            })
+            if getattr(node, "name", "") != "img":
+                continue
+            u = image_url_from_tag(hero_url, node)
+            sc = image_score(u, node)
+            if sc > best_sc:
+                best, best_sc = u, sc
+        add_skin(skin_name, best)
 
-    # Final de-duplicate: ID is stronger than name, since names may differ.
-    uniq = []
-    seen_ids: set[str] = set()
-    seen_names: set[str] = set()
-    for item in skins:
-        sid = str(item.get("skinId", "")).strip()
-        name_key = norm(item.get("skinNameSource", ""))
-        if sid and sid in seen_ids:
-            # If a previous entry had no image and this one has an image, upgrade it.
-            for old in uniq:
-                if str(old.get("skinId", "")).strip() == sid and not old.get("skinImage") and item.get("skinImage"):
-                    old["skinImage"] = item["skinImage"]
-            continue
-        if name_key and name_key in seen_names:
-            for old in uniq:
-                if norm(old.get("skinNameSource", "")) == name_key and not old.get("skinImage") and item.get("skinImage"):
-                    old["skinImage"] = item["skinImage"]
-            continue
-        if sid:
-            seen_ids.add(sid)
-        if name_key:
-            seen_names.add(name_key)
-        uniq.append(item)
+    # 3) De-duplicate by normalized name; keep entries even when artwork is unavailable.
+    #    This is the key difference from the old code: missing images no longer delete skins.
+    out = list(discovered.values())
+    out.sort(key=lambda x: (x.get("fragment") or "", norm(x.get("skinNameSource", ""))))
+    return hero_img, out
 
-    return hero_img, uniq
 
 def is_hidden_skin_name(name: str) -> bool:
     n = str(name or "").strip()
@@ -425,39 +448,19 @@ def merge_manual_skins(catalog_data: dict[str, Any], old_data: dict[str, Any]) -
 
 def merge_catalog(auto_data: dict[str, Any], garena_heroes: list[dict[str, str]]) -> dict[str, Any]:
     auto_data = filter_auto_catalog(auto_data)
-    by_name = {
-        norm(h.get("heroName", "")): h
-        for h in garena_heroes
-        if is_valid_hero_name(h.get("heroName", ""))
-    }
-
+    by_name = {norm(h.get("heroName", "")): h for h in garena_heroes if is_valid_hero_name(h.get("heroName", ""))}
     result = {
-        "schemaVersion": 4,
+        "schemaVersion": 3,
         "resourcesVersion": auto_data.get("resourcesVersion", ""),
         "generatedAt": auto_data.get("generatedAt", ""),
         "heroCount": 0,
         "skinCount": 0,
         "heroes": [],
     }
-
-    # IDs from Resources tell us whether a skin can actually be built/modded.
-    auto_skin_ids = {
-        str(sk.get("skinId", "")).strip()
-        for ah in auto_data.get("heroes", [])
-        for sk in ah.get("skins", [])
-        if str(sk.get("skinId", "")).strip()
-    }
-
     by_hero_key: dict[str, dict] = {}
-
-    # Keep ALL Resources heroes instead of dropping anything whose localized name
-    # does not exactly match the Garena display name.
     for h in auto_data.get("heroes", []):
         hero_id = str(h.get("heroId", "")).strip()
         hero_name = str(h.get("heroName", "")).strip()
-        if not hero_id or not hero_name:
-            continue
-
         g = by_name.get(norm(hero_name))
         key = norm(hero_name) or hero_id
         hero = by_hero_key.get(key)
@@ -465,174 +468,133 @@ def merge_catalog(auto_data: dict[str, Any], garena_heroes: list[dict[str, str]]
             hero = {
                 "heroId": hero_id,
                 "heroName": hero_name,
-                "heroImage": g.get("heroImage", "") if g else "",
-                "garenaSlug": g.get("slug", "") if g else "",
+                "heroImage": g.get("heroImage", ""),
+                "garenaSlug": g.get("slug", ""),
                 "skins": [],
             }
             by_hero_key[key] = hero
             result["heroes"].append(hero)
-
-        seen_skin_ids = set()
-        for old_skin in hero["skins"]:
-            seen_skin_ids.add(str(old_skin.get("skinId", "")).strip())
-
-        for sk in h.get("skins", []):
-            sid = str(sk.get("skinId", "")).strip()
-            sname = str(sk.get("skinName", "")).strip()
+        seen_skin_ids = {str(x.get("skinId")) for x in hero["skins"]}
+        for s in h.get("skins", []):
+            sid = str(s.get("skinId", "")).strip()
+            sname = str(s.get("skinName", "")).strip()
             if not sid or sid in seen_skin_ids or is_hidden_skin_name(sname):
                 continue
             seen_skin_ids.add(sid)
             hero["skins"].append({
                 "skinId": sid,
-                "skinName": sname or ("Skin " + sid),
+                "skinName": sname,
                 "skinImage": "",
-                "supported": bool(sk.get("resolved")) or sid in auto_skin_ids,
-                "resourcesVersion": sk.get("resourcesVersion", result["resourcesVersion"]),
+                "supported": bool(s.get("resolved")),
+                "resourcesVersion": s.get("resourcesVersion", result["resourcesVersion"]),
             })
 
-    # Attach official Garena metadata/images. Match by skin ID first, then name.
+    # Match skin images by normalized source name; never by position.
     for hero in result["heroes"]:
-        garena = next(
-            (x for x in garena_heroes if x.get("slug") == hero.get("garenaSlug")),
-            None,
-        )
-        if not garena:
-            garena = by_name.get(norm(hero.get("heroName", "")))
-        if not garena:
-            hero["skinCount"] = len(hero.get("skins", []))
+        garena = next((x for x in garena_heroes if x.get("slug") == hero.get("garenaSlug")), None)
+        if not garena or not garena.get("_skins"):
             continue
-
-        if not hero.get("heroImage"):
-            hero["heroImage"] = garena.get("heroImage", "")
-        if not hero.get("garenaSlug"):
-            hero["garenaSlug"] = garena.get("slug", "")
-
-        source_skins = [
-            x for x in garena.get("_skins", [])
-            if not is_hidden_skin_name(x.get("skinNameSource", ""))
-        ]
-        by_id = {
-            str(x.get("skinId", "")).strip(): x
-            for x in source_skins
+        source_skins = [x for x in garena["_skins"] if not is_hidden_skin_name(x.get("skinNameSource", ""))]
+        by_skin_name: dict[str, list[dict[str, str]]] = {}
+        for x in source_skins:
+            by_skin_name.setdefault(norm(x["skinNameSource"]), []).append(x)
+        used_images: set[str] = set()
+        for skin in hero["skins"]:
+            key = norm(skin["skinName"])
+            img = ""
+            for c in by_skin_name.get(key, []):
+                if c.get("skinImage") and c["skinImage"] not in used_images:
+                    img = c["skinImage"]
+                    break
+            if not img and key:
+                best = None
+                for c in source_skins:
+                    if c.get("skinImage") in used_images:
+                        continue
+                    ck = norm(c.get("skinNameSource", ""))
+                    if ck and (ck in key or key in ck):
+                        if best is None or len(ck) > len(norm(best.get("skinNameSource", ""))):
+                            best = c
+                if best:
+                    img = best.get("skinImage", "")
+            if img:
+                used_images.add(img)
+            skin["skinImage"] = img
+            if not img:
+                skin["imageMissing"] = True
+        # Add Garena skins that Resources did not resolve by name, using the REAL
+        # 5-digit ID when it can be derived from Garena artwork filenames.
+        existing_ids = {str(x.get("skinId", "")).strip() for x in hero["skins"]}
+        auto_skin_ids = {
+            str(x.get("skinId", "")).strip()
+            for hh in auto_data.get("heroes", [])
+            for x in hh.get("skins", [])
             if str(x.get("skinId", "")).strip()
         }
-        by_name_skin: dict[str, list[dict[str, str]]] = {}
-        for x in source_skins:
-            by_name_skin.setdefault(norm(x.get("skinNameSource", "")), []).append(x)
-
-        used_images: set[str] = set()
-        existing_ids: set[str] = set()
-
-        for skin in hero["skins"]:
-            sid = str(skin.get("skinId", "")).strip()
-            existing_ids.add(sid)
-            source = by_id.get(sid)
-            img = source.get("skinImage", "") if source else ""
-            official_name = source.get("skinNameSource", "") if source else ""
-
-            if not img:
-                key = norm(skin.get("skinName", ""))
-                candidates = by_name_skin.get(key, [])
-                for c in candidates:
-                    if c.get("skinImage"):
-                        img = c["skinImage"]
-                        break
-
-            if img:
-                skin["skinImage"] = img
-                used_images.add(img)
-            elif not skin.get("skinImage"):
-                skin["skinImage"] = ""
-                skin["imageMissing"] = True
-
-            if official_name and (
-                not skin.get("skinName")
-                or norm(skin.get("skinName", "")) in {norm(hero.get("heroName", "")), ""}
-            ):
-                skin["skinName"] = official_name
-
-            skin["supported"] = bool(skin.get("supported")) or sid in auto_skin_ids
-
-        # Add skins found on the official Garena page but absent from Resources.
-        # They remain visible in the catalog, but supported=False when Resources
-        # has no matching skin ID.
         for source in source_skins:
             sid = str(source.get("skinId", "")).strip()
             sname = str(source.get("skinNameSource", "")).strip()
-            if not re.fullmatch(r"\d{5}", sid) or sid in existing_ids:
-                continue
-            if not sname or is_hidden_skin_name(sname):
+            simg = str(source.get("skinImage", "")).strip()
+            if not sid:
+                sid = derive_skin_id_from_image(simg)
+            if not re.fullmatch(r"\d{5}", sid) or sid in existing_ids or is_hidden_skin_name(sname):
                 continue
             hero["skins"].append({
                 "skinId": sid,
-                "skinName": sname,
-                "skinImage": str(source.get("skinImage", "")).strip(),
+                "skinName": sname or ("Skin " + sid),
+                "skinImage": simg,
                 "supported": sid in auto_skin_ids,
                 "resourcesVersion": result["resourcesVersion"],
                 "officialGarena": True,
             })
             existing_ids.add(sid)
-
         hero["skinCount"] = len(hero["skins"])
 
-    # Add Garena heroes missing entirely from Resources. A Garena skin ID begins
-    # with the hero ID in the current catalog, so derive it only when that pattern
-    # is unambiguous. These heroes are catalog-visible but not automatically mod-ready.
-    existing_heroes = {norm(h.get("heroName", "")) for h in result["heroes"]}
+    # Add Garena heroes missing completely from Resources when their page exposes
+    # at least one real 5-digit skin ID. The first three digits identify the hero.
+    existing_hero_keys = {norm(h.get("heroName", "")) for h in result["heroes"]}
+    auto_skin_ids = {
+        str(x.get("skinId", "")).strip()
+        for hh in auto_data.get("heroes", [])
+        for x in hh.get("skins", [])
+        if str(x.get("skinId", "")).strip()
+    }
     for g in garena_heroes:
         gname = str(g.get("heroName", "")).strip()
-        gkey = norm(gname)
-        if not gkey or gkey in existing_heroes or not is_valid_hero_name(gname):
+        if not gname or norm(gname) in existing_hero_keys:
             continue
-
-        official_skins = [
-            x for x in g.get("_skins", [])
-            if re.fullmatch(r"\d{5}", str(x.get("skinId", "")).strip())
-            and str(x.get("skinNameSource", "")).strip()
-            and not is_hidden_skin_name(x.get("skinNameSource", ""))
-        ]
-        if not official_skins:
+        gs = [x for x in (g.get("_skins") or []) if not is_hidden_skin_name(x.get("skinNameSource", ""))]
+        official = []
+        for x in gs:
+            sid = str(x.get("skinId", "")).strip() or derive_skin_id_from_image(str(x.get("skinImage", "")))
+            if not re.fullmatch(r"\d{5}", sid):
+                continue
+            sname = str(x.get("skinNameSource", "")).strip()
+            if not sname:
+                continue
+            official.append({
+                "skinId": sid, "skinName": sname,
+                "skinImage": str(x.get("skinImage", "")).strip(),
+                "supported": sid in auto_skin_ids,
+                "resourcesVersion": result["resourcesVersion"],
+                "officialGarena": True,
+            })
+        if not official:
             continue
-
-        hero_prefixes = {
-            str(x.get("skinId", "")).strip()[:3]
-            for x in official_skins
-        }
-        hero_prefixes = {
-            p for p in hero_prefixes
-            if re.fullmatch(r"\d{3}", p)
-        }
-        if len(hero_prefixes) != 1:
-            # Avoid inventing a hero ID if the page does not give us an unambiguous one.
-            continue
-        hero_id = next(iter(hero_prefixes))
-
-        added_skins = [{
-            "skinId": str(x.get("skinId", "")).strip(),
-            "skinName": str(x.get("skinNameSource", "")).strip(),
-            "skinImage": str(x.get("skinImage", "")).strip(),
-            "supported": str(x.get("skinId", "")).strip() in auto_skin_ids,
-            "resourcesVersion": result["resourcesVersion"],
-            "officialGarena": True,
-        } for x in official_skins]
-
-        if not added_skins:
-            continue
-
+        hero_id = str(int(official[0]["skinId"]) // 100)
         result["heroes"].append({
-            "heroId": hero_id,
-            "heroName": gname,
+            "heroId": hero_id, "heroName": gname,
             "heroImage": str(g.get("heroImage", "")).strip(),
             "garenaSlug": g.get("slug", ""),
-            "skins": added_skins,
-            "officialOnly": True,
-            "skinCount": len(added_skins),
+            "skins": official, "officialOnly": True,
+            "skinCount": len(official),
         })
-        existing_heroes.add(gkey)
+        existing_hero_keys.add(norm(gname))
 
     result["heroCount"] = len(result["heroes"])
     result["skinCount"] = sum(len(h.get("skins", [])) for h in result["heroes"])
     return result
+
 
 def load_json(path: Path, default: Any):
     if not path.is_file():
@@ -2038,7 +2000,6 @@ def scan_catalog():
     try:
         main_html = fetch_with_fallback(GARNA_MAIN)
         heroes = extract_hero_links(main_html)
-        # Filter Auto metadata to heroes that are actually listed by the official Garena hero catalog.
         enriched = []
         def one(h):
             try:
