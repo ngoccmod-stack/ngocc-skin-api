@@ -3,7 +3,7 @@
   "resourcesVersion": "1.63.1",
   "generatedAt": "2026-09-08T15:32:56.955486+00:00",
   "heroCount": 124,
-  "skinCount": 1041,
+  "skinCount": 1040,
   "heroes": [
     {
       "heroId": "130",
@@ -3554,19 +3554,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "59601"
-        },
-        {
-          "skinId": "59602",
-          "skinName": "Swampseer",
-          "skinImage": "https://i.ibb.co/Xf5RtH6C/ngocc-image.webp",
-          "resolved": true,
-          "supported": true,
-          "manualAdded": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 2
+      "skinCount": 1
     },
     {
       "heroId": "175",
