@@ -3,7 +3,7 @@
   "resourcesVersion": "1.63.1",
   "generatedAt": "2026-09-08T15:06:11.475410+00:00",
   "heroCount": 127,
-  "skinCount": 1674,
+  "skinCount": 1673,
   "heroes": [
     {
       "heroId": "130",
@@ -4592,15 +4592,6 @@
           "imageMissing": true
         },
         {
-          "skinId": "57702",
-          "skinName": "Skin 57702",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "57703",
           "skinName": "Skin 57703",
           "skinImage": "",
@@ -4664,7 +4655,7 @@
           "imageMissing": true
         }
       ],
-      "skinCount": 9
+      "skinCount": 8
     },
     {
       "heroId": "595",
