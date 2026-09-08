@@ -3,7 +3,7 @@
   "resourcesVersion": "1.63.1",
   "generatedAt": "2026-09-08T15:32:56.955486+00:00",
   "heroCount": 127,
-  "skinCount": 1140,
+  "skinCount": 1139,
   "heroes": [
     {
       "heroId": "130",
@@ -467,22 +467,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "11818"
-        },
-        {
-          "skinId": "garena:alice:name:butterfly-mansion-girl",
-          "skinName": "Butterfly Mansion Girl",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/1225b2f111cbd467d25efe8a2c0e6f19659518c5d93871.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 16
+      "skinCount": 15
     },
     {
       "heroId": "537",
@@ -14342,7 +14329,8 @@
     "noImage|yorn|giao long",
     "noImage|zephys|10713",
     "noImage|zill|bac thay sushi",
-    "noImage|zuka|zuka"
+    "noImage|zuka|zuka",
+    "unresolved|alice|butterfly mansion girl"
   ],
   "deletedHeroIds": [
     "garena:flowborn"
@@ -14354,25 +14342,11 @@
     "mismatch": [],
     "unresolved": [
       {
-        "heroId": "118",
-        "heroName": "Alice",
-        "skinId": "garena:alice:name:butterfly-mansion-girl",
-        "skinName": "Butterfly Mansion Girl",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/1225b2f111cbd467d25efe8a2c0e6f19659518c5d93871.jpg"
-      },
-      {
         "heroId": "537",
         "heroName": "Allain",
         "skinId": "garena:allain:name:kirito-hac-kiem-si",
         "skinName": "Kirito Hắc kiếm sĩ",
         "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/f7696367c10acf27c7b75ce22bf5a8f05f08440a7d0f11.jpg"
-      },
-      {
-        "heroId": "536",
-        "heroName": "Aoi",
-        "skinId": "garena:aoi:name:mikasa-ackermann",
-        "skinName": "Mikasa Ackermann",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/53612.jpg"
       },
       {
         "heroId": "garena:azzenka",
@@ -15012,18 +14986,6 @@
         "heroName": "Stuart",
         "skinId": "17406",
         "skinName": "Streamer bí ẩn"
-      },
-      {
-        "heroId": "144",
-        "heroName": "Taara",
-        "skinId": "14410",
-        "skinName": "Hoa hồng đỏ tươi"
-      },
-      {
-        "heroId": "144",
-        "heroName": "Taara",
-        "skinId": "14407",
-        "skinName": "Nữ chiến binh"
       },
       {
         "heroId": "546",
