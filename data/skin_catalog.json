@@ -3,7 +3,7 @@
   "resourcesVersion": "1.63.1",
   "generatedAt": "2026-09-08T15:32:56.955486+00:00",
   "heroCount": 127,
-  "skinCount": 1141,
+  "skinCount": 1140,
   "heroes": [
     {
       "heroId": "130",
@@ -897,22 +897,9 @@
           "resolved": true,
           "resourcesVersion": "1.63.1",
           "imageMissing": true
-        },
-        {
-          "skinId": "garena:aoi:name:mikasa-ackermann",
-          "skinName": "Mikasa Ackermann",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/53612.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 9
+      "skinCount": 8
     },
     {
       "heroId": "126",
