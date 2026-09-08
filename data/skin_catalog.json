@@ -3,7 +3,7 @@
   "resourcesVersion": "1.63.1",
   "generatedAt": "2026-09-08T15:32:56.955486+00:00",
   "heroCount": 127,
-  "skinCount": 1138,
+  "skinCount": 1053,
   "heroes": [
     {
       "heroId": "130",
@@ -1515,101 +1515,9 @@
       "heroName": "Azzen’Ka",
       "heroImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/12700_B51-1.jpg",
       "garenaSlug": "azzenka",
-      "skins": [
-        {
-          "skinId": "garena:azzenka:name:azzen-ka-linh-hon-lu-khach",
-          "skinName": "Azzen'Ka Linh Hồn Lữ Khách",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/0ffd9626a663ebad9045e6cdcfdee438597b602420d5b1.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "2",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:azzenka:name:azzen-ka-gheo-hay-keo",
-          "skinName": "Azzen'ka Ghẹo hay kẹo",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/47260783c37c1d6f4ccd9ac4933dd9f25be144f2ee5d61.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "3",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:azzenka:name:azzen-ka-quang-vinh-2-0",
-          "skinName": "Azzen'ka Quang Vinh 2.0",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/e17c848e6c54041be804c6aeaf8c360265966477bd0de1-e1718879653891.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "4",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:azzenka:name:azzen-ka-quy-dien-lang-khach",
-          "skinName": "Azzen'ka Quỷ diện lãng khách",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/01a0e6ddb266f526dd64780e5db62f24659664b79e8f51-e1718879644627.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "5",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:azzenka:name:azzen-ka-giang-sinh",
-          "skinName": "Azzen'Ka Giáng sinh",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/12706-1.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "6",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:azzenka:name:azzen-ka-u-hon-sa-mac",
-          "skinName": "Azzen'Ka U hồn sa mạc",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/301277head.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "7",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:azzenka:name:azzen-ka-tong-do-than-mieu",
-          "skinName": "Azzen'Ka Tông đồ thần miếu",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/301278head.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "8",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        }
-      ],
+      "skins": [],
       "officialOnly": true,
-      "skinCount": 7
+      "skinCount": 0
     },
     {
       "heroId": "505",
@@ -2159,22 +2067,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "11622"
-        },
-        {
-          "skinId": "garena:butterfly:name:thanh-nu-khoi-nguyen",
-          "skinName": "Thánh nữ khởi nguyên",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/5fcca4d14f5b72792fc2fe6aa9d7a7626593c70303ae21.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 17
+      "skinCount": 16
     },
     {
       "heroId": "524",
@@ -2329,22 +2224,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "52416"
-        },
-        {
-          "skinId": "garena:capheny:name:bugcag-assemble",
-          "skinName": "Bugcag Assemble",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/52415.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 16
+      "skinCount": 15
     },
     {
       "heroId": "192",
@@ -2577,114 +2459,9 @@
       "heroName": "D’Arcy",
       "heroImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/903191ed8212c2c6c91f1f6f0a677a565c6102d8ecf4a1.jpg",
       "garenaSlug": "darcy",
-      "skins": [
-        {
-          "skinId": "garena:darcy:name:d-arcy",
-          "skinName": "D'arcy",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/c545d29232eefe7a4d455fa68e7a60305c61059833fe21.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "1",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:darcy:name:d-arcy-nam-tuoc",
-          "skinName": "D'arcy Nam tước",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/269e80e7dd8b02a502622b1657b965cb5c6105d5c18f01.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "2",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:darcy:name:d-arcy-do-doc-tinh-he",
-          "skinName": "D'arcy Đô đốc tinh hệ",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/5ea64fa8cbeda37f03ff60dbbdd8e20a5d55455a287eb1.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "3",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:darcy:name:d-arcy-phap-su-hoa-long",
-          "skinName": "D'arcy Pháp sư hỏa long",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/7dd9effdcf4dbbc01245290ce65429275fa3860868e511.png",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "4",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:darcy:name:d-arcy-tien-si-thien-tai",
-          "skinName": "D'Arcy Tiến sĩ thiên tài",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/329aad7c027ce601993323e5c523b51e6597b75d05aac1-e1718877683606.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "5",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:darcy:name:d-arcy-chan-nhan",
-          "skinName": "D'Arcy Chân nhân",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/7e5cdbbaa00e338ba8644a38550e9f7c6597b7a32f17f1-e1718877672987.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "6",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:darcy:name:d-arcy-tong-do-chan-ly",
-          "skinName": "D'Arcy Tông đồ Chân lý",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/52306-1.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "7",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:darcy:name:d-arcy-bac-si-thu-y",
-          "skinName": "D'Arcy Bác sĩ thú y",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/305237head.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "8",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        }
-      ],
+      "skins": [],
       "officialOnly": true,
-      "skinCount": 8
+      "skinCount": 0
     },
     {
       "heroId": "534",
@@ -3060,184 +2837,25 @@
       "heroName": "Dyadia",
       "heroImage": "https://lienquan.garena.vn/wp-content/uploads/2026/01/SeaTalk_IMG_20260119_104427.jpg",
       "garenaSlug": "dyadia",
-      "skins": [
-        {
-          "skinId": "garena:dyadia:name:dyadia",
-          "skinName": "Dyadia",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2026/01/SeaTalk_IMG_20260119_104427.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "1",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        }
-      ],
-      "skinCount": 1
+      "skins": [],
+      "skinCount": 0
     },
     {
       "heroId": "595",
       "heroName": "Edras",
       "heroImage": "https://lienquan.garena.vn/wp-content/uploads/2025/10/edrashead-2.jpg",
       "garenaSlug": "11596",
-      "skins": [
-        {
-          "skinId": "garena:11596:name:edras",
-          "skinName": "Edras",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2025/10/edrashead-2.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "1",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        }
-      ],
-      "skinCount": 1
+      "skins": [],
+      "skinCount": 0
     },
     {
       "heroId": "garena:elandorr",
       "heroName": "Eland’orr",
       "heroImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/060f8e35db2f7fb1be51d7e5bdd1724a5db174d49d9de1.jpg",
       "garenaSlug": "elandorr",
-      "skins": [
-        {
-          "skinId": "garena:elandorr:name:eland-orr",
-          "skinName": "Eland'orr",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/d5592bb2109b1367451f11bb876a58ce5db1778ed43411.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "1",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:elandorr:name:eland-orr-soai-tac",
-          "skinName": "Eland'orr Soái tặc",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/2a77f7161612f671e52b016ad6e176d05db1779faca701.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "2",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:elandorr:name:eland-orr-hoc-vien-carano",
-          "skinName": "Eland'orr Học viện Carano",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/9c18721e9856cb307b2b3383a27c3c865ed4c810811f51.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "3",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:elandorr:name:eland-orr-phi-vu-the-ky",
-          "skinName": "Eland'orr Phi vụ thế kỷ",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/28a71d5d00272e77e50e4f17bbf1fe305fbcb86f9d6341.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "4",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:elandorr:name:eland-orr-sieu-tham-tu",
-          "skinName": "Eland'orr Siêu Thám Tử",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/8458d266870cafbd3411eacdb519e14c61178ff69dd211.png",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "5",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:elandorr:name:eland-orr-chu-ong-bay-cao",
-          "skinName": "Eland'orr Chú ong bay cao",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/73e68eba326e926ed5c75b03d8763bea65964dee79bbb1-e1718876798375.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "6",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:elandorr:name:eland-orr-tuxedo",
-          "skinName": "Eland'orr-Tuxedo",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/4e099533425d22f1a9896a185600089365964e3a2f1531-e1718876788133.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "7",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:elandorr:name:eland-orr-uyen-uong-mong-diep",
-          "skinName": "Eland'orr Uyên Ương Mộng Điệp",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/19907-1.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "8",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:elandorr:name:eland-orr-mong-gioi-than-chu",
-          "skinName": "Eland'orr Mộng giới thần chủ",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/301998head.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "9",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:elandorr:name:eland-oor-s-quang-vinh",
-          "skinName": "Eland'oor S-Quang vinh",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/301999head.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "10",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        }
-      ],
+      "skins": [],
       "officialOnly": true,
-      "skinCount": 10
+      "skinCount": 0
     },
     {
       "heroId": "196",
@@ -3353,22 +2971,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "19614"
-        },
-        {
-          "skinId": "garena:elsu:name:dj",
-          "skinName": "DJ",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/19613-1.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 12
+      "skinCount": 11
     },
     {
       "heroId": "195",
@@ -3474,22 +3079,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "19511"
-        },
-        {
-          "skinId": "garena:enzo:name:leo-nui",
-          "skinName": "Leo núi",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/e3bdc0d28ae94a3fbb7525a7bb40509b659643148d5c71.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 11
+      "skinCount": 10
     },
     {
       "heroId": "567",
@@ -5191,88 +4783,9 @@
       "heroName": "Kil’Groth",
       "heroImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/4dd76a3f07965ade3c71b89874b64b935a29291ca4a111.gif",
       "garenaSlug": "kilgroth",
-      "skins": [
-        {
-          "skinId": "garena:kilgroth:name:kil-groth",
-          "skinName": "Kil'Groth",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/e23f0872bf3974b176e45684ba99dfc75a29fbcfb4b1b1.gif",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "1",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:kilgroth:name:kil-groth-quang-vinh",
-          "skinName": "Kil'Groth Quang Vinh",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/8a3b9b6c07df83e4543bd734533ecde15b35e1e4ad6b51.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "2",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:kilgroth:name:kil-groth-canh-ve-bien",
-          "skinName": "Kil'Groth Cảnh Vệ Biển",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/72a9d5d7335fbb427d067ccbcedb31005a29fc99330d81.gif",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "3",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:kilgroth:name:kil-groth-chu-linh-chi",
-          "skinName": "Kil'Groth Chú lính chì",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/07665a0da323f6f7b5549b63334661866593e7bf7f7461-e1718878475327.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "4",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:kilgroth:name:kil-groth-can-nguyen-thu-ve",
-          "skinName": "Kil'Groth Càn Nguyên thủ vệ",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/13904-1.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "5",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:kilgroth:name:kil-groth-hung-than-bien-sau",
-          "skinName": "Kil'Groth Hung thần biển sâu",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/301395head.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "6",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        }
-      ],
+      "skins": [],
       "officialOnly": true,
-      "skinCount": 6
+      "skinCount": 0
     },
     {
       "heroId": "162",
@@ -5497,22 +5010,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "10621"
-        },
-        {
-          "skinId": "garena:krixi:name:terrible-tornado",
-          "skinName": "Terrible Tornado",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/10611.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 16
+      "skinCount": 15
     },
     {
       "heroId": "189",
@@ -5579,22 +5079,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "18907"
-        },
-        {
-          "skinId": "garena:krizzix:name:tien-si-tac-ke",
-          "skinName": "Tiến sĩ tắc kè",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/18908.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 7
+      "skinCount": 6
     },
     {
       "heroId": "141",
@@ -6127,22 +5614,9 @@
           "resolved": true,
           "resourcesVersion": "1.63.1",
           "imageMissing": true
-        },
-        {
-          "skinId": "garena:lindis:name:linh-hoa-than-nu",
-          "skinName": "Linh Hoa thần nữ",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/17709.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 9
+      "skinCount": 8
     },
     {
       "heroId": "539",
@@ -6317,22 +5791,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "12812"
-        },
-        {
-          "skinId": "garena:lu-bo:name:lu-bo-vu-dieu-samba",
-          "skinName": "Lữ Bố Vũ điệu Samba",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/97ac596ec4d7a612bf16a5a096debae065966a96a1a481.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 12
+      "skinCount": 11
     },
     {
       "heroId": "168",
@@ -6536,22 +5997,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "12312"
-        },
-        {
-          "skinId": "garena:maloch:name:dai-tuong-robot",
-          "skinName": "Đại Tướng Robot",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/eff1c39886b58631b79b8cbc0d29b2e95c3c3ef3e539b1.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 13
+      "skinCount": 12
     },
     {
       "heroId": "121",
@@ -6628,22 +6076,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "12107"
-        },
-        {
-          "skinId": "garena:marja:name:huyet-mau-ta-linh",
-          "skinName": "Huyết mẫu tà linh",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/12108.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 8
+      "skinCount": 7
     },
     {
       "heroId": "180",
@@ -7553,35 +6988,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "14214"
-        },
-        {
-          "skinId": "garena:natalya:name:biet-doi-bang-lam",
-          "skinName": "Biệt đội băng lam",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/949e39612e6487a9880d5e3810ebf1cd6594cf6d22b181.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:natalya:name:phu-thuy-bong-dem",
-          "skinName": "Phù thủy bóng đêm",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/14215.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 15
+      "skinCount": 13
     },
     {
       "heroId": "167",
@@ -7698,22 +7107,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "16712"
-        },
-        {
-          "skinId": "garena:ngo-khong:name:nhoc-ty-ba-dao",
-          "skinName": "Nhóc tỳ bá đạo",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/bc402592f4d5daa41a15e6d67489cbd061175a79399571.png",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 12
+      "skinCount": 11
     },
     {
       "heroId": "114",
@@ -8057,22 +7453,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "13706"
-        },
-        {
-          "skinId": "garena:paine:name:cuu-son-tuong-lieu",
-          "skinName": "Cửu Sơn Tương Liễu",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/13707.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 7
+      "skinCount": 6
     },
     {
       "heroId": "148",
@@ -8218,22 +7601,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "52810"
-        },
-        {
-          "skinId": "garena:qi:name:thieu-nu-mua-xuan",
-          "skinName": "Thiếu nữ mùa xuân",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/bd1e14967c73c54c19de2aba827054886597c1384e6d41.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 9
+      "skinCount": 8
     },
     {
       "heroId": "518",
@@ -8568,22 +7938,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "51509"
-        },
-        {
-          "skinId": "garena:richter:name:kiem-than-susanoo",
-          "skinName": "Kiếm thần Susanoo",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/e179f831b08782f4031695b47904822565977cc7be8711.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 7
+      "skinCount": 6
     },
     {
       "heroId": "191",
@@ -9086,22 +8443,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "52710"
-        },
-        {
-          "skinId": "garena:sephera:name:s-quang-vinh",
-          "skinName": "S - Quang Vinh",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/52712.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 11
+      "skinCount": 10
     },
     {
       "heroId": "535",
@@ -9693,22 +9037,8 @@
       "heroName": "Tamyn",
       "heroImage": "https://lienquan.garena.vn/wp-content/uploads/2026/07/SeaTalk_IMG_20260722_163230-1.jpg",
       "garenaSlug": "tamyn",
-      "skins": [
-        {
-          "skinId": "garena:tamyn:name:tamyn",
-          "skinName": "Tamyn",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2026/07/SeaTalk_IMG_20260722_163230-e1784712776930.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "1",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        }
-      ],
-      "skinCount": 1
+      "skins": [],
+      "skinCount": 0
     },
     {
       "heroId": "186",
@@ -9863,279 +9193,18 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "54607"
-        },
-        {
-          "skinId": "garena:teeri:name:tieu-ki-lan",
-          "skinName": "Tiểu kì lân",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/87dc204036bcbdec7be459ba90327feb65968448beea31.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 7
+      "skinCount": 6
     },
     {
       "heroId": "garena:telannas",
       "heroName": "Tel’Annas",
       "heroImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/5064b1bbcb8dcac94f88292537d6c35459e96577aa90c1.jpg",
       "garenaSlug": "telannas",
-      "skins": [
-        {
-          "skinId": "garena:telannas:name:tel-annas",
-          "skinName": "Tel'Annas",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/cc9c2ce79150240646c6ae335f7184b859e965ee68f1b1.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "1",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:telannas:name:tel-annas-canh-ve-rung",
-          "skinName": "Tel'Annas Cảnh Vệ Rừng",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/8707e09b758532f8e7f78230743337be59e9660d262971.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "2",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:telannas:name:tel-annas-chung-tinh-tien",
-          "skinName": "Tel'Annas Chung Tình Tiễn",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/354fd183190e0a5a383bc4d2eb3ace8e5a7abfd8f3d0d1.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "3",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:telannas:name:tel-annas-giam-thi-than-thien",
-          "skinName": "Tel'Annas Giám thị thân thiện",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/c6a443a3a3dbbe48bbc5fc4da6f4f26d5ab9f98850a091.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "4",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:telannas:name:tel-annas-thanh-nu-mat-hoi",
-          "skinName": "Tel'annas Thánh nữ mật hội",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/fbb25c1c3c0df6b66df81cba4e8bb08e5b868528757cb1.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "5",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:telannas:name:tel-annas-than-su-f-e-e-x1",
-          "skinName": "Tel'Annas Thần sứ F.E.E-X1",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/acd939e7bd203ceebe66450431292e5a5cd114a5bc5b91.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "6",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:telannas:name:tel-annas-da-hoi",
-          "skinName": "Tel'annas Dạ hội",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/a3601bb9e05c116cdce169d684d2fb3d5e45350747f551.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "7",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:telannas:name:tel-annas-cam-y-ve-phi-ung",
-          "skinName": "Tel'annas Cẩm y vệ: Phi Ưng",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/a1ef77f114dcc84df725f46ff3c356c45ed4ac70276141.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "8",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:telannas:name:tel-annas-thu-nguyen-ve-than",
-          "skinName": "Tel'Annas Thứ nguyên vệ thần",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/a8711ec71b74022f658d35c1c8f4f63b5fbb7a7bd31201.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "9",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:telannas:name:tel-annas-cong-chua-mong-mo",
-          "skinName": "Tel'Annas Công chúa mộng mơ",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/765f09cc27fd749f8739e8d7a84d14c6611764db5a63a1.png",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "10",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:telannas:name:tel-annas-vu-khuc-yeu-ho",
-          "skinName": "Tel'Annas Vũ khúc yêu hồ",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/7ff46defba46217a92b614111e51b4f161176608010d71.png",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "11",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:telannas:name:tel-annas-thien-vu-than-long",
-          "skinName": "Tel'Annas Thiên Vũ Thần Long",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/2022d73a74079d001aa2953124cad71365964ecbeec521-e1718878580123.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "12",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:telannas:name:tel-annas-o-thuoc-tien-nu",
-          "skinName": "Tel'Annas Ô Thước Tiên nữ",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/0f5ae4fbe872326c495eef61f72e756365965307ec3c61-e1718878572511.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "13",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:telannas:name:tel-annas-quang-vinh",
-          "skinName": "Tel'Annas Quang Vinh",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/7ef71e2a3494971556f7354fa4c5dd01659653a619fc51-e1718878554143.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "14",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:telannas:name:tel-annas-tan-nien-ve-than",
-          "skinName": "Tel'Annas Tân niên vệ thần",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/700a2b1db620403126bb04ff26dace86659653e918f9c1-e1718878547590.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "15",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:telannas:name:tel-annas-jujutsu-sorcerer",
-          "skinName": "Tel'Annas Jujutsu Sorcerer",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/50118-1.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "16",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:telannas:name:tel-annas-lan-quang-thanh-dieu",
-          "skinName": "Tel'Annas Lân Quang Thánh Điệu",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/50119-1.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "17",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:telannas:name:tel-annas-ky-nguyen-ho-phach",
-          "skinName": "Tel'Annas Kỷ Nguyên Hổ Phách",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/3050120head.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "18",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:telannas:name:tel-annas-tiec-bai-bien",
-          "skinName": "Tel'Annas Tiệc bãi biển",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/3050121head.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "19",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        }
-      ],
+      "skins": [],
       "officialOnly": true,
-      "skinCount": 19
+      "skinCount": 0
     },
     {
       "heroId": "135",
@@ -10210,35 +9279,9 @@
           "resolved": true,
           "resourcesVersion": "1.63.1",
           "imageMissing": true
-        },
-        {
-          "skinId": "garena:the-flash:name:the-flash",
-          "skinName": "The Flash",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/efc981c9e4534651441b90a4b4945e055ad9688b0d01a1.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "1",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:the-flash:name:flash-tia-chop-tuong-lai",
-          "skinName": "Flash Tia chớp tương lai",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/0b12171834d2f648325336e88a167df25bad9a7d4af101.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "2",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 3
+      "skinCount": 1
     },
     {
       "heroId": "532",
@@ -10682,22 +9725,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "19016"
-        },
-        {
-          "skinId": "garena:tulen:name:than-su-st-l-79",
-          "skinName": "Thần sứ ST.L-79",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/c03782ae462d08357340d3886cb701e15fc5253293e3d1.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 16
+      "skinCount": 15
     },
     {
       "heroId": "133",
@@ -11351,22 +10381,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "11120"
-        },
-        {
-          "skinId": "garena:violet:name:phao-hoa-neon-tuyet-sac",
-          "skinName": "Pháo hoa Neon Tuyệt sắc",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/101cc6d1d768baa1c7c2d3cc030bdae55c4ed09b701111.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 20
+      "skinCount": 19
     },
     {
       "heroId": "529",
@@ -11462,22 +10479,8 @@
       "heroName": "Wiro",
       "heroImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/61015ea8f83c0a833833297bb927ccd35be3c4834cd261.jpg",
       "garenaSlug": "wiro",
-      "skins": [
-        {
-          "skinId": "garena:wiro:name:wiro",
-          "skinName": "Wiro",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/86f414b37cd13c697508282c15fa05805be3c49c8204f1.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "1",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        }
-      ],
-      "skinCount": 1
+      "skins": [],
+      "skinCount": 0
     },
     {
       "heroId": "508",
@@ -11780,101 +10783,9 @@
       "heroName": "Y’bneth",
       "heroImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/173809566ede28d1fee0731e43a1912c5b98deb97c82f1.jpg",
       "garenaSlug": "ybneth",
-      "skins": [
-        {
-          "skinId": "garena:ybneth:name:y-bneth",
-          "skinName": "Y'bneth",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/8276a829e1e1559b0a57f38ce7e1ac255b98deead3d3e1.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "1",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:ybneth:name:y-bneth-hat-truong-kiem-lam",
-          "skinName": "Y'bneth Hạt trưởng kiểm lâm",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/28f0eae6913d1acf23e887010dab7cfe5b98df7580fd21.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "2",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:ybneth:name:y-bneth-chien-binh-luc-bao",
-          "skinName": "Y'Bneth Chiến binh lục bảo",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/8401097de8d6f9d7f83beea744d3501f65968e88458531-e1718877959516.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "3",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:ybneth:name:y-bneth-dong-co-vinh-cuu",
-          "skinName": "Y'bneth Động cơ vĩnh cửu",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/ffe020ee1a967b61c3989d000c6d0d0565968ee80c4781-e1718877975812.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "4",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:ybneth:name:y-bneth-titan-bang-gia",
-          "skinName": "Y'bneth Titan Băng giá",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/50905-1.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "5",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:ybneth:name:y-bneth-candy-bear",
-          "skinName": "Y'Bneth Candy Bear",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/305096head.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "6",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        },
-        {
-          "skinId": "garena:ybneth:name:y-bneth-dai-thu-am-nhac",
-          "skinName": "Y'Bneth Đại Thụ Âm Nhạc",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/305097head.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "7",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        }
-      ],
+      "skins": [],
       "officialOnly": true,
-      "skinCount": 7
+      "skinCount": 0
     },
     {
       "heroId": "154",
@@ -12455,22 +11366,9 @@
           "resolved": true,
           "resourcesVersion": "1.63.1",
           "imageMissing": true
-        },
-        {
-          "skinId": "garena:zephys:name:dai-ca-duong-pho",
-          "skinName": "Đại ca đường phố",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/10715.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 13
+      "skinCount": 12
     },
     {
       "heroId": "146",
@@ -12654,22 +11552,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "52508"
-        },
-        {
-          "skinId": "garena:zip:name:day-to-hong",
-          "skinName": "Dây tơ hồng",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/52507.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 9
+      "skinCount": 8
     },
     {
       "heroId": "503",
@@ -14321,7 +13206,92 @@
     "noImage|zill|bac thay sushi",
     "noImage|zuka|zuka",
     "unresolved|alice|butterfly mansion girl",
-    "unresolved|allain|kirito hac kiem si"
+    "unresolved|allain|kirito hac kiem si",
+    "unresolved|azzenka|azzen ka gheo hay keo",
+    "unresolved|azzenka|azzen ka giang sinh",
+    "unresolved|azzenka|azzen ka linh hon lu khach",
+    "unresolved|azzenka|azzen ka quang vinh 2 0",
+    "unresolved|azzenka|azzen ka quy dien lang khach",
+    "unresolved|azzenka|azzen ka tong do than mieu",
+    "unresolved|azzenka|azzen ka u hon sa mac",
+    "unresolved|butterfly|thanh nu khoi nguyen",
+    "unresolved|capheny|bugcag assemble",
+    "unresolved|darcy|d arcy",
+    "unresolved|darcy|d arcy bac si thu y",
+    "unresolved|darcy|d arcy chan nhan",
+    "unresolved|darcy|d arcy do doc tinh he",
+    "unresolved|darcy|d arcy nam tuoc",
+    "unresolved|darcy|d arcy phap su hoa long",
+    "unresolved|darcy|d arcy tien si thien tai",
+    "unresolved|darcy|d arcy tong do chan ly",
+    "unresolved|dyadia|dyadia",
+    "unresolved|edras|edras",
+    "unresolved|elandorr|eland oor s quang vinh",
+    "unresolved|elandorr|eland orr",
+    "unresolved|elandorr|eland orr chu ong bay cao",
+    "unresolved|elandorr|eland orr hoc vien carano",
+    "unresolved|elandorr|eland orr mong gioi than chu",
+    "unresolved|elandorr|eland orr phi vu the ky",
+    "unresolved|elandorr|eland orr sieu tham tu",
+    "unresolved|elandorr|eland orr soai tac",
+    "unresolved|elandorr|eland orr tuxedo",
+    "unresolved|elandorr|eland orr uyen uong mong diep",
+    "unresolved|elsu|dj",
+    "unresolved|enzo|leo nui",
+    "unresolved|kilgroth|kil groth",
+    "unresolved|kilgroth|kil groth can nguyen thu ve",
+    "unresolved|kilgroth|kil groth canh ve bien",
+    "unresolved|kilgroth|kil groth chu linh chi",
+    "unresolved|kilgroth|kil groth hung than bien sau",
+    "unresolved|kilgroth|kil groth quang vinh",
+    "unresolved|krixi|terrible tornado",
+    "unresolved|krizzix|tien si tac ke",
+    "unresolved|lindis|linh hoa than nu",
+    "unresolved|lu bo|lu bo vu dieu samba",
+    "unresolved|maloch|dai tuong robot",
+    "unresolved|marja|huyet mau ta linh",
+    "unresolved|natalya|biet doi bang lam",
+    "unresolved|natalya|phu thuy bong dem",
+    "unresolved|ngo khong|nhoc ty ba dao",
+    "unresolved|paine|cuu son tuong lieu",
+    "unresolved|qi|thieu nu mua xuan",
+    "unresolved|richter|kiem than susanoo",
+    "unresolved|sephera|s quang vinh",
+    "unresolved|tamyn|tamyn",
+    "unresolved|teeri|tieu ki lan",
+    "unresolved|telannas|tel annas",
+    "unresolved|telannas|tel annas cam y ve phi ung",
+    "unresolved|telannas|tel annas canh ve rung",
+    "unresolved|telannas|tel annas chung tinh tien",
+    "unresolved|telannas|tel annas cong chua mong mo",
+    "unresolved|telannas|tel annas da hoi",
+    "unresolved|telannas|tel annas giam thi than thien",
+    "unresolved|telannas|tel annas jujutsu sorcerer",
+    "unresolved|telannas|tel annas ky nguyen ho phach",
+    "unresolved|telannas|tel annas lan quang thanh dieu",
+    "unresolved|telannas|tel annas o thuoc tien nu",
+    "unresolved|telannas|tel annas quang vinh",
+    "unresolved|telannas|tel annas tan nien ve than",
+    "unresolved|telannas|tel annas than su f e e x1",
+    "unresolved|telannas|tel annas thanh nu mat hoi",
+    "unresolved|telannas|tel annas thien vu than long",
+    "unresolved|telannas|tel annas thu nguyen ve than",
+    "unresolved|telannas|tel annas tiec bai bien",
+    "unresolved|telannas|tel annas vu khuc yeu ho",
+    "unresolved|the flash|flash tia chop tuong lai",
+    "unresolved|the flash|the flash",
+    "unresolved|tulen|than su st l 79",
+    "unresolved|violet|phao hoa neon tuyet sac",
+    "unresolved|wiro|wiro",
+    "unresolved|ybneth|y bneth",
+    "unresolved|ybneth|y bneth candy bear",
+    "unresolved|ybneth|y bneth chien binh luc bao",
+    "unresolved|ybneth|y bneth dai thu am nhac",
+    "unresolved|ybneth|y bneth dong co vinh cuu",
+    "unresolved|ybneth|y bneth hat truong kiem lam",
+    "unresolved|ybneth|y bneth titan bang gia",
+    "unresolved|zephys|dai ca duong pho",
+    "unresolved|zip|day to hong"
   ],
   "deletedHeroIds": [
     "garena:flowborn"
@@ -14331,603 +13301,7 @@
   ],
   "idIssues": {
     "mismatch": [],
-    "unresolved": [
-      {
-        "heroId": "garena:azzenka",
-        "heroName": "Azzen’Ka",
-        "skinId": "garena:azzenka:name:azzen-ka-gheo-hay-keo",
-        "skinName": "Azzen'ka Ghẹo hay kẹo",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/47260783c37c1d6f4ccd9ac4933dd9f25be144f2ee5d61.jpg"
-      },
-      {
-        "heroId": "garena:azzenka",
-        "heroName": "Azzen’Ka",
-        "skinId": "garena:azzenka:name:azzen-ka-giang-sinh",
-        "skinName": "Azzen'Ka Giáng sinh",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/12706-1.jpg"
-      },
-      {
-        "heroId": "garena:azzenka",
-        "heroName": "Azzen’Ka",
-        "skinId": "garena:azzenka:name:azzen-ka-linh-hon-lu-khach",
-        "skinName": "Azzen'Ka Linh Hồn Lữ Khách",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/0ffd9626a663ebad9045e6cdcfdee438597b602420d5b1.jpg"
-      },
-      {
-        "heroId": "garena:azzenka",
-        "heroName": "Azzen’Ka",
-        "skinId": "garena:azzenka:name:azzen-ka-quang-vinh-2-0",
-        "skinName": "Azzen'ka Quang Vinh 2.0",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/e17c848e6c54041be804c6aeaf8c360265966477bd0de1-e1718879653891.jpg"
-      },
-      {
-        "heroId": "garena:azzenka",
-        "heroName": "Azzen’Ka",
-        "skinId": "garena:azzenka:name:azzen-ka-quy-dien-lang-khach",
-        "skinName": "Azzen'ka Quỷ diện lãng khách",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/01a0e6ddb266f526dd64780e5db62f24659664b79e8f51-e1718879644627.jpg"
-      },
-      {
-        "heroId": "garena:azzenka",
-        "heroName": "Azzen’Ka",
-        "skinId": "garena:azzenka:name:azzen-ka-tong-do-than-mieu",
-        "skinName": "Azzen'Ka Tông đồ thần miếu",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/301278head.jpg"
-      },
-      {
-        "heroId": "garena:azzenka",
-        "heroName": "Azzen’Ka",
-        "skinId": "garena:azzenka:name:azzen-ka-u-hon-sa-mac",
-        "skinName": "Azzen'Ka U hồn sa mạc",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/301277head.jpg"
-      },
-      {
-        "heroId": "116",
-        "heroName": "Butterfly",
-        "skinId": "garena:butterfly:name:thanh-nu-khoi-nguyen",
-        "skinName": "Thánh nữ khởi nguyên",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/5fcca4d14f5b72792fc2fe6aa9d7a7626593c70303ae21.jpg"
-      },
-      {
-        "heroId": "524",
-        "heroName": "Capheny",
-        "skinId": "garena:capheny:name:bugcag-assemble",
-        "skinName": "Bugcag Assemble",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/52415.jpg"
-      },
-      {
-        "heroId": "garena:darcy",
-        "heroName": "D’Arcy",
-        "skinId": "garena:darcy:name:d-arcy",
-        "skinName": "D'arcy",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/c545d29232eefe7a4d455fa68e7a60305c61059833fe21.jpg"
-      },
-      {
-        "heroId": "garena:darcy",
-        "heroName": "D’Arcy",
-        "skinId": "garena:darcy:name:d-arcy-bac-si-thu-y",
-        "skinName": "D'Arcy Bác sĩ thú y",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/305237head.jpg"
-      },
-      {
-        "heroId": "garena:darcy",
-        "heroName": "D’Arcy",
-        "skinId": "garena:darcy:name:d-arcy-chan-nhan",
-        "skinName": "D'Arcy Chân nhân",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/7e5cdbbaa00e338ba8644a38550e9f7c6597b7a32f17f1-e1718877672987.jpg"
-      },
-      {
-        "heroId": "garena:darcy",
-        "heroName": "D’Arcy",
-        "skinId": "garena:darcy:name:d-arcy-do-doc-tinh-he",
-        "skinName": "D'arcy Đô đốc tinh hệ",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/5ea64fa8cbeda37f03ff60dbbdd8e20a5d55455a287eb1.jpg"
-      },
-      {
-        "heroId": "garena:darcy",
-        "heroName": "D’Arcy",
-        "skinId": "garena:darcy:name:d-arcy-nam-tuoc",
-        "skinName": "D'arcy Nam tước",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/269e80e7dd8b02a502622b1657b965cb5c6105d5c18f01.jpg"
-      },
-      {
-        "heroId": "garena:darcy",
-        "heroName": "D’Arcy",
-        "skinId": "garena:darcy:name:d-arcy-phap-su-hoa-long",
-        "skinName": "D'arcy Pháp sư hỏa long",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/7dd9effdcf4dbbc01245290ce65429275fa3860868e511.png"
-      },
-      {
-        "heroId": "garena:darcy",
-        "heroName": "D’Arcy",
-        "skinId": "garena:darcy:name:d-arcy-tien-si-thien-tai",
-        "skinName": "D'Arcy Tiến sĩ thiên tài",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/329aad7c027ce601993323e5c523b51e6597b75d05aac1-e1718877683606.jpg"
-      },
-      {
-        "heroId": "garena:darcy",
-        "heroName": "D’Arcy",
-        "skinId": "garena:darcy:name:d-arcy-tong-do-chan-ly",
-        "skinName": "D'Arcy Tông đồ Chân lý",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/52306-1.jpg"
-      },
-      {
-        "heroId": "577",
-        "heroName": "Dyadia",
-        "skinId": "garena:dyadia:name:dyadia",
-        "skinName": "Dyadia",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2026/01/SeaTalk_IMG_20260119_104427.jpg"
-      },
-      {
-        "heroId": "595",
-        "heroName": "Edras",
-        "skinId": "garena:11596:name:edras",
-        "skinName": "Edras",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2025/10/edrashead-2.jpg"
-      },
-      {
-        "heroId": "garena:elandorr",
-        "heroName": "Eland’orr",
-        "skinId": "garena:elandorr:name:eland-oor-s-quang-vinh",
-        "skinName": "Eland'oor S-Quang vinh",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/301999head.jpg"
-      },
-      {
-        "heroId": "garena:elandorr",
-        "heroName": "Eland’orr",
-        "skinId": "garena:elandorr:name:eland-orr",
-        "skinName": "Eland'orr",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/d5592bb2109b1367451f11bb876a58ce5db1778ed43411.jpg"
-      },
-      {
-        "heroId": "garena:elandorr",
-        "heroName": "Eland’orr",
-        "skinId": "garena:elandorr:name:eland-orr-chu-ong-bay-cao",
-        "skinName": "Eland'orr Chú ong bay cao",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/73e68eba326e926ed5c75b03d8763bea65964dee79bbb1-e1718876798375.jpg"
-      },
-      {
-        "heroId": "garena:elandorr",
-        "heroName": "Eland’orr",
-        "skinId": "garena:elandorr:name:eland-orr-hoc-vien-carano",
-        "skinName": "Eland'orr Học viện Carano",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/9c18721e9856cb307b2b3383a27c3c865ed4c810811f51.jpg"
-      },
-      {
-        "heroId": "garena:elandorr",
-        "heroName": "Eland’orr",
-        "skinId": "garena:elandorr:name:eland-orr-mong-gioi-than-chu",
-        "skinName": "Eland'orr Mộng giới thần chủ",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/301998head.jpg"
-      },
-      {
-        "heroId": "garena:elandorr",
-        "heroName": "Eland’orr",
-        "skinId": "garena:elandorr:name:eland-orr-phi-vu-the-ky",
-        "skinName": "Eland'orr Phi vụ thế kỷ",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/28a71d5d00272e77e50e4f17bbf1fe305fbcb86f9d6341.jpg"
-      },
-      {
-        "heroId": "garena:elandorr",
-        "heroName": "Eland’orr",
-        "skinId": "garena:elandorr:name:eland-orr-sieu-tham-tu",
-        "skinName": "Eland'orr Siêu Thám Tử",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/8458d266870cafbd3411eacdb519e14c61178ff69dd211.png"
-      },
-      {
-        "heroId": "garena:elandorr",
-        "heroName": "Eland’orr",
-        "skinId": "garena:elandorr:name:eland-orr-soai-tac",
-        "skinName": "Eland'orr Soái tặc",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/2a77f7161612f671e52b016ad6e176d05db1779faca701.jpg"
-      },
-      {
-        "heroId": "garena:elandorr",
-        "heroName": "Eland’orr",
-        "skinId": "garena:elandorr:name:eland-orr-tuxedo",
-        "skinName": "Eland'orr-Tuxedo",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/4e099533425d22f1a9896a185600089365964e3a2f1531-e1718876788133.jpg"
-      },
-      {
-        "heroId": "garena:elandorr",
-        "heroName": "Eland’orr",
-        "skinId": "garena:elandorr:name:eland-orr-uyen-uong-mong-diep",
-        "skinName": "Eland'orr Uyên Ương Mộng Điệp",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/19907-1.jpg"
-      },
-      {
-        "heroId": "196",
-        "heroName": "Elsu",
-        "skinId": "garena:elsu:name:dj",
-        "skinName": "DJ",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/19613-1.jpg"
-      },
-      {
-        "heroId": "195",
-        "heroName": "Enzo",
-        "skinId": "garena:enzo:name:leo-nui",
-        "skinName": "Leo núi",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/e3bdc0d28ae94a3fbb7525a7bb40509b659643148d5c71.jpg"
-      },
-      {
-        "heroId": "garena:kilgroth",
-        "heroName": "Kil’Groth",
-        "skinId": "garena:kilgroth:name:kil-groth",
-        "skinName": "Kil'Groth",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/e23f0872bf3974b176e45684ba99dfc75a29fbcfb4b1b1.gif"
-      },
-      {
-        "heroId": "garena:kilgroth",
-        "heroName": "Kil’Groth",
-        "skinId": "garena:kilgroth:name:kil-groth-can-nguyen-thu-ve",
-        "skinName": "Kil'Groth Càn Nguyên thủ vệ",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/13904-1.jpg"
-      },
-      {
-        "heroId": "garena:kilgroth",
-        "heroName": "Kil’Groth",
-        "skinId": "garena:kilgroth:name:kil-groth-canh-ve-bien",
-        "skinName": "Kil'Groth Cảnh Vệ Biển",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/72a9d5d7335fbb427d067ccbcedb31005a29fc99330d81.gif"
-      },
-      {
-        "heroId": "garena:kilgroth",
-        "heroName": "Kil’Groth",
-        "skinId": "garena:kilgroth:name:kil-groth-chu-linh-chi",
-        "skinName": "Kil'Groth Chú lính chì",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/07665a0da323f6f7b5549b63334661866593e7bf7f7461-e1718878475327.jpg"
-      },
-      {
-        "heroId": "garena:kilgroth",
-        "heroName": "Kil’Groth",
-        "skinId": "garena:kilgroth:name:kil-groth-hung-than-bien-sau",
-        "skinName": "Kil'Groth Hung thần biển sâu",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/301395head.jpg"
-      },
-      {
-        "heroId": "garena:kilgroth",
-        "heroName": "Kil’Groth",
-        "skinId": "garena:kilgroth:name:kil-groth-quang-vinh",
-        "skinName": "Kil'Groth Quang Vinh",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/8a3b9b6c07df83e4543bd734533ecde15b35e1e4ad6b51.jpg"
-      },
-      {
-        "heroId": "106",
-        "heroName": "Krixi",
-        "skinId": "garena:krixi:name:terrible-tornado",
-        "skinName": "Terrible Tornado",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/10611.jpg"
-      },
-      {
-        "heroId": "189",
-        "heroName": "Krizzix",
-        "skinId": "garena:krizzix:name:tien-si-tac-ke",
-        "skinName": "Tiến sĩ tắc kè",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/18908.jpg"
-      },
-      {
-        "heroId": "177",
-        "heroName": "Lindis",
-        "skinId": "garena:lindis:name:linh-hoa-than-nu",
-        "skinName": "Linh Hoa thần nữ",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/17709.jpg"
-      },
-      {
-        "heroId": "128",
-        "heroName": "Lữ Bố",
-        "skinId": "garena:lu-bo:name:lu-bo-vu-dieu-samba",
-        "skinName": "Lữ Bố Vũ điệu Samba",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/97ac596ec4d7a612bf16a5a096debae065966a96a1a481.jpg"
-      },
-      {
-        "heroId": "123",
-        "heroName": "Maloch",
-        "skinId": "garena:maloch:name:dai-tuong-robot",
-        "skinName": "Đại Tướng Robot",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/eff1c39886b58631b79b8cbc0d29b2e95c3c3ef3e539b1.jpg"
-      },
-      {
-        "heroId": "121",
-        "heroName": "Marja",
-        "skinId": "garena:marja:name:huyet-mau-ta-linh",
-        "skinName": "Huyết mẫu tà linh",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/12108.jpg"
-      },
-      {
-        "heroId": "142",
-        "heroName": "Natalya",
-        "skinId": "garena:natalya:name:biet-doi-bang-lam",
-        "skinName": "Biệt đội băng lam",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/949e39612e6487a9880d5e3810ebf1cd6594cf6d22b181.jpg"
-      },
-      {
-        "heroId": "142",
-        "heroName": "Natalya",
-        "skinId": "garena:natalya:name:phu-thuy-bong-dem",
-        "skinName": "Phù thủy bóng đêm",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/14215.jpg"
-      },
-      {
-        "heroId": "167",
-        "heroName": "Ngộ Không",
-        "skinId": "garena:ngo-khong:name:nhoc-ty-ba-dao",
-        "skinName": "Nhóc tỳ bá đạo",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/bc402592f4d5daa41a15e6d67489cbd061175a79399571.png"
-      },
-      {
-        "heroId": "137",
-        "heroName": "Paine",
-        "skinId": "garena:paine:name:cuu-son-tuong-lieu",
-        "skinName": "Cửu Sơn Tương Liễu",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/13707.jpg"
-      },
-      {
-        "heroId": "528",
-        "heroName": "Qi",
-        "skinId": "garena:qi:name:thieu-nu-mua-xuan",
-        "skinName": "Thiếu nữ mùa xuân",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/bd1e14967c73c54c19de2aba827054886597c1384e6d41.jpg"
-      },
-      {
-        "heroId": "515",
-        "heroName": "Richter",
-        "skinId": "garena:richter:name:kiem-than-susanoo",
-        "skinName": "Kiếm thần Susanoo",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/e179f831b08782f4031695b47904822565977cc7be8711.jpg"
-      },
-      {
-        "heroId": "527",
-        "heroName": "Sephera",
-        "skinId": "garena:sephera:name:s-quang-vinh",
-        "skinName": "S - Quang Vinh",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/52712.jpg"
-      },
-      {
-        "heroId": "593",
-        "heroName": "Tamyn",
-        "skinId": "garena:tamyn:name:tamyn",
-        "skinName": "Tamyn",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2026/07/SeaTalk_IMG_20260722_163230-e1784712776930.jpg"
-      },
-      {
-        "heroId": "546",
-        "heroName": "Teeri",
-        "skinId": "garena:teeri:name:tieu-ki-lan",
-        "skinName": "Tiểu kì lân",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/87dc204036bcbdec7be459ba90327feb65968448beea31.jpg"
-      },
-      {
-        "heroId": "garena:telannas",
-        "heroName": "Tel’Annas",
-        "skinId": "garena:telannas:name:tel-annas",
-        "skinName": "Tel'Annas",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/cc9c2ce79150240646c6ae335f7184b859e965ee68f1b1.jpg"
-      },
-      {
-        "heroId": "garena:telannas",
-        "heroName": "Tel’Annas",
-        "skinId": "garena:telannas:name:tel-annas-cam-y-ve-phi-ung",
-        "skinName": "Tel'annas Cẩm y vệ: Phi Ưng",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/a1ef77f114dcc84df725f46ff3c356c45ed4ac70276141.jpg"
-      },
-      {
-        "heroId": "garena:telannas",
-        "heroName": "Tel’Annas",
-        "skinId": "garena:telannas:name:tel-annas-canh-ve-rung",
-        "skinName": "Tel'Annas Cảnh Vệ Rừng",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/8707e09b758532f8e7f78230743337be59e9660d262971.jpg"
-      },
-      {
-        "heroId": "garena:telannas",
-        "heroName": "Tel’Annas",
-        "skinId": "garena:telannas:name:tel-annas-chung-tinh-tien",
-        "skinName": "Tel'Annas Chung Tình Tiễn",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/354fd183190e0a5a383bc4d2eb3ace8e5a7abfd8f3d0d1.jpg"
-      },
-      {
-        "heroId": "garena:telannas",
-        "heroName": "Tel’Annas",
-        "skinId": "garena:telannas:name:tel-annas-cong-chua-mong-mo",
-        "skinName": "Tel'Annas Công chúa mộng mơ",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/765f09cc27fd749f8739e8d7a84d14c6611764db5a63a1.png"
-      },
-      {
-        "heroId": "garena:telannas",
-        "heroName": "Tel’Annas",
-        "skinId": "garena:telannas:name:tel-annas-da-hoi",
-        "skinName": "Tel'annas Dạ hội",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/a3601bb9e05c116cdce169d684d2fb3d5e45350747f551.jpg"
-      },
-      {
-        "heroId": "garena:telannas",
-        "heroName": "Tel’Annas",
-        "skinId": "garena:telannas:name:tel-annas-giam-thi-than-thien",
-        "skinName": "Tel'Annas Giám thị thân thiện",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/c6a443a3a3dbbe48bbc5fc4da6f4f26d5ab9f98850a091.jpg"
-      },
-      {
-        "heroId": "garena:telannas",
-        "heroName": "Tel’Annas",
-        "skinId": "garena:telannas:name:tel-annas-jujutsu-sorcerer",
-        "skinName": "Tel'Annas Jujutsu Sorcerer",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/50118-1.jpg"
-      },
-      {
-        "heroId": "garena:telannas",
-        "heroName": "Tel’Annas",
-        "skinId": "garena:telannas:name:tel-annas-ky-nguyen-ho-phach",
-        "skinName": "Tel'Annas Kỷ Nguyên Hổ Phách",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/3050120head.jpg"
-      },
-      {
-        "heroId": "garena:telannas",
-        "heroName": "Tel’Annas",
-        "skinId": "garena:telannas:name:tel-annas-lan-quang-thanh-dieu",
-        "skinName": "Tel'Annas Lân Quang Thánh Điệu",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/50119-1.jpg"
-      },
-      {
-        "heroId": "garena:telannas",
-        "heroName": "Tel’Annas",
-        "skinId": "garena:telannas:name:tel-annas-o-thuoc-tien-nu",
-        "skinName": "Tel'Annas Ô Thước Tiên nữ",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/0f5ae4fbe872326c495eef61f72e756365965307ec3c61-e1718878572511.jpg"
-      },
-      {
-        "heroId": "garena:telannas",
-        "heroName": "Tel’Annas",
-        "skinId": "garena:telannas:name:tel-annas-quang-vinh",
-        "skinName": "Tel'Annas Quang Vinh",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/7ef71e2a3494971556f7354fa4c5dd01659653a619fc51-e1718878554143.jpg"
-      },
-      {
-        "heroId": "garena:telannas",
-        "heroName": "Tel’Annas",
-        "skinId": "garena:telannas:name:tel-annas-tan-nien-ve-than",
-        "skinName": "Tel'Annas Tân niên vệ thần",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/700a2b1db620403126bb04ff26dace86659653e918f9c1-e1718878547590.jpg"
-      },
-      {
-        "heroId": "garena:telannas",
-        "heroName": "Tel’Annas",
-        "skinId": "garena:telannas:name:tel-annas-than-su-f-e-e-x1",
-        "skinName": "Tel'Annas Thần sứ F.E.E-X1",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/acd939e7bd203ceebe66450431292e5a5cd114a5bc5b91.jpg"
-      },
-      {
-        "heroId": "garena:telannas",
-        "heroName": "Tel’Annas",
-        "skinId": "garena:telannas:name:tel-annas-thanh-nu-mat-hoi",
-        "skinName": "Tel'annas Thánh nữ mật hội",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/fbb25c1c3c0df6b66df81cba4e8bb08e5b868528757cb1.jpg"
-      },
-      {
-        "heroId": "garena:telannas",
-        "heroName": "Tel’Annas",
-        "skinId": "garena:telannas:name:tel-annas-thien-vu-than-long",
-        "skinName": "Tel'Annas Thiên Vũ Thần Long",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/2022d73a74079d001aa2953124cad71365964ecbeec521-e1718878580123.jpg"
-      },
-      {
-        "heroId": "garena:telannas",
-        "heroName": "Tel’Annas",
-        "skinId": "garena:telannas:name:tel-annas-thu-nguyen-ve-than",
-        "skinName": "Tel'Annas Thứ nguyên vệ thần",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/a8711ec71b74022f658d35c1c8f4f63b5fbb7a7bd31201.jpg"
-      },
-      {
-        "heroId": "garena:telannas",
-        "heroName": "Tel’Annas",
-        "skinId": "garena:telannas:name:tel-annas-tiec-bai-bien",
-        "skinName": "Tel'Annas Tiệc bãi biển",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/3050121head.jpg"
-      },
-      {
-        "heroId": "garena:telannas",
-        "heroName": "Tel’Annas",
-        "skinId": "garena:telannas:name:tel-annas-vu-khuc-yeu-ho",
-        "skinName": "Tel'Annas Vũ khúc yêu hồ",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/7ff46defba46217a92b614111e51b4f161176608010d71.png"
-      },
-      {
-        "heroId": "507",
-        "heroName": "The Flash",
-        "skinId": "garena:the-flash:name:flash-tia-chop-tuong-lai",
-        "skinName": "Flash Tia chớp tương lai",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/0b12171834d2f648325336e88a167df25bad9a7d4af101.jpg"
-      },
-      {
-        "heroId": "507",
-        "heroName": "The Flash",
-        "skinId": "garena:the-flash:name:the-flash",
-        "skinName": "The Flash",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/efc981c9e4534651441b90a4b4945e055ad9688b0d01a1.jpg"
-      },
-      {
-        "heroId": "190",
-        "heroName": "Tulen",
-        "skinId": "garena:tulen:name:than-su-st-l-79",
-        "skinName": "Thần sứ ST.L-79",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/c03782ae462d08357340d3886cb701e15fc5253293e3d1.jpg"
-      },
-      {
-        "heroId": "111",
-        "heroName": "Violet",
-        "skinId": "garena:violet:name:phao-hoa-neon-tuyet-sac",
-        "skinName": "Pháo hoa Neon Tuyệt sắc",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/101cc6d1d768baa1c7c2d3cc030bdae55c4ed09b701111.jpg"
-      },
-      {
-        "heroId": "194",
-        "heroName": "Wiro",
-        "skinId": "garena:wiro:name:wiro",
-        "skinName": "Wiro",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/86f414b37cd13c697508282c15fa05805be3c49c8204f1.jpg"
-      },
-      {
-        "heroId": "garena:ybneth",
-        "heroName": "Y’bneth",
-        "skinId": "garena:ybneth:name:y-bneth",
-        "skinName": "Y'bneth",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/8276a829e1e1559b0a57f38ce7e1ac255b98deead3d3e1.jpg"
-      },
-      {
-        "heroId": "garena:ybneth",
-        "heroName": "Y’bneth",
-        "skinId": "garena:ybneth:name:y-bneth-candy-bear",
-        "skinName": "Y'Bneth Candy Bear",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/305096head.jpg"
-      },
-      {
-        "heroId": "garena:ybneth",
-        "heroName": "Y’bneth",
-        "skinId": "garena:ybneth:name:y-bneth-chien-binh-luc-bao",
-        "skinName": "Y'Bneth Chiến binh lục bảo",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/8401097de8d6f9d7f83beea744d3501f65968e88458531-e1718877959516.jpg"
-      },
-      {
-        "heroId": "garena:ybneth",
-        "heroName": "Y’bneth",
-        "skinId": "garena:ybneth:name:y-bneth-dai-thu-am-nhac",
-        "skinName": "Y'Bneth Đại Thụ Âm Nhạc",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/305097head.jpg"
-      },
-      {
-        "heroId": "garena:ybneth",
-        "heroName": "Y’bneth",
-        "skinId": "garena:ybneth:name:y-bneth-dong-co-vinh-cuu",
-        "skinName": "Y'bneth Động cơ vĩnh cửu",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/ffe020ee1a967b61c3989d000c6d0d0565968ee80c4781-e1718877975812.jpg"
-      },
-      {
-        "heroId": "garena:ybneth",
-        "heroName": "Y’bneth",
-        "skinId": "garena:ybneth:name:y-bneth-hat-truong-kiem-lam",
-        "skinName": "Y'bneth Hạt trưởng kiểm lâm",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/28f0eae6913d1acf23e887010dab7cfe5b98df7580fd21.jpg"
-      },
-      {
-        "heroId": "garena:ybneth",
-        "heroName": "Y’bneth",
-        "skinId": "garena:ybneth:name:y-bneth-titan-bang-gia",
-        "skinName": "Y'bneth Titan Băng giá",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/50905-1.jpg"
-      },
-      {
-        "heroId": "107",
-        "heroName": "Zephys",
-        "skinId": "garena:zephys:name:dai-ca-duong-pho",
-        "skinName": "Đại ca đường phố",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/10715.jpg"
-      },
-      {
-        "heroId": "525",
-        "heroName": "Zip",
-        "skinId": "garena:zip:name:day-to-hong",
-        "skinName": "Dây tơ hồng",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/52507.jpg"
-      }
-    ],
+    "unresolved": [],
     "noImage": [
       {
         "heroId": "166",
