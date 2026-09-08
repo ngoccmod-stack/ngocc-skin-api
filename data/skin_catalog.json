@@ -480,11 +480,14 @@
         {
           "skinId": "53701",
           "skinName": "Hắc kiếm sĩ Kirito",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/821ef914d9346290ddd89ab4ed1c42e06597b5bc3abaa1.jpg",
+          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/f7696367c10acf27c7b75ce22bf5a8f05f08440a7d0f11.jpg",
           "supported": true,
           "resolved": true,
           "resourcesVersion": "1.63.1",
-          "imageMissing": true
+          "imageMissing": false,
+          "imageManual": true,
+          "titleSize": 12.5,
+          "titleColor": "#ffffff"
         },
         {
           "skinId": "53702",
