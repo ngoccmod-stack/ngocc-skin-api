@@ -2,7 +2,7 @@
   "schemaVersion": 6,
   "resourcesVersion": "1.63.1",
   "generatedAt": "2026-09-08T15:17:05.281966+00:00",
-  "heroCount": 128,
+  "heroCount": 127,
   "skinCount": 1674,
   "heroes": [
     {
@@ -5901,15 +5901,6 @@
         }
       ],
       "skinCount": 20
-    },
-    {
-      "heroId": "garena:flowborn",
-      "heroName": "Flowborn",
-      "heroImage": "https://lienquan.garena.vn/wp-content/uploads/2026/04/IMG-SQR-0200x0200-080150-ket-thuc.jpg",
-      "garenaSlug": "flowborn",
-      "skins": [],
-      "officialOnly": true,
-      "skinCount": 0
     },
     {
       "heroId": "108",
@@ -26404,5 +26395,11 @@
         "skinName": "Zuka"
       }
     ]
-  }
+  },
+  "deletedHeroIds": [
+    "garena:flowborn"
+  ],
+  "deletedHeroKeys": [
+    "flowborn"
+  ]
 }
