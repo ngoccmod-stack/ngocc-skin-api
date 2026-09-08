@@ -3558,12 +3558,15 @@
         {
           "skinId": "59602",
           "skinName": "Swampseer",
-          "skinImage": "https://i.ibb.co/dJtWj5VL/ngocc-image.webp",
+          "skinImage": "https://imagur.org/i/MrQwYI7n",
           "resolved": true,
           "supported": true,
           "manualAdded": true,
           "resourcesVersion": "1.63.1",
-          "imageMissing": false
+          "imageMissing": false,
+          "imageManual": true,
+          "titleSize": 12.5,
+          "titleColor": "#ffffff"
         }
       ],
       "skinCount": 2
