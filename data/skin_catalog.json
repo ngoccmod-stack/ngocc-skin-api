@@ -3,7 +3,7 @@
   "resourcesVersion": "1.63.1",
   "generatedAt": "2026-09-08T15:32:56.955486+00:00",
   "heroCount": 127,
-  "skinCount": 1053,
+  "skinCount": 1040,
   "heroes": [
     {
       "heroId": "130",
@@ -1064,15 +1064,6 @@
           "garenaRealSkinId": "16607"
         },
         {
-          "skinId": "16608",
-          "skinName": "Crescent General",
-          "skinImage": "",
-          "supported": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "16609",
           "skinName": "Tôn Hổ vô song",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/d3b9c45c33fb057a804456ca03d60bec65950f46f18a61.jpg",
@@ -1081,15 +1072,6 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "16609"
-        },
-        {
-          "skinId": "16610",
-          "skinName": "Hoàng tử Okka",
-          "skinImage": "",
-          "supported": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
         },
         {
           "skinId": "16611",
@@ -1112,7 +1094,7 @@
           "garenaRealSkinId": "16612"
         }
       ],
-      "skinCount": 12
+      "skinCount": 10
     },
     {
       "heroId": "187",
@@ -2188,15 +2170,6 @@
           "garenaRealSkinId": "52412"
         },
         {
-          "skinId": "52413",
-          "skinName": "Huyết phong",
-          "skinImage": "",
-          "supported": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "52414",
           "skinName": "Càn Nguyên Điện Chủ",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/52414.jpg",
@@ -2205,15 +2178,6 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "52414"
-        },
-        {
-          "skinId": "52415",
-          "skinName": "Bugcat Assemble",
-          "skinImage": "",
-          "supported": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
         },
         {
           "skinId": "52416",
@@ -2226,7 +2190,7 @@
           "garenaRealSkinId": "52416"
         }
       ],
-      "skinCount": 15
+      "skinCount": 13
     },
     {
       "heroId": "192",
@@ -5911,15 +5875,6 @@
           "garenaRealSkinId": "12303"
         },
         {
-          "skinId": "12304",
-          "skinName": "Đại tướng Rô bốt",
-          "skinImage": "",
-          "supported": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "12305",
           "skinName": "Ông kẹ bí ngô",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/02368019fb58e76efdbca577335c34105db588fbd54871.jpg",
@@ -5980,15 +5935,6 @@
           "garenaRealSkinId": "12310"
         },
         {
-          "skinId": "12311",
-          "skinName": "Đại Thiên Tu La",
-          "skinImage": "",
-          "supported": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "12312",
           "skinName": "Đấu Sĩ Đoạt Thẻ",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/12312.jpg",
@@ -5999,7 +5945,7 @@
           "garenaRealSkinId": "12312"
         }
       ],
-      "skinCount": 12
+      "skinCount": 10
     },
     {
       "heroId": "121",
@@ -8791,15 +8737,6 @@
           "garenaRealSkinId": "17405"
         },
         {
-          "skinId": "17406",
-          "skinName": "Streamer bí ẩn",
-          "skinImage": "",
-          "supported": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "17407",
           "skinName": "Dạ Xoa thiếu chủ",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/17407.jpg",
@@ -8820,7 +8757,7 @@
           "garenaRealSkinId": "17408"
         }
       ],
-      "skinCount": 8
+      "skinCount": 7
     },
     {
       "heroId": "140",
@@ -9136,15 +9073,6 @@
       "garenaSlug": "teeri",
       "skins": [
         {
-          "skinId": "54601",
-          "skinName": "Tiểu kỳ lân",
-          "skinImage": "",
-          "supported": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "54602",
           "skinName": "Minh tinh ảo thuật",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/54602.jpg",
@@ -9195,7 +9123,7 @@
           "garenaRealSkinId": "54607"
         }
       ],
-      "skinCount": 6
+      "skinCount": 5
     },
     {
       "heroId": "garena:telannas",
@@ -9955,15 +9883,6 @@
           "garenaRealSkinId": "10907"
         },
         {
-          "skinId": "10908",
-          "skinName": "Vũ điệu samba",
-          "skinImage": "",
-          "supported": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "10910",
           "skinName": "Đánh cắp trái tim",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/431492a0542e904686620dd71798702465951200cbd971.jpg",
@@ -10037,7 +9956,7 @@
           "imageMissing": false
         }
       ],
-      "skinCount": 15
+      "skinCount": 14
     },
     {
       "heroId": "520",
@@ -10146,15 +10065,6 @@
           "garenaRealSkinId": "52011"
         },
         {
-          "skinId": "52012",
-          "skinName": "Vũ điệu dân gian",
-          "skinImage": "",
-          "supported": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "52013",
           "skinName": "Thỏ may mắn",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/52013.jpg",
@@ -10185,7 +10095,7 @@
           "garenaRealSkinId": "52015"
         }
       ],
-      "skinCount": 14
+      "skinCount": 13
     },
     {
       "heroId": "111",
@@ -11132,15 +11042,6 @@
           "garenaRealSkinId": "54505"
         },
         {
-          "skinId": "54506",
-          "skinName": "Nàng tiên Gạo",
-          "skinImage": "",
-          "supported": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "54507",
           "skinName": "Hỗn Độn Thần Ma",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/54507.jpg",
@@ -11151,7 +11052,7 @@
           "garenaRealSkinId": "54507"
         }
       ],
-      "skinCount": 6
+      "skinCount": 5
     },
     {
       "heroId": "513",
@@ -11357,18 +11258,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "10714"
-        },
-        {
-          "skinId": "10715",
-          "skinName": "Chị đại Gangster",
-          "skinImage": "",
-          "supported": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
         }
       ],
-      "skinCount": 12
+      "skinCount": 11
     },
     {
       "heroId": "146",
@@ -11506,15 +11398,6 @@
           "garenaRealSkinId": "52503"
         },
         {
-          "skinId": "52504",
-          "skinName": "Gà siêu cấp",
-          "skinImage": "",
-          "supported": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "52505",
           "skinName": "Vua sân cỏ",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/ab03ee7a38606916bf8584029d0446f86597bb4023cd41.jpg",
@@ -11554,7 +11437,7 @@
           "garenaRealSkinId": "52508"
         }
       ],
-      "skinCount": 8
+      "skinCount": 7
     },
     {
       "heroId": "503",
@@ -13036,6 +12919,8 @@
     "noImage|aoi|skin 53610",
     "noImage|aoi|skin 53613",
     "noImage|aoi|skin 53614",
+    "noImage|arthur|crescent general",
+    "noImage|arthur|hoang tu okka",
     "noImage|arthur|than tuong troc quy",
     "noImage|ata|sushi master",
     "noImage|billow|skin 59904",
@@ -13060,6 +12945,8 @@
     "noImage|bolt baron|skin 59809",
     "noImage|butterfly|anh sang 1",
     "noImage|butterfly|nu than khoi nguyen",
+    "noImage|capheny|bugcat assemble",
+    "noImage|capheny|huyet phong",
     "noImage|capheny|skin 52417",
     "noImage|charlotte|skin 20602",
     "noImage|charlotte|skin 20603",
@@ -13133,6 +13020,8 @@
     "noImage|lauriel|vu khuc han hoan",
     "noImage|laville|skin 53314",
     "noImage|laville|skin 53315",
+    "noImage|maloch|dai thien tu la",
+    "noImage|maloch|dai tuong ro bot",
     "noImage|ming|56802",
     "noImage|ming|skin 56803",
     "noImage|ming|skin 56804",
@@ -13170,6 +13059,7 @@
     "noImage|stuart|17410",
     "noImage|stuart|17411",
     "noImage|stuart|17412",
+    "noImage|stuart|streamer bi an",
     "noImage|tachi|skin 54210",
     "noImage|tachi|skin 54211",
     "noImage|tachi|skin 54212",
@@ -13188,12 +13078,15 @@
     "noImage|tamyn|skin 59309",
     "noImage|teeri|54604",
     "noImage|teeri|ky ngo sac mau",
+    "noImage|teeri|tieu ky lan",
     "noImage|thane|hiep si hoang kim",
     "noImage|trieu van|dau si vo dai",
     "noImage|tulen|than su stl 79",
     "noImage|valhein|aw5",
     "noImage|veera|doi hac am",
+    "noImage|veera|vu dieu samba",
     "noImage|veres|skin 52016",
+    "noImage|veres|vu dieu dan gian",
     "noImage|violet|nu quan thu",
     "noImage|violet|skin 11118",
     "noImage|violet|skin 11122",
@@ -13202,8 +13095,11 @@
     "noImage|violet|skin 11125",
     "noImage|violet|skin 11126",
     "noImage|yorn|giao long",
+    "noImage|yue|nang tien gao",
     "noImage|zephys|10713",
+    "noImage|zephys|chi dai gangster",
     "noImage|zill|bac thay sushi",
+    "noImage|zip|ga sieu cap",
     "noImage|zuka|zuka",
     "unresolved|alice|butterfly mansion girl",
     "unresolved|allain|kirito hac kiem si",
@@ -13302,85 +13198,6 @@
   "idIssues": {
     "mismatch": [],
     "unresolved": [],
-    "noImage": [
-      {
-        "heroId": "166",
-        "heroName": "Arthur",
-        "skinId": "16608",
-        "skinName": "Crescent General"
-      },
-      {
-        "heroId": "166",
-        "heroName": "Arthur",
-        "skinId": "16610",
-        "skinName": "Hoàng tử Okka"
-      },
-      {
-        "heroId": "524",
-        "heroName": "Capheny",
-        "skinId": "52415",
-        "skinName": "Bugcat Assemble"
-      },
-      {
-        "heroId": "524",
-        "heroName": "Capheny",
-        "skinId": "52413",
-        "skinName": "Huyết phong"
-      },
-      {
-        "heroId": "123",
-        "heroName": "Maloch",
-        "skinId": "12311",
-        "skinName": "Đại Thiên Tu La"
-      },
-      {
-        "heroId": "123",
-        "heroName": "Maloch",
-        "skinId": "12304",
-        "skinName": "Đại tướng Rô bốt"
-      },
-      {
-        "heroId": "174",
-        "heroName": "Stuart",
-        "skinId": "17406",
-        "skinName": "Streamer bí ẩn"
-      },
-      {
-        "heroId": "546",
-        "heroName": "Teeri",
-        "skinId": "54601",
-        "skinName": "Tiểu kỳ lân"
-      },
-      {
-        "heroId": "109",
-        "heroName": "Veera",
-        "skinId": "10908",
-        "skinName": "Vũ điệu samba"
-      },
-      {
-        "heroId": "520",
-        "heroName": "Veres",
-        "skinId": "52012",
-        "skinName": "Vũ điệu dân gian"
-      },
-      {
-        "heroId": "545",
-        "heroName": "Yue",
-        "skinId": "54506",
-        "skinName": "Nàng tiên Gạo"
-      },
-      {
-        "heroId": "107",
-        "heroName": "Zephys",
-        "skinId": "10715",
-        "skinName": "Chị đại Gangster"
-      },
-      {
-        "heroId": "525",
-        "heroName": "Zip",
-        "skinId": "52504",
-        "skinName": "Gà siêu cấp"
-      }
-    ]
+    "noImage": []
   }
 }
