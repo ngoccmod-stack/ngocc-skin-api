@@ -3,7 +3,7 @@
   "resourcesVersion": "1.63.1",
   "generatedAt": "2026-09-08T15:32:56.955486+00:00",
   "heroCount": 127,
-  "skinCount": 1149,
+  "skinCount": 1148,
   "heroes": [
     {
       "heroId": "130",
@@ -9679,15 +9679,6 @@
           "imageMissing": true
         },
         {
-          "skinId": "14410",
-          "skinName": "Hoa hồng đỏ tươi",
-          "skinImage": "",
-          "supported": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "14411",
           "skinName": "Thần chiến tranh",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/14411.jpg",
@@ -9721,7 +9712,7 @@
           "imageMissing": false
         }
       ],
-      "skinCount": 11
+      "skinCount": 10
     },
     {
       "heroId": "542",
