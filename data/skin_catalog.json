@@ -3,7 +3,7 @@
   "resourcesVersion": "1.63.1",
   "generatedAt": "2026-09-08T15:32:56.955486+00:00",
   "heroCount": 127,
-  "skinCount": 1139,
+  "skinCount": 1138,
   "heroes": [
     {
       "heroId": "130",
@@ -565,22 +565,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "53709"
-        },
-        {
-          "skinId": "garena:allain:name:kirito-hac-kiem-si",
-          "skinName": "Kirito Hắc kiếm sĩ",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/f7696367c10acf27c7b75ce22bf5a8f05f08440a7d0f11.jpg",
-          "supported": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 10
+      "skinCount": 9
     },
     {
       "heroId": "193",
@@ -14330,7 +14317,8 @@
     "noImage|zephys|10713",
     "noImage|zill|bac thay sushi",
     "noImage|zuka|zuka",
-    "unresolved|alice|butterfly mansion girl"
+    "unresolved|alice|butterfly mansion girl",
+    "unresolved|allain|kirito hac kiem si"
   ],
   "deletedHeroIds": [
     "garena:flowborn"
@@ -14341,13 +14329,6 @@
   "idIssues": {
     "mismatch": [],
     "unresolved": [
-      {
-        "heroId": "537",
-        "heroName": "Allain",
-        "skinId": "garena:allain:name:kirito-hac-kiem-si",
-        "skinName": "Kirito Hắc kiếm sĩ",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/f7696367c10acf27c7b75ce22bf5a8f05f08440a7d0f11.jpg"
-      },
       {
         "heroId": "garena:azzenka",
         "heroName": "Azzen’Ka",
