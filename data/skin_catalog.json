@@ -3,7 +3,7 @@
   "resourcesVersion": "1.63.1",
   "generatedAt": "2026-09-08T15:32:56.955486+00:00",
   "heroCount": 127,
-  "skinCount": 1324,
+  "skinCount": 1245,
   "heroes": [
     {
       "heroId": "130",
@@ -908,15 +908,6 @@
           "garenaRealSkinId": "53609"
         },
         {
-          "skinId": "53610",
-          "skinName": "Skin 53610",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "53611",
           "skinName": "Bách thú triều Long",
           "skinImage": "",
@@ -935,24 +926,6 @@
           "imageMissing": true
         },
         {
-          "skinId": "53613",
-          "skinName": "Skin 53613",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "53614",
-          "skinName": "Skin 53614",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "garena:aoi:name:mikasa-ackermann",
           "skinName": "Mikasa Ackermann",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/53612.jpg",
@@ -966,7 +939,7 @@
           "imageMissing": false
         }
       ],
-      "skinCount": 13
+      "skinCount": 10
     },
     {
       "heroId": "126",
@@ -1902,63 +1875,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "59903"
-        },
-        {
-          "skinId": "59904",
-          "skinName": "Skin 59904",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59905",
-          "skinName": "Skin 59905",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59906",
-          "skinName": "Skin 59906",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59907",
-          "skinName": "Skin 59907",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59908",
-          "skinName": "Skin 59908",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59909",
-          "skinName": "Skin 59909",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
         }
       ],
-      "skinCount": 9
+      "skinCount": 3
     },
     {
       "heroId": "597",
@@ -1994,63 +1913,9 @@
           "resolved": true,
           "resourcesVersion": "1.63.1",
           "imageMissing": true
-        },
-        {
-          "skinId": "59704",
-          "skinName": "Skin 59704",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59705",
-          "skinName": "Skin 59705",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59706",
-          "skinName": "Skin 59706",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59707",
-          "skinName": "Skin 59707",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59708",
-          "skinName": "Skin 59708",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59709",
-          "skinName": "Skin 59709",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
         }
       ],
-      "skinCount": 9
+      "skinCount": 3
     },
     {
       "heroId": "598",
@@ -2077,72 +1942,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "59802"
-        },
-        {
-          "skinId": "59803",
-          "skinName": "Skin 59803",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59804",
-          "skinName": "Skin 59804",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59805",
-          "skinName": "Skin 59805",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59806",
-          "skinName": "Skin 59806",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59807",
-          "skinName": "Skin 59807",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59808",
-          "skinName": "Skin 59808",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59809",
-          "skinName": "Skin 59809",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
         }
       ],
-      "skinCount": 9
+      "skinCount": 2
     },
     {
       "heroId": "541",
@@ -2409,15 +2211,6 @@
           "garenaRealSkinId": "11614"
         },
         {
-          "skinId": "11616",
-          "skinName": "Nữ thần Khởi nguyên",
-          "skinImage": "",
-          "supported": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "11618",
           "skinName": "Tình yêu nổi loạn",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/98697ce1b773086bb925643c4ec8512165b380344da281.jpg",
@@ -2466,15 +2259,6 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "11622"
-        },
-        {
-          "skinId": "11633",
-          "skinName": "Ánh sáng 1",
-          "skinImage": "",
-          "supported": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
         },
         {
           "skinId": "11634",
@@ -2540,7 +2324,7 @@
           "imageMissing": false
         }
       ],
-      "skinCount": 25
+      "skinCount": 23
     },
     {
       "heroId": "524",
@@ -2697,15 +2481,6 @@
           "garenaRealSkinId": "52416"
         },
         {
-          "skinId": "52417",
-          "skinName": "Skin 52417",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "garena:capheny:name:bugcag-assemble",
           "skinName": "Bugcag Assemble",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/52415.jpg",
@@ -2719,7 +2494,7 @@
           "imageMissing": false
         }
       ],
-      "skinCount": 17
+      "skinCount": 16
     },
     {
       "heroId": "192",
@@ -2815,81 +2590,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "20601"
-        },
-        {
-          "skinId": "20602",
-          "skinName": "Skin 20602",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "20603",
-          "skinName": "Skin 20603",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "20604",
-          "skinName": "Skin 20604",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "20605",
-          "skinName": "Skin 20605",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "20606",
-          "skinName": "Skin 20606",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "20607",
-          "skinName": "Skin 20607",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "20608",
-          "skinName": "Skin 20608",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "20609",
-          "skinName": "Skin 20609",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
         }
       ],
-      "skinCount": 9
+      "skinCount": 1
     },
     {
       "heroId": "113",
@@ -3536,87 +3239,6 @@
       "garenaSlug": "dyadia",
       "skins": [
         {
-          "skinId": "57701",
-          "skinName": "Skin 57701",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "57702",
-          "skinName": "Skin 57702",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "57703",
-          "skinName": "Skin 57703",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "57704",
-          "skinName": "Skin 57704",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "57705",
-          "skinName": "Skin 57705",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "57706",
-          "skinName": "Skin 57706",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "57707",
-          "skinName": "Skin 57707",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "57708",
-          "skinName": "Skin 57708",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "57709",
-          "skinName": "Skin 57709",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "garena:dyadia:name:dyadia",
           "skinName": "Dyadia",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2026/01/SeaTalk_IMG_20260119_104427.jpg",
@@ -3630,7 +3252,7 @@
           "imageMissing": false
         }
       ],
-      "skinCount": 10
+      "skinCount": 1
     },
     {
       "heroId": "595",
@@ -3638,87 +3260,6 @@
       "heroImage": "https://lienquan.garena.vn/wp-content/uploads/2025/10/edrashead-2.jpg",
       "garenaSlug": "11596",
       "skins": [
-        {
-          "skinId": "59501",
-          "skinName": "Skin 59501",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59502",
-          "skinName": "Skin 59502",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59503",
-          "skinName": "Skin 59503",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59504",
-          "skinName": "Skin 59504",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59505",
-          "skinName": "Skin 59505",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59506",
-          "skinName": "Skin 59506",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59507",
-          "skinName": "Skin 59507",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59508",
-          "skinName": "Skin 59508",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59509",
-          "skinName": "Skin 59509",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
         {
           "skinId": "garena:11596:name:edras",
           "skinName": "Edras",
@@ -3733,7 +3274,7 @@
           "imageMissing": false
         }
       ],
-      "skinCount": 10
+      "skinCount": 1
     },
     {
       "heroId": "garena:elandorr",
@@ -3981,15 +3522,6 @@
           "garenaRealSkinId": "19611"
         },
         {
-          "skinId": "19612",
-          "skinName": "Tuyệt ảnh",
-          "skinImage": "",
-          "supported": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "19613",
           "skinName": "DJ <Siêu Đẳng>",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/3019613head-1.jpg",
@@ -4022,7 +3554,7 @@
           "imageMissing": false
         }
       ],
-      "skinCount": 14
+      "skinCount": 13
     },
     {
       "heroId": "195",
@@ -4199,45 +3731,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "56705"
-        },
-        {
-          "skinId": "56706",
-          "skinName": "Skin 56706",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "56707",
-          "skinName": "Skin 56707",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "56708",
-          "skinName": "Skin 56708",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "56709",
-          "skinName": "Skin 56709",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
         }
       ],
-      "skinCount": 9
+      "skinCount": 5
     },
     {
       "heroId": "522",
@@ -4334,45 +3830,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "52210"
-        },
-        {
-          "skinId": "52211",
-          "skinName": "Skin 52211",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "52212",
-          "skinName": "Skin 52212",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "52213",
-          "skinName": "Skin 52213",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "52214",
-          "skinName": "Skin 52214",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
         }
       ],
-      "skinCount": 13
+      "skinCount": 9
     },
     {
       "heroId": "173",
@@ -4618,27 +4078,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "52113"
-        },
-        {
-          "skinId": "52114",
-          "skinName": "Skin 52114",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "52115",
-          "skinName": "Skin 52115",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
         }
       ],
-      "skinCount": 14
+      "skinCount": 12
     },
     {
       "heroId": "108",
@@ -4769,51 +4211,6 @@
           "garenaRealSkinId": "59601"
         },
         {
-          "skinId": "59602",
-          "skinName": "Skin 59602",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59603",
-          "skinName": "Skin 59603",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59604",
-          "skinName": "Skin 59604",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59605",
-          "skinName": "Skin 59605",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59606",
-          "skinName": "Skin 59606",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "59607",
           "skinName": "Skin 59607",
           "skinImage": "",
@@ -4841,7 +4238,7 @@
           "imageMissing": true
         }
       ],
-      "skinCount": 9
+      "skinCount": 4
     },
     {
       "heroId": "175",
@@ -12399,15 +11796,6 @@
           "garenaRealSkinId": "13314"
         },
         {
-          "skinId": "13315",
-          "skinName": "AW5",
-          "skinImage": "",
-          "supported": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "13316",
           "skinName": "Mã Hành Vạn Lý",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/13316.jpg",
@@ -12418,7 +11806,7 @@
           "garenaRealSkinId": "13316"
         }
       ],
-      "skinCount": 15
+      "skinCount": 14
     },
     {
       "heroId": "109",
@@ -12516,15 +11904,6 @@
           "garenaRealSkinId": "10910"
         },
         {
-          "skinId": "10911",
-          "skinName": "Dơi hắc ám",
-          "skinImage": "",
-          "supported": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "10912",
           "skinName": "A.I Love you",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/Honeyview_0734db187607514182aeffa6a1736be865951211eeb08.jpg",
@@ -12588,7 +11967,7 @@
           "imageMissing": false
         }
       ],
-      "skinCount": 16
+      "skinCount": 15
     },
     {
       "heroId": "520",
@@ -12734,18 +12113,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "52015"
-        },
-        {
-          "skinId": "52016",
-          "skinName": "Skin 52016",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
         }
       ],
-      "skinCount": 15
+      "skinCount": 14
     },
     {
       "heroId": "111",
@@ -12923,15 +12293,6 @@
           "garenaRealSkinId": "11117"
         },
         {
-          "skinId": "11118",
-          "skinName": "Skin 11118",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "11119",
           "skinName": "Vọng nguyệt Long Cơ",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/0c026845cdd6414fbd6c1bcb9fc70628660396d3c7f931.jpg",
@@ -12961,51 +12322,6 @@
           "imageMissing": true
         },
         {
-          "skinId": "11122",
-          "skinName": "Skin 11122",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "11123",
-          "skinName": "Skin 11123",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "11124",
-          "skinName": "Skin 11124",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "11125",
-          "skinName": "Skin 11125",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "11126",
-          "skinName": "Skin 11126",
-          "skinImage": "",
-          "supported": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "garena:violet:name:phao-hoa-neon-tuyet-sac",
           "skinName": "Pháo hoa Neon Tuyệt sắc",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/101cc6d1d768baa1c7c2d3cc030bdae55c4ed09b701111.jpg",
@@ -13019,7 +12335,7 @@
           "imageMissing": false
         }
       ],
-      "skinCount": 27
+      "skinCount": 21
     },
     {
       "heroId": "529",
@@ -14100,15 +13416,6 @@
           "garenaRealSkinId": "10712"
         },
         {
-          "skinId": "10713",
-          "skinName": "10713",
-          "skinImage": "",
-          "supported": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "10714",
           "skinName": "Kỷ Nguyên Hổ Phách",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/10714.jpg",
@@ -14141,7 +13448,7 @@
           "imageMissing": false
         }
       ],
-      "skinCount": 14
+      "skinCount": 13
     },
     {
       "heroId": "146",
@@ -14238,18 +13545,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "14612"
-        },
-        {
-          "skinId": "14613",
-          "skinName": "Bậc Thầy Sushi",
-          "skinImage": "",
-          "supported": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
         }
       ],
-      "skinCount": 10
+      "skinCount": 9
     },
     {
       "heroId": "525",
@@ -14357,15 +13655,6 @@
       "heroImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/d5166c51f37b444810f2ae3df056920d5c4938c59a4821.jpg",
       "garenaSlug": "zuka",
       "skins": [
-        {
-          "skinId": "50301",
-          "skinName": "Zuka",
-          "skinImage": "",
-          "supported": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
         {
           "skinId": "50302",
           "skinName": "Đại Phú Ông",
@@ -14480,7 +13769,7 @@
           "imageMissing": false
         }
       ],
-      "skinCount": 12
+      "skinCount": 11
     }
   ],
   "resourceSkinIds": [
@@ -15833,7 +15122,87 @@
     "99939"
   ],
   "ignoredSkinIds": [],
-  "ignoredIssueKeys": [],
+  "ignoredIssueKeys": [
+    "noImage|aoi|skin 53610",
+    "noImage|aoi|skin 53613",
+    "noImage|aoi|skin 53614",
+    "noImage|billow|skin 59904",
+    "noImage|billow|skin 59905",
+    "noImage|billow|skin 59906",
+    "noImage|billow|skin 59907",
+    "noImage|billow|skin 59908",
+    "noImage|billow|skin 59909",
+    "noImage|biron|skin 59704",
+    "noImage|biron|skin 59705",
+    "noImage|biron|skin 59706",
+    "noImage|biron|skin 59707",
+    "noImage|biron|skin 59708",
+    "noImage|biron|skin 59709",
+    "noImage|bolt baron|skin 59803",
+    "noImage|bolt baron|skin 59804",
+    "noImage|bolt baron|skin 59805",
+    "noImage|bolt baron|skin 59806",
+    "noImage|bolt baron|skin 59807",
+    "noImage|bolt baron|skin 59808",
+    "noImage|bolt baron|skin 59809",
+    "noImage|butterfly|anh sang 1",
+    "noImage|butterfly|nu than khoi nguyen",
+    "noImage|capheny|skin 52417",
+    "noImage|charlotte|skin 20602",
+    "noImage|charlotte|skin 20603",
+    "noImage|charlotte|skin 20604",
+    "noImage|charlotte|skin 20605",
+    "noImage|charlotte|skin 20606",
+    "noImage|charlotte|skin 20607",
+    "noImage|charlotte|skin 20608",
+    "noImage|charlotte|skin 20609",
+    "noImage|dyadia|skin 57701",
+    "noImage|dyadia|skin 57702",
+    "noImage|dyadia|skin 57703",
+    "noImage|dyadia|skin 57704",
+    "noImage|dyadia|skin 57705",
+    "noImage|dyadia|skin 57706",
+    "noImage|dyadia|skin 57707",
+    "noImage|dyadia|skin 57708",
+    "noImage|dyadia|skin 57709",
+    "noImage|edras|skin 59501",
+    "noImage|edras|skin 59502",
+    "noImage|edras|skin 59503",
+    "noImage|edras|skin 59504",
+    "noImage|edras|skin 59505",
+    "noImage|edras|skin 59506",
+    "noImage|edras|skin 59507",
+    "noImage|edras|skin 59508",
+    "noImage|edras|skin 59509",
+    "noImage|elsu|tuyet anh",
+    "noImage|erin|skin 56706",
+    "noImage|erin|skin 56707",
+    "noImage|erin|skin 56708",
+    "noImage|erin|skin 56709",
+    "noImage|errol|skin 52211",
+    "noImage|errol|skin 52212",
+    "noImage|errol|skin 52213",
+    "noImage|errol|skin 52214",
+    "noImage|florentino|skin 52114",
+    "noImage|florentino|skin 52115",
+    "noImage|goverra|skin 59602",
+    "noImage|goverra|skin 59603",
+    "noImage|goverra|skin 59604",
+    "noImage|goverra|skin 59605",
+    "noImage|goverra|skin 59606",
+    "noImage|valhein|aw5",
+    "noImage|veera|doi hac am",
+    "noImage|veres|skin 52016",
+    "noImage|violet|skin 11118",
+    "noImage|violet|skin 11122",
+    "noImage|violet|skin 11123",
+    "noImage|violet|skin 11124",
+    "noImage|violet|skin 11125",
+    "noImage|violet|skin 11126",
+    "noImage|zephys|10713",
+    "noImage|zill|bac thay sushi",
+    "noImage|zuka|zuka"
+  ],
   "deletedHeroIds": [
     "garena:flowborn"
   ],
@@ -15841,62 +15210,7 @@
     "flowborn"
   ],
   "idIssues": {
-    "mismatch": [
-      {
-        "heroId": "256",
-        "heroName": "Không rõ tướng",
-        "items": [
-          {
-            "heroId": "256",
-            "heroName": "Không rõ tướng",
-            "skinName": "Skin 12593",
-            "skinId": "12593",
-            "reason": "ID skin 12593 không thuộc tướng 256"
-          },
-          {
-            "heroId": "256",
-            "heroName": "Không rõ tướng",
-            "skinName": "Skin 14135",
-            "skinId": "14135",
-            "reason": "ID skin 14135 không thuộc tướng 256"
-          },
-          {
-            "heroId": "256",
-            "heroName": "Không rõ tướng",
-            "skinName": "Skin 25701",
-            "skinId": "25701",
-            "reason": "ID skin 25701 không thuộc tướng 256"
-          },
-          {
-            "heroId": "256",
-            "heroName": "Không rõ tướng",
-            "skinName": "Skin 26478",
-            "skinId": "26478",
-            "reason": "ID skin 26478 không thuộc tướng 256"
-          }
-        ]
-      },
-      {
-        "heroId": "257",
-        "heroName": "Không rõ tướng",
-        "items": [
-          {
-            "heroId": "257",
-            "heroName": "Không rõ tướng",
-            "skinName": "Skin 26478",
-            "skinId": "26478",
-            "reason": "ID skin 26478 không thuộc tướng 257"
-          },
-          {
-            "heroId": "257",
-            "heroName": "Không rõ tướng",
-            "skinName": "Skin 65536",
-            "skinId": "65536",
-            "reason": "ID skin 65536 không thuộc tướng 257"
-          }
-        ]
-      }
-    ],
+    "mismatch": [],
     "unresolved": [
       {
         "heroId": "118",
@@ -16523,18 +15837,6 @@
         "skinName": "Thống lĩnh hỗn mang"
       },
       {
-        "heroId": "118",
-        "heroName": "Alice",
-        "skinId": "11810",
-        "skinName": "The Butterfly Mansion Girl"
-      },
-      {
-        "heroId": "537",
-        "heroName": "Allain",
-        "skinId": "53701",
-        "skinName": "Hắc kiếm sĩ Kirito"
-      },
-      {
         "heroId": "193",
         "heroName": "Amily",
         "skinId": "19300",
@@ -16545,30 +15847,6 @@
         "heroName": "Aoi",
         "skinId": "53611",
         "skinName": "Bách thú triều Long"
-      },
-      {
-        "heroId": "536",
-        "heroName": "Aoi",
-        "skinId": "53612",
-        "skinName": "Mikasa"
-      },
-      {
-        "heroId": "536",
-        "heroName": "Aoi",
-        "skinId": "53610",
-        "skinName": "Skin 53610"
-      },
-      {
-        "heroId": "536",
-        "heroName": "Aoi",
-        "skinId": "53613",
-        "skinName": "Skin 53613"
-      },
-      {
-        "heroId": "536",
-        "heroName": "Aoi",
-        "skinId": "53614",
-        "skinName": "Skin 53614"
       },
       {
         "heroId": "166",
@@ -16595,136 +15873,10 @@
         "skinName": "Sushi Master"
       },
       {
-        "heroId": "599",
-        "heroName": "Billow",
-        "skinId": "59904",
-        "skinName": "Skin 59904"
-      },
-      {
-        "heroId": "599",
-        "heroName": "Billow",
-        "skinId": "59905",
-        "skinName": "Skin 59905"
-      },
-      {
-        "heroId": "599",
-        "heroName": "Billow",
-        "skinId": "59906",
-        "skinName": "Skin 59906"
-      },
-      {
-        "heroId": "599",
-        "heroName": "Billow",
-        "skinId": "59907",
-        "skinName": "Skin 59907"
-      },
-      {
-        "heroId": "599",
-        "heroName": "Billow",
-        "skinId": "59908",
-        "skinName": "Skin 59908"
-      },
-      {
-        "heroId": "599",
-        "heroName": "Billow",
-        "skinId": "59909",
-        "skinName": "Skin 59909"
-      },
-      {
         "heroId": "597",
         "heroName": "Biron",
         "skinId": "59703",
         "skinName": "Deathmerc"
-      },
-      {
-        "heroId": "597",
-        "heroName": "Biron",
-        "skinId": "59704",
-        "skinName": "Skin 59704"
-      },
-      {
-        "heroId": "597",
-        "heroName": "Biron",
-        "skinId": "59705",
-        "skinName": "Skin 59705"
-      },
-      {
-        "heroId": "597",
-        "heroName": "Biron",
-        "skinId": "59706",
-        "skinName": "Skin 59706"
-      },
-      {
-        "heroId": "597",
-        "heroName": "Biron",
-        "skinId": "59707",
-        "skinName": "Skin 59707"
-      },
-      {
-        "heroId": "597",
-        "heroName": "Biron",
-        "skinId": "59708",
-        "skinName": "Skin 59708"
-      },
-      {
-        "heroId": "597",
-        "heroName": "Biron",
-        "skinId": "59709",
-        "skinName": "Skin 59709"
-      },
-      {
-        "heroId": "598",
-        "heroName": "Bolt Baron",
-        "skinId": "59803",
-        "skinName": "Skin 59803"
-      },
-      {
-        "heroId": "598",
-        "heroName": "Bolt Baron",
-        "skinId": "59804",
-        "skinName": "Skin 59804"
-      },
-      {
-        "heroId": "598",
-        "heroName": "Bolt Baron",
-        "skinId": "59805",
-        "skinName": "Skin 59805"
-      },
-      {
-        "heroId": "598",
-        "heroName": "Bolt Baron",
-        "skinId": "59806",
-        "skinName": "Skin 59806"
-      },
-      {
-        "heroId": "598",
-        "heroName": "Bolt Baron",
-        "skinId": "59807",
-        "skinName": "Skin 59807"
-      },
-      {
-        "heroId": "598",
-        "heroName": "Bolt Baron",
-        "skinId": "59808",
-        "skinName": "Skin 59808"
-      },
-      {
-        "heroId": "598",
-        "heroName": "Bolt Baron",
-        "skinId": "59809",
-        "skinName": "Skin 59809"
-      },
-      {
-        "heroId": "116",
-        "heroName": "Butterfly",
-        "skinId": "11616",
-        "skinName": "Nữ thần Khởi nguyên"
-      },
-      {
-        "heroId": "116",
-        "heroName": "Butterfly",
-        "skinId": "11633",
-        "skinName": "Ánh sáng 1"
       },
       {
         "heroId": "524",
@@ -16737,60 +15889,6 @@
         "heroName": "Capheny",
         "skinId": "52413",
         "skinName": "Huyết phong"
-      },
-      {
-        "heroId": "524",
-        "heroName": "Capheny",
-        "skinId": "52417",
-        "skinName": "Skin 52417"
-      },
-      {
-        "heroId": "206",
-        "heroName": "Charlotte",
-        "skinId": "20602",
-        "skinName": "Skin 20602"
-      },
-      {
-        "heroId": "206",
-        "heroName": "Charlotte",
-        "skinId": "20603",
-        "skinName": "Skin 20603"
-      },
-      {
-        "heroId": "206",
-        "heroName": "Charlotte",
-        "skinId": "20604",
-        "skinName": "Skin 20604"
-      },
-      {
-        "heroId": "206",
-        "heroName": "Charlotte",
-        "skinId": "20605",
-        "skinName": "Skin 20605"
-      },
-      {
-        "heroId": "206",
-        "heroName": "Charlotte",
-        "skinId": "20606",
-        "skinName": "Skin 20606"
-      },
-      {
-        "heroId": "206",
-        "heroName": "Charlotte",
-        "skinId": "20607",
-        "skinName": "Skin 20607"
-      },
-      {
-        "heroId": "206",
-        "heroName": "Charlotte",
-        "skinId": "20608",
-        "skinName": "Skin 20608"
-      },
-      {
-        "heroId": "206",
-        "heroName": "Charlotte",
-        "skinId": "20609",
-        "skinName": "Skin 20609"
       },
       {
         "heroId": "113",
@@ -16811,232 +15909,16 @@
         "skinName": "Snack giòn tan"
       },
       {
-        "heroId": "577",
-        "heroName": "Dyadia",
-        "skinId": "57701",
-        "skinName": "Skin 57701"
-      },
-      {
-        "heroId": "577",
-        "heroName": "Dyadia",
-        "skinId": "57702",
-        "skinName": "Skin 57702"
-      },
-      {
-        "heroId": "577",
-        "heroName": "Dyadia",
-        "skinId": "57703",
-        "skinName": "Skin 57703"
-      },
-      {
-        "heroId": "577",
-        "heroName": "Dyadia",
-        "skinId": "57704",
-        "skinName": "Skin 57704"
-      },
-      {
-        "heroId": "577",
-        "heroName": "Dyadia",
-        "skinId": "57705",
-        "skinName": "Skin 57705"
-      },
-      {
-        "heroId": "577",
-        "heroName": "Dyadia",
-        "skinId": "57706",
-        "skinName": "Skin 57706"
-      },
-      {
-        "heroId": "577",
-        "heroName": "Dyadia",
-        "skinId": "57707",
-        "skinName": "Skin 57707"
-      },
-      {
-        "heroId": "577",
-        "heroName": "Dyadia",
-        "skinId": "57708",
-        "skinName": "Skin 57708"
-      },
-      {
-        "heroId": "577",
-        "heroName": "Dyadia",
-        "skinId": "57709",
-        "skinName": "Skin 57709"
-      },
-      {
-        "heroId": "595",
-        "heroName": "Edras",
-        "skinId": "59501",
-        "skinName": "Skin 59501"
-      },
-      {
-        "heroId": "595",
-        "heroName": "Edras",
-        "skinId": "59502",
-        "skinName": "Skin 59502"
-      },
-      {
-        "heroId": "595",
-        "heroName": "Edras",
-        "skinId": "59503",
-        "skinName": "Skin 59503"
-      },
-      {
-        "heroId": "595",
-        "heroName": "Edras",
-        "skinId": "59504",
-        "skinName": "Skin 59504"
-      },
-      {
-        "heroId": "595",
-        "heroName": "Edras",
-        "skinId": "59505",
-        "skinName": "Skin 59505"
-      },
-      {
-        "heroId": "595",
-        "heroName": "Edras",
-        "skinId": "59506",
-        "skinName": "Skin 59506"
-      },
-      {
-        "heroId": "595",
-        "heroName": "Edras",
-        "skinId": "59507",
-        "skinName": "Skin 59507"
-      },
-      {
-        "heroId": "595",
-        "heroName": "Edras",
-        "skinId": "59508",
-        "skinName": "Skin 59508"
-      },
-      {
-        "heroId": "595",
-        "heroName": "Edras",
-        "skinId": "59509",
-        "skinName": "Skin 59509"
-      },
-      {
-        "heroId": "196",
-        "heroName": "Elsu",
-        "skinId": "19613",
-        "skinName": "DJ <Siêu Đẳng>"
-      },
-      {
-        "heroId": "196",
-        "heroName": "Elsu",
-        "skinId": "19612",
-        "skinName": "Tuyệt ảnh"
-      },
-      {
         "heroId": "196",
         "heroName": "Elsu",
         "skinId": "19600",
         "skinName": "Đôi cánh tự do"
       },
       {
-        "heroId": "195",
-        "heroName": "Enzo",
-        "skinId": "19504",
-        "skinName": "Nhà leo núi"
-      },
-      {
         "heroId": "567",
         "heroName": "Erin",
         "skinId": "56702",
         "skinName": "Cực địa tinh linh"
-      },
-      {
-        "heroId": "567",
-        "heroName": "Erin",
-        "skinId": "56706",
-        "skinName": "Skin 56706"
-      },
-      {
-        "heroId": "567",
-        "heroName": "Erin",
-        "skinId": "56707",
-        "skinName": "Skin 56707"
-      },
-      {
-        "heroId": "567",
-        "heroName": "Erin",
-        "skinId": "56708",
-        "skinName": "Skin 56708"
-      },
-      {
-        "heroId": "567",
-        "heroName": "Erin",
-        "skinId": "56709",
-        "skinName": "Skin 56709"
-      },
-      {
-        "heroId": "522",
-        "heroName": "Errol",
-        "skinId": "52211",
-        "skinName": "Skin 52211"
-      },
-      {
-        "heroId": "522",
-        "heroName": "Errol",
-        "skinId": "52212",
-        "skinName": "Skin 52212"
-      },
-      {
-        "heroId": "522",
-        "heroName": "Errol",
-        "skinId": "52213",
-        "skinName": "Skin 52213"
-      },
-      {
-        "heroId": "522",
-        "heroName": "Errol",
-        "skinId": "52214",
-        "skinName": "Skin 52214"
-      },
-      {
-        "heroId": "521",
-        "heroName": "Florentino",
-        "skinId": "52114",
-        "skinName": "Skin 52114"
-      },
-      {
-        "heroId": "521",
-        "heroName": "Florentino",
-        "skinId": "52115",
-        "skinName": "Skin 52115"
-      },
-      {
-        "heroId": "596",
-        "heroName": "Goverra",
-        "skinId": "59602",
-        "skinName": "Skin 59602"
-      },
-      {
-        "heroId": "596",
-        "heroName": "Goverra",
-        "skinId": "59603",
-        "skinName": "Skin 59603"
-      },
-      {
-        "heroId": "596",
-        "heroName": "Goverra",
-        "skinId": "59604",
-        "skinName": "Skin 59604"
-      },
-      {
-        "heroId": "596",
-        "heroName": "Goverra",
-        "skinId": "59605",
-        "skinName": "Skin 59605"
-      },
-      {
-        "heroId": "596",
-        "heroName": "Goverra",
-        "skinId": "59606",
-        "skinName": "Skin 59606"
       },
       {
         "heroId": "596",
@@ -17155,12 +16037,6 @@
       {
         "heroId": "106",
         "heroName": "Krixi",
-        "skinId": "10611",
-        "skinName": "Lốc xoáy kinh hoàng Tatsumaki"
-      },
-      {
-        "heroId": "106",
-        "heroName": "Krixi",
         "skinId": "10610",
         "skinName": "Skin 10610"
       },
@@ -17193,18 +16069,6 @@
         "heroName": "Laville",
         "skinId": "53315",
         "skinName": "Skin 53315"
-      },
-      {
-        "heroId": "177",
-        "heroName": "Lindis",
-        "skinId": "17709",
-        "skinName": "Linh Hoa tiễn"
-      },
-      {
-        "heroId": "128",
-        "heroName": "Lữ Bố",
-        "skinId": "12810",
-        "skinName": "Vũ điệu samba"
       },
       {
         "heroId": "123",
@@ -17579,12 +16443,6 @@
         "skinName": "Hiệp sĩ hoàng kim"
       },
       {
-        "heroId": "507",
-        "heroName": "The Flash",
-        "skinId": "50701",
-        "skinName": "Tia chớp tương lai"
-      },
-      {
         "heroId": "129",
         "heroName": "Triệu Vân",
         "skinId": "12914",
@@ -17597,28 +16455,10 @@
         "skinName": "Thần sứ STL-79"
       },
       {
-        "heroId": "133",
-        "heroName": "Valhein",
-        "skinId": "13315",
-        "skinName": "AW5"
-      },
-      {
-        "heroId": "109",
-        "heroName": "Veera",
-        "skinId": "10911",
-        "skinName": "Dơi hắc ám"
-      },
-      {
         "heroId": "109",
         "heroName": "Veera",
         "skinId": "10908",
         "skinName": "Vũ điệu samba"
-      },
-      {
-        "heroId": "520",
-        "heroName": "Veres",
-        "skinId": "52016",
-        "skinName": "Skin 52016"
       },
       {
         "heroId": "520",
@@ -17631,48 +16471,6 @@
         "heroName": "Violet",
         "skinId": "11121",
         "skinName": "Nữ quản thú"
-      },
-      {
-        "heroId": "111",
-        "heroName": "Violet",
-        "skinId": "11108",
-        "skinName": "Pháo hoa Neon"
-      },
-      {
-        "heroId": "111",
-        "heroName": "Violet",
-        "skinId": "11118",
-        "skinName": "Skin 11118"
-      },
-      {
-        "heroId": "111",
-        "heroName": "Violet",
-        "skinId": "11122",
-        "skinName": "Skin 11122"
-      },
-      {
-        "heroId": "111",
-        "heroName": "Violet",
-        "skinId": "11123",
-        "skinName": "Skin 11123"
-      },
-      {
-        "heroId": "111",
-        "heroName": "Violet",
-        "skinId": "11124",
-        "skinName": "Skin 11124"
-      },
-      {
-        "heroId": "111",
-        "heroName": "Violet",
-        "skinId": "11125",
-        "skinName": "Skin 11125"
-      },
-      {
-        "heroId": "111",
-        "heroName": "Violet",
-        "skinId": "11126",
-        "skinName": "Skin 11126"
       },
       {
         "heroId": "112",
@@ -17689,38 +16487,14 @@
       {
         "heroId": "107",
         "heroName": "Zephys",
-        "skinId": "10713",
-        "skinName": "10713"
-      },
-      {
-        "heroId": "107",
-        "heroName": "Zephys",
         "skinId": "10715",
         "skinName": "Chị đại Gangster"
-      },
-      {
-        "heroId": "146",
-        "heroName": "Zill",
-        "skinId": "14613",
-        "skinName": "Bậc Thầy Sushi"
-      },
-      {
-        "heroId": "525",
-        "heroName": "Zip",
-        "skinId": "52507",
-        "skinName": "Duyên tơ hồng"
       },
       {
         "heroId": "525",
         "heroName": "Zip",
         "skinId": "52504",
         "skinName": "Gà siêu cấp"
-      },
-      {
-        "heroId": "503",
-        "heroName": "Zuka",
-        "skinId": "50301",
-        "skinName": "Zuka"
       }
     ]
   }
