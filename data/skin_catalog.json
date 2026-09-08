@@ -2,7 +2,7 @@
   "schemaVersion": 6,
   "resourcesVersion": "1.63.1",
   "generatedAt": "2026-09-08T15:32:56.955486+00:00",
-  "heroCount": 127,
+  "heroCount": 124,
   "skinCount": 1040,
   "heroes": [
     {
@@ -2795,22 +2795,6 @@
       ],
       "officialOnly": true,
       "skinCount": 4
-    },
-    {
-      "heroId": "577",
-      "heroName": "Dyadia",
-      "heroImage": "https://lienquan.garena.vn/wp-content/uploads/2026/01/SeaTalk_IMG_20260119_104427.jpg",
-      "garenaSlug": "dyadia",
-      "skins": [],
-      "skinCount": 0
-    },
-    {
-      "heroId": "595",
-      "heroName": "Edras",
-      "heroImage": "https://lienquan.garena.vn/wp-content/uploads/2025/10/edrashead-2.jpg",
-      "garenaSlug": "11596",
-      "skins": [],
-      "skinCount": 0
     },
     {
       "heroId": "garena:elandorr",
@@ -8970,14 +8954,6 @@
       "skinCount": 7
     },
     {
-      "heroId": "593",
-      "heroName": "Tamyn",
-      "heroImage": "https://lienquan.garena.vn/wp-content/uploads/2026/07/SeaTalk_IMG_20260722_163230-1.jpg",
-      "garenaSlug": "tamyn",
-      "skins": [],
-      "skinCount": 0
-    },
-    {
       "heroId": "186",
       "heroName": "TeeMee",
       "heroImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/d048143eef92ff2734c99f53b46e19db5a4dabef8a0fe1.jpg",
@@ -13190,10 +13166,16 @@
     "unresolved|zip|day to hong"
   ],
   "deletedHeroIds": [
+    "577",
+    "593",
+    "595",
     "garena:flowborn"
   ],
   "deletedHeroKeys": [
-    "flowborn"
+    "dyadia",
+    "edras",
+    "flowborn",
+    "tamyn"
   ],
   "idIssues": {
     "mismatch": [],
