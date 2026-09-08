@@ -718,7 +718,7 @@ def merge_catalog(auto_data: dict[str, Any], garena_heroes: list[dict[str, str]]
             if not sid or sid in existing_ids or sid in ignored_ids or is_hidden_skin_name(nm): continue
             if _issue_key('unresolved' if not re.fullmatch(r'\d{5}',sid) else 'noImage',hero_id,sid,name,nm) in ignored_issue_keys: continue
             existing_ids.add(sid); existing_names.add(norm(nm))
-            hero['skins'].append({'skinId':sid,'skinName':nm or ('Skin '+sid),'skinImage':'','supported':sid in auto_support_ids or bool(sk.get('resolved')),'resolved':bool(sk.get('resolved')),'resourcesVersion':sk.get('resourcesVersion',result['resourcesVersion']),'imageMissing':True})
+            hero['skins'].append({'skinId':sid,'skinName':nm or ('Skin '+sid),'skinImage':'','supported':sid in auto_support_ids or bool(sk.get('resolved')),'autoModReady':bool(re.fullmatch(r'\d{5}',sid)) and (not re.fullmatch(r'\d{3}',hero_id) or sid[:3]==hero_id),'resolved':bool(sk.get('resolved')),'resourcesVersion':sk.get('resourcesVersion',result['resourcesVersion']),'imageMissing':True})
 
         source=[x for x in (g.get('_skins') or []) if str(x.get('skinNameSource','')).strip() and not is_hidden_skin_name(str(x.get('skinNameSource','')))]
         by_id={str(x.get('skinId')).strip():x for x in source if re.fullmatch(r'\d{5}',str(x.get('skinId','')).strip())}
@@ -733,6 +733,7 @@ def merge_catalog(auto_data: dict[str, Any], garena_heroes: list[dict[str, str]]
                 if src.get('skinNameSource'): sk['skinName']=src['skinNameSource']
                 if src.get('skinId'): sk['garenaRealSkinId']=str(src['skinId'])
             sk['supported']=sid in auto_support_ids or bool(sk.get('supported'))
+            sk['autoModReady']=bool(re.fullmatch(r'\d{5}',sid)) and (not re.fullmatch(r'\d{3}',hero_id) or sid[:3]==hero_id)
             sk['imageMissing']=not bool(sk.get('skinImage'))
 
         for src in source:
@@ -744,7 +745,7 @@ def merge_catalog(auto_data: dict[str, Any], garena_heroes: list[dict[str, str]]
             internal_id=sid if sid else f'garena:{slug or "hero"}:name:{norm(nm).replace(" ","-")}'
             # Real ID from skin.txt or Garena is now stored directly in skinId, so the auto builder can use it.
             hero['skins'].append({'skinId':internal_id,'skinName':nm,'skinImage':str(src.get('skinImage') or ''),
-                                  'supported':sid in auto_support_ids,'resolved':False,'officialGarena':True,
+                                  'supported':sid in auto_support_ids,'autoModReady':bool(re.fullmatch(r'\d{5}',sid)) and (not re.fullmatch(r'\d{3}',hero_id) or sid[:3]==hero_id),'resolved':False,'officialGarena':True,
                                   'garenaRealSkinId':sid,'garenaSlot':str(src.get('garenaSlot') or ''),
                                   'skinIdSource':str(src.get('skinIdSource') or ('garena' if sid else '')),
                                   'resourcesVersion':result['resourcesVersion'],'imageMissing':not bool(src.get('skinImage'))})
@@ -2370,7 +2371,8 @@ def _run_premod_job():
         data = restore_catalog_from_cloud()
     data = sanitize_catalog(data)
     version = data.get("resourcesVersion") or load_json(ACTIVE, {}).get("version", "")
-    all_skins = [(h, s) for h in data.get("heroes", []) for s in h.get("skins", []) if s.get("supported")]
+    all_skins = [(h, s) for h in data.get("heroes", []) for s in h.get("skins", [])
+                 if skin_auto_mod_ready(str(h.get("heroId", "")), str(s.get("skinId", "")))]
     total = len(all_skins)
     _set_premod_state(running=True, done=False, total=total, doneCount=0, okCount=0, failCount=0, progress="Đang chuẩn bị...", stopRequested=False)
     ok = 0
@@ -2777,6 +2779,17 @@ def premod_status():
         return {"ok": True, **PREMOD_STATE}
 
 
+def skin_auto_mod_ready(hero_id: str, skin_id: str) -> bool:
+    sid = str(skin_id or "").strip()
+    if not re.fullmatch(r"\d{5}", sid):
+        return False
+    hid = str(hero_id or "").strip()
+    # A numeric hero must own the skin ID prefix; this prevents the
+    # "ID không phù hợp" bucket from becoming accidentally buildable.
+    if re.fullmatch(r"\d{3}", hid):
+        return sid[:3] == hid
+    return True
+
 @app.post("/api/build/{skin_id}")
 def build_skin(skin_id: str):
     data = load_json(CATALOG, {})
@@ -2792,8 +2805,8 @@ def build_skin(skin_id: str):
         raise HTTPException(404, "Skin ID chưa có trong catalog.")
     hero, skin = skins[skin_id]
     version = data.get("resourcesVersion") or load_json(ACTIVE, {}).get("version", "")
-    if not skin.get("supported", False):
-        raise HTTPException(409, f"Skin chưa được Resources {version or 'hiện tại'} hỗ trợ.")
+    if not skin_auto_mod_ready(str(hero.get("heroId", "")), skin_id):
+        raise HTTPException(409, "ID skin không phù hợp với tướng này nên không thể Auto Mod.")
     # Tên tướng + tên skin thật (vd "Billow Okarun"), dùng làm tên gói bên trong ZIP
     # và tên file tải về, thay vì chỉ dùng số Skin ID trần trụi.
     display_name = f"{hero.get('heroName','').strip()} {skin.get('skinName','').strip()}".strip() or skin_id
