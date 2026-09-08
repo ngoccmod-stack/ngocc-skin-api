@@ -285,99 +285,95 @@ def _skin_target_nodes(soup) -> list[tuple[str, object]]:
 
 
 def extract_hero_page(hero_url: str, hero_name: str) -> tuple[str, list[dict[str, str]]]:
-    """Read one official Garena hero page without inventing skin IDs.
+    """Read the Garena page using the original DOM rule: the image immediately
+    after each skin heading is the large rectangular artwork in the page body.
 
-    The current Garena page exposes skin names mainly through image alt/title text.
-    Parent containers often contain several neighboring skin names, so using parent
-    text as the primary name source causes every card to receive the same name.
-    This parser therefore prefers the image's own alt/title, then the exact anchor
-    text, and only then a small local fallback.
+    The small square portraits in the "Trang phục" gallery are only a last-resort
+    fallback when the large artwork blocks cannot be found.
     """
-    html=fetch_with_fallback(hero_url)
-    soup=BeautifulSoup(html,'html.parser')
-    hero_img=''
-    hero_key=norm(hero_name)
+    html = fetch_with_fallback(hero_url)
+    soup = BeautifulSoup(html, 'html.parser')
+    imgs = soup.find_all('img')
 
-    exact=[]
-    for img in soup.find_all('img'):
-        alt=norm(img.get('alt') or img.get('title') or '')
-        if alt == hero_key:
-            exact.append(img)
-    hero_img=_pick_image(exact,hero_url)
-    if not hero_img:
-        # Do not use a skin artwork as the hero avatar when the exact hero image is absent.
-        for img in soup.find_all('img')[:40]:
-            alt=norm(img.get('alt') or img.get('title') or '')
-            if alt and alt.startswith(hero_key+' '):
-                continue
-            u=_pick_image([img],hero_url)
-            if u:
-                hero_img=u; break
+    # Hero avatar: prefer the image whose alt/title is exactly the hero name.
+    hero_img = ''
+    target_hero = norm(hero_name)
+    for img in imgs:
+        alt = norm(img.get('alt') or img.get('title') or '')
+        if target_hero and alt == target_hero:
+            # Original behavior used img.src here; keep the same source selection.
+            src = absurl(hero_url, str(img.get('src') or ''))
+            if src and not _is_bad_small_image(src):
+                hero_img = src
+                break
+    if not hero_img and imgs:
+        first = absurl(hero_url, str(imgs[0].get('src') or ''))
+        if first and not _is_bad_small_image(first):
+            hero_img = first
 
-    skins=[]
-    anchors=soup.find_all('a',href=re.compile(r'#heroSkin-\d+',re.I))
-    for a in anchors:
-        slot=_extract_skin_slot(a.get('href'))
-        if not slot: continue
-        imgs=a.find_all('img')
-        name=''; img=''; sid=''
-        # Image alt/title is the cleanest source: e.g. "Dolia Mã Khởi Thiên Ca".
-        for im in imgs:
-            raw=str(im.get('alt') or im.get('title') or '').strip()
-            m=re.match(rf'^{re.escape(hero_name)}\s+(.+)$',raw,flags=re.I)
-            if m:
-                cand=m.group(1).strip()
-                if cand and not is_hidden_skin_name(cand) and norm(cand) not in {'trang phuc','ky nang'}:
-                    name=cand
-            if not img:
-                img=_pick_image([im, im.parent, getattr(im.parent,'parent',None)],hero_url)
-            if not sid:
-                sid=_extract_5digit_id(json.dumps(getattr(im,'attrs',{}),ensure_ascii=False,default=str))
-        if not name:
-            raw=' '.join(a.stripped_strings).strip()
-            m=re.match(rf'^{re.escape(hero_name)}\s+(.+)$',raw,flags=re.I)
-            if m:
-                cand=m.group(1).strip()
-                if 2 <= len(cand) <= 100 and not is_hidden_skin_name(cand): name=cand
-        if not name:
-            target=next((n for sl,n in _skin_target_nodes(soup) if sl==slot),None)
-            if target:
-                for im in target.find_all('img') if hasattr(target,'find_all') else []:
-                    raw=str(im.get('alt') or im.get('title') or '').strip()
-                    m=re.match(rf'^{re.escape(hero_name)}\s+(.+)$',raw,flags=re.I)
-                    if m:
-                        cand=m.group(1).strip()
-                        if cand and not is_hidden_skin_name(cand): name=cand; img=img or _pick_image([im],hero_url); break
-        if name:
-            skins.append({'skinNameSource':name,'skinImage':img,'skinId':sid,'garenaSlot':slot})
-
-    # Current Garena markup also contains the same skin labels directly on artwork images.
-    for img in soup.find_all('img'):
-        raw=str(img.get('alt') or img.get('title') or '').strip()
-        m=re.match(rf'^{re.escape(hero_name)}\s+(.+)$',raw,flags=re.I)
-        if not m: continue
-        name=m.group(1).strip()
-        if not name or is_hidden_skin_name(name) or norm(name) in {'trang phuc','ky nang'} or len(name)>100:
+    skins: list[dict[str, str]] = []
+    # IMPORTANT: use the exact first <img> AFTER the skin heading, excluding images
+    # nested inside the heading. This is the large rectangular artwork used by the
+    # original scanner, not the square thumbnail gallery.
+    for heading in soup.find_all(['h2', 'h3', 'h4']):
+        text = ' '.join(heading.stripped_strings).strip()
+        if not text:
             continue
-        sid=_extract_5digit_id(json.dumps(getattr(img,'attrs',{}),ensure_ascii=False,default=str))
-        skins.append({'skinNameSource':name,'skinImage':_pick_image([img,img.parent,getattr(img.parent,'parent',None)],hero_url),'skinId':sid,'garenaSlot':''})
+        if not norm(text).startswith(target_hero):
+            continue
+        skin_name = re.sub(rf'^{re.escape(hero_name)}\s*', '', text, flags=re.I).strip()
+        if not skin_name or norm(skin_name) in {'trang phuc', 'ky nang'} or is_hidden_skin_name(skin_name):
+            continue
+        img = None
+        for cand in heading.find_all_next('img'):
+            if heading in cand.parents:
+                continue
+            src = absurl(hero_url, str(cand.get('src') or ''))
+            if not src or _is_bad_small_image(src):
+                continue
+            img = cand
+            break
+        if not img:
+            continue
+        src = absurl(hero_url, str(img.get('src') or ''))
+        if not src or _is_bad_small_image(src):
+            continue
+        sid = _extract_5digit_id(json.dumps(getattr(heading, 'attrs', {}), ensure_ascii=False, default=str))
+        skins.append({'skinNameSource': skin_name, 'skinImage': src, 'skinId': sid,
+                      'garenaSlot': _extract_skin_slot(heading.get('id', ''))})
 
-    # Dedupe by real ID first, otherwise by normalized skin name. A Garena slot is
-    # never treated as a skin ID because #heroSkin-N is only a page anchor.
-    uniq=[]; seen_ids=set(); seen_names=set()
+    # Last resort only: the square gallery thumbnails under "Trang phục".
+    if not skins:
+        outfit_heading = None
+        for h in soup.find_all(['h2', 'h3', 'h4']):
+            if norm(' '.join(h.stripped_strings)) == 'trang phuc':
+                outfit_heading = h
+                break
+        if outfit_heading is not None:
+            container = outfit_heading.find_next(['ul', 'ol', 'div'])
+            anchors = container.find_all('a', href=re.compile(r'#heroSkin-\d+', re.I)) if container else []
+            for a in anchors:
+                img = a.find('img')
+                if not img:
+                    continue
+                full_name = (a.get('title') or img.get('alt') or img.get('title') or '').strip()
+                src = absurl(hero_url, str(img.get('src') or ''))
+                if not full_name or not src or _is_bad_small_image(src):
+                    continue
+                skin_name = re.sub(rf'^{re.escape(hero_name)}\s*', '', full_name, flags=re.I).strip() or full_name
+                if is_hidden_skin_name(skin_name):
+                    continue
+                skins.append({'skinNameSource': skin_name, 'skinImage': src, 'skinId':
+                              _extract_5digit_id(json.dumps(getattr(a, 'attrs', {}), ensure_ascii=False, default=str)),
+                              'garenaSlot': _extract_skin_slot(a.get('href'))})
+
+    # De-duplicate exact names while preserving DOM order.
+    seen_names=set(); uniq=[]
     for item in skins:
-        name=str(item.get('skinNameSource') or '').strip()
-        sid=str(item.get('skinId') or '').strip()
-        if not name: continue
-        key=norm(name)
-        if sid and re.fullmatch(r'\d{5}',sid):
-            if sid in seen_ids: continue
-            seen_ids.add(sid)
-        else:
-            if key in seen_names: continue
-        seen_names.add(key)
-        uniq.append(item)
-    return hero_img,uniq
+        k=norm(item.get('skinNameSource',''))
+        if k and k not in seen_names:
+            seen_names.add(k); uniq.append(item)
+    return hero_img, uniq
 
 def is_hidden_skin_name(name: str) -> bool:
     n = str(name or "").strip()
@@ -619,63 +615,67 @@ def _apply_skin_txt_ids(garena_heroes: list[dict[str, Any]]) -> list[dict[str, A
     return garena_heroes
 
 
-def build_catalog_id_issues(auto_data: dict[str, Any], garena_heroes: list[dict[str, Any]], catalog_data: dict[str, Any], ignored_ids: set[str] | None = None) -> dict[str, Any]:
-    """Build the three admin-only issue buckets.
+def build_catalog_id_issues(auto_data: dict[str, Any], garena_heroes: list[dict[str, Any]], catalog_data: dict[str, Any], ignored_ids: set[str] | None = None, ignored_issue_keys: set[str] | None = None) -> dict[str, Any]:
+    """Build admin-only issue buckets directly from the catalog.
 
-    mismatch: a numeric Resource skin ID whose hero prefix disagrees with the official hero page
-              the same skin name appears on; unresolved: official skin with no usable 5-digit ID;
-              no_image: catalog skin with a numeric ID but no image URL.
+    The mismatch list is intentionally NOT dependent on Garena name matching. If a
+    5-digit skin ID sits under a numeric hero whose first 3 digits differ from the
+    hero ID (e.g. hero 141 + skin 66107), it is an invalid placement and must show up.
     """
     ignored_ids=ignored_ids or set()
-    mismatch_by_key: dict[str, dict[str, Any]] = {}
-    official_skin_owner: dict[str, dict[str, Any]] = {}
-    for h in garena_heroes:
-        hn=str(h.get('heroName') or '').strip(); slug=str(h.get('slug') or '').strip()
-        hero_entry=next((x for x in catalog_data.get('heroes',[]) if norm(x.get('heroName',''))==norm(hn)),None)
-        hid=str((hero_entry or {}).get('heroId') or h.get('_heroId') or '').strip()
-        for src in h.get('_skins') or []:
-            nm=str(src.get('skinNameSource') or '').strip(); sid=str(src.get('skinId') or '').strip()
-            if not nm: continue
-            official_skin_owner[norm(nm)]={'heroId':hid,'heroName':hn,'skinName':nm,'slug':slug,'officialId':sid}
-            if re.fullmatch(r'\d{5}',sid) and re.fullmatch(r'\d{3}',hid or '') and sid[:3] != hid:
-                key=sid+'|'+norm(hn)+'|'+norm(nm)
-                mismatch_by_key[key]={'heroId':hid,'heroName':hn,'skinName':nm,'skinId':sid,'reason':'Garena skin ID không khớp ID tướng'}
-    # Also catch a Resource entry placed under the wrong hero but sharing the official skin name.
-    for ah in auto_data.get('heroes',[]):
-        ahid=str(ah.get('heroId') or '').strip()
-        for sk in ah.get('skins',[]):
-            sid=str(sk.get('skinId') or '').strip(); nm=str(sk.get('skinName') or '').strip()
-            if not re.fullmatch(r'\d{5}',sid) or sid in ignored_ids or not nm: continue
-            own=official_skin_owner.get(norm(nm))
-            if own and re.fullmatch(r'\d{3}',str(own.get('heroId') or '')) and ahid != str(own.get('heroId')):
-                key=sid+'|'+norm(own['heroName'])+'|'+norm(nm)
-                mismatch_by_key.setdefault(key,{'heroId':own['heroId'],'heroName':own['heroName'],'skinName':nm,'skinId':sid,'reason':f'Resources xếp ID {sid[:3]} cho tướng {ahid}'})
-    mismatch_groups={}
-    for item in mismatch_by_key.values():
-        k=str(item['heroId'])+'|'+norm(item['heroName'])
-        mismatch_groups.setdefault(k,{'heroId':item['heroId'],'heroName':item['heroName'],'items':[]})['items'].append(item)
-    for g in mismatch_groups.values(): g['items'].sort(key=lambda x:int(x['skinId']))
-
+    ignored_issue_keys=ignored_issue_keys or set()
+    mismatch_groups: dict[str, dict[str, Any]] = {}
+    # Raw heroSkin.bytes mismatches are kept by the scanner even though they are
+    # excluded from normal AutoMod records. Surface them here so the admin can see
+    # every invalid pair present in Resources (e.g. 141 - Lauriel / 66107).
+    for item in auto_data.get('idMismatches',[]) if isinstance(auto_data,dict) else []:
+        sid=str(item.get('skinId') or '').strip(); hid=str(item.get('heroId') or '').strip()
+        if sid in ignored_ids or not re.fullmatch(r'\d{5}',sid) or not re.fullmatch(r'\d{3}',hid):
+            continue
+        key=hid+'|'+norm(str(item.get('heroName') or ''))
+        g=mismatch_groups.setdefault(key,{'heroId':hid,'heroName':str(item.get('heroName') or 'Không rõ tướng'),'items':[]})
+        g['items'].append({'heroId':hid,'heroName':g['heroName'],'skinName':str(item.get('skinName') or ('Skin '+sid)),'skinId':sid,'reason':f'ID skin {sid} không thuộc tướng {hid}'})
     unresolved=[]
     no_image=[]
+
     for h in catalog_data.get('heroes',[]):
-        hid=str(h.get('heroId') or '').strip(); hn=str(h.get('heroName') or '').strip()
+        hid=str(h.get('heroId') or '').strip()
+        hn=str(h.get('heroName') or '').strip()
+        numeric_hero=re.fullmatch(r'\d{3}',hid) is not None
         for sk in h.get('skins',[]):
             sid=str(sk.get('skinId') or '').strip()
-            if sid in ignored_ids: continue
+            nm=str(sk.get('skinName') or '').strip()
+            if not sid or sid in ignored_ids:
+                continue
+            if numeric_hero and re.fullmatch(r'\d{5}',sid) and sid[:3] != hid:
+                k=hid+'|'+norm(hn)
+                g=mismatch_groups.setdefault(k,{'heroId':hid,'heroName':hn,'items':[]})
+                g['items'].append({'heroId':hid,'heroName':hn,'skinName':nm or ('Skin '+sid),'skinId':sid,
+                                    'reason':f'ID skin {sid} không thuộc tướng {hid}'})
+                continue
             if not re.fullmatch(r'\d{5}',sid):
-                unresolved.append({'heroId':hid,'heroName':hn,'skinId':sid,'skinName':str(sk.get('skinName') or ''),'imageUrl':str(sk.get('skinImage') or '')})
+                if _issue_key('unresolved',hid,sid,hn,nm) not in ignored_issue_keys:
+                    unresolved.append({'heroId':hid,'heroName':hn,'skinId':sid,'skinName':nm,'imageUrl':str(sk.get('skinImage') or '')})
             elif not str(sk.get('skinImage') or '').strip():
-                no_image.append({'heroId':hid,'heroName':hn,'skinId':sid,'skinName':str(sk.get('skinName') or '')})
-    unresolved.sort(key=lambda x:(norm(x['heroName']),norm(x['skinName'])))
-    no_image.sort(key=lambda x:(norm(x['heroName']),int(x['skinId'])))
-    mismatch=list(mismatch_groups.values()); mismatch.sort(key=lambda x:norm(x['heroName']))
+                if _issue_key('noImage',hid,sid,hn,nm) not in ignored_issue_keys:
+                    no_image.append({'heroId':hid,'heroName':hn,'skinId':sid,'skinName':nm})
+
+    for g in mismatch_groups.values():
+        uniq_items={}
+        for item in g.get('items',[]):
+            uniq_items[str(item.get('skinId') or '')]=item
+        g['items']=sorted(uniq_items.values(),key=lambda x:int(x['skinId']))
+    mismatch=sorted(mismatch_groups.values(),key=lambda x:(norm(x['heroName']),x['heroId']))
+    unresolved.sort(key=lambda x:(norm(x['heroName']),norm(x['skinName']),x['skinId']))
+    no_image.sort(key=lambda x:(norm(x['heroName']),x['skinName'],x['skinId']))
     return {'mismatch':mismatch,'unresolved':unresolved,'noImage':no_image}
 
-
-def merge_catalog(auto_data: dict[str, Any], garena_heroes: list[dict[str, str]], ignored_ids: set[str] | None = None) -> dict[str, Any]:
+def merge_catalog(auto_data: dict[str, Any], garena_heroes: list[dict[str, str]], ignored_ids: set[str] | None = None, deleted_hero_ids: set[str] | None = None, deleted_hero_keys: set[str] | None = None, ignored_issue_keys: set[str] | None = None) -> dict[str, Any]:
     """Make Garena's hero list authoritative while using Resources + Skin/skin.txt for real IDs/support."""
     ignored_ids=ignored_ids or set()
+    deleted_hero_ids=deleted_hero_ids or set()
+    deleted_hero_keys=deleted_hero_keys or set()
+    ignored_issue_keys=ignored_issue_keys or set()
     auto=filter_auto_catalog(auto_data)
     auto_by_name={}; auto_by_id={}
     for h in auto.get('heroes',[]):
@@ -687,13 +687,18 @@ def merge_catalog(auto_data: dict[str, Any], garena_heroes: list[dict[str, str]]
     garena_heroes=_apply_skin_txt_ids(garena_heroes)
     result={'schemaVersion':6,'resourcesVersion':auto.get('resourcesVersion',''),'generatedAt':auto.get('generatedAt',''),'heroCount':0,'skinCount':0,'heroes':[],
             'resourceSkinIds':sorted({str(sk.get('skinId')).strip() for hh in auto.get('heroes',[]) for sk in hh.get('skins',[]) if re.fullmatch(r'\d{5}',str(sk.get('skinId','')).strip())}),
-            'ignoredSkinIds':sorted(ignored_ids)}
+            'ignoredSkinIds':sorted(ignored_ids),'ignoredIssueKeys':sorted(ignored_issue_keys),'deletedHeroIds':sorted(deleted_hero_ids),'deletedHeroKeys':sorted(deleted_hero_keys)}
     auto_support_ids=set(result['resourceSkinIds'])
 
     seen_heroes=set()
     for g in garena_heroes:
         name=str(g.get('heroName','')).strip(); slug=str(g.get('slug','')).strip()
         key=norm(name)
+        # Admin-deleted heroes stay deleted until explicitly restored/removed from the tombstone.
+        candidate_ids=set()
+        if g.get('_heroId'): candidate_ids.add(str(g.get('_heroId')).strip())
+        if any(x in deleted_hero_ids for x in candidate_ids) or key in deleted_hero_keys:
+            continue
         if not name or key in seen_heroes or not is_valid_hero_name(name): continue
         seen_heroes.add(key)
         ah=auto_by_name.get(key)
@@ -702,6 +707,8 @@ def merge_catalog(auto_data: dict[str, Any], garena_heroes: list[dict[str, str]]
             real=next((str(x.get('skinId','')).strip() for x in (g.get('_skins') or []) if re.fullmatch(r'\d{5}',str(x.get('skinId','')).strip())), '')
             hero_id=real[:3] if real and 100 <= int(real[:3]) <= 999 else f'garena:{slug or re.sub(r"[^a-z0-9._-]+","-",key)}'
         g['_heroId']=hero_id
+        if hero_id in deleted_hero_ids or key in deleted_hero_keys:
+            continue
         hero={'heroId':hero_id,'heroName':name,'heroImage':str(g.get('heroImage') or ''),'garenaSlug':slug,'skins':[]}
         if not ah: hero['officialOnly']=True
 
@@ -709,6 +716,7 @@ def merge_catalog(auto_data: dict[str, Any], garena_heroes: list[dict[str, str]]
         for sk in (ah or {}).get('skins',[]):
             sid=str(sk.get('skinId','')).strip(); nm=str(sk.get('skinName','')).strip()
             if not sid or sid in existing_ids or sid in ignored_ids or is_hidden_skin_name(nm): continue
+            if _issue_key('unresolved' if not re.fullmatch(r'\d{5}',sid) else 'noImage',hero_id,sid,name,nm) in ignored_issue_keys: continue
             existing_ids.add(sid); existing_names.add(norm(nm))
             hero['skins'].append({'skinId':sid,'skinName':nm or ('Skin '+sid),'skinImage':'','supported':sid in auto_support_ids or bool(sk.get('resolved')),'resolved':bool(sk.get('resolved')),'resourcesVersion':sk.get('resourcesVersion',result['resourcesVersion']),'imageMissing':True})
 
@@ -732,6 +740,7 @@ def merge_catalog(auto_data: dict[str, Any], garena_heroes: list[dict[str, str]]
             if sid in ignored_ids: continue
             if sid and sid in existing_ids: continue
             if not sid and norm(nm) in existing_names: continue
+            if _issue_key('unresolved' if not sid else 'noImage',hero_id,sid or '',name,nm) in ignored_issue_keys: continue
             internal_id=sid if sid else f'garena:{slug or "hero"}:name:{norm(nm).replace(" ","-")}'
             # Real ID from skin.txt or Garena is now stored directly in skinId, so the auto builder can use it.
             hero['skins'].append({'skinId':internal_id,'skinName':nm,'skinImage':str(src.get('skinImage') or ''),
@@ -746,7 +755,7 @@ def merge_catalog(auto_data: dict[str, Any], garena_heroes: list[dict[str, str]]
 
     result['heroCount']=len(result['heroes'])
     result['skinCount']=sum(len(h.get('skins',[])) for h in result['heroes'])
-    result['idIssues']=build_catalog_id_issues(auto_data,garena_heroes,result,ignored_ids)
+    result['idIssues']=build_catalog_id_issues(auto_data,garena_heroes,result,ignored_ids,ignored_issue_keys)
     return result
 
 def load_json(path: Path, default: Any):
@@ -2147,6 +2156,32 @@ def _catalog_ignored_ids(data: dict[str, Any] | None = None) -> set[str]:
     return {str(x).strip() for x in vals if re.fullmatch(r'\d{5}',str(x).strip())}
 
 
+def _catalog_ignored_issue_keys(data: dict[str, Any] | None = None) -> set[str]:
+    d=data if isinstance(data,dict) else load_json(CATALOG,{})
+    vals=d.get('ignoredIssueKeys',[]) if isinstance(d,dict) else []
+    return {str(x).strip() for x in vals if str(x).strip()}
+
+
+def _issue_key(mode: str, hero_id: str, skin_id: str, hero_name: str = '', skin_name: str = '') -> str:
+    # Prefer canonical names so an unresolved synthetic ID can still be ignored
+    # after a future scan regenerates that internal key.
+    h=norm(hero_name) or str(hero_id).strip()
+    n=norm(skin_name) or str(skin_id).strip()
+    return f"{mode}|{h}|{n}"
+
+
+def _deleted_hero_keys(data: dict[str, Any] | None = None) -> set[str]:
+    d=data if isinstance(data,dict) else load_json(CATALOG,{})
+    vals=d.get('deletedHeroKeys',[]) if isinstance(d,dict) else []
+    return {str(x).strip() for x in vals if str(x).strip()}
+
+
+def _deleted_hero_ids(data: dict[str, Any] | None = None) -> set[str]:
+    d=data if isinstance(data,dict) else load_json(CATALOG,{})
+    vals=d.get('deletedHeroIds',[]) if isinstance(d,dict) else []
+    return {str(x).strip() for x in vals if str(x).strip()}
+
+
 @app.post("/api/scan")
 def scan_catalog():
     try:
@@ -2178,7 +2213,7 @@ def scan_catalog():
             for fut in as_completed(futures):
                 enriched.append(fut.result())
         enriched.sort(key=lambda x: norm(x.get('heroName','')))
-        catalog_data = merge_catalog(auto_data, enriched, _catalog_ignored_ids(load_json(CATALOG, {})))
+        catalog_data = merge_catalog(auto_data, enriched, _catalog_ignored_ids(load_json(CATALOG, {})), _deleted_hero_ids(load_json(CATALOG, {})), _deleted_hero_keys(load_json(CATALOG, {})), _catalog_ignored_issue_keys(load_json(CATALOG, {})))
         catalog_data = preserve_previous_catalog_data(catalog_data, load_json(CATALOG, {}))
         catalog_data = merge_manual_skins(catalog_data, load_json(CATALOG, {}))
     except Exception as e:
@@ -2261,7 +2296,7 @@ def _run_scan_job():
             for fut in as_completed(futures):
                 enriched.append(fut.result())
         enriched.sort(key=lambda x: norm(x.get('heroName', '')))
-        catalog_data = merge_catalog(auto_data, enriched, _catalog_ignored_ids(load_json(CATALOG, {})))
+        catalog_data = merge_catalog(auto_data, enriched, _catalog_ignored_ids(load_json(CATALOG, {})), _deleted_hero_ids(load_json(CATALOG, {})), _deleted_hero_keys(load_json(CATALOG, {})), _catalog_ignored_issue_keys(load_json(CATALOG, {})))
         catalog_data = preserve_previous_catalog_data(catalog_data, load_json(CATALOG, {}))
     except Exception as e:
         safe_auto = filter_auto_catalog(auto_data)
@@ -2379,15 +2414,24 @@ def _save_catalog_and_persist(data: dict[str, Any]) -> str:
 def delete_hero(hero_id: str):
     data = load_json(CATALOG, {})
     heroes = data.get("heroes", [])
-    before = len(heroes)
-    heroes = [h for h in heroes if str(h.get("heroId")) != str(hero_id)]
-    if len(heroes) == before:
-        raise HTTPException(404, "Không tìm thấy tướng trong catalog.")
-    data["heroes"] = heroes
-    data["heroCount"] = len(heroes)
-    data["skinCount"] = sum(len(h.get("skins", [])) for h in heroes)
+    target = next((h for h in heroes if str(h.get("heroId")) == str(hero_id)), None)
+    if target is None:
+        # Treat an already-deleted hero as idempotent so the UI never gets stuck
+        # on a stale cached card. Persist the tombstone again.
+        return {"ok": True, "deleted": 0, "alreadyDeleted": True, "cloudWarning": "", **data}
+    data["heroes"] = [h for h in heroes if str(h.get("heroId")) != str(hero_id)]
+    data.setdefault('deletedHeroIds', [])
+    data.setdefault('deletedHeroKeys', [])
+    hid=str(hero_id).strip()
+    hkey=norm(target.get('heroName',''))
+    if hid and hid not in data['deletedHeroIds']: data['deletedHeroIds'].append(hid)
+    if hkey and hkey not in data['deletedHeroKeys']: data['deletedHeroKeys'].append(hkey)
+    data['deletedHeroIds']=sorted(set(map(str,data['deletedHeroIds'])))
+    data['deletedHeroKeys']=sorted(set(map(str,data['deletedHeroKeys'])))
+    data["heroCount"] = len(data["heroes"])
+    data["skinCount"] = sum(len(h.get("skins", [])) for h in data["heroes"])
     warn = _save_catalog_and_persist(data)
-    return {"ok": True, "cloudWarning": warn, **data}
+    return {"ok": True, "deleted": 1, "cloudWarning": warn, **data}
 
 
 @app.post("/api/catalog/hero/{hero_id}/skin/{skin_id}/delete")
@@ -2422,11 +2466,21 @@ class CatalogImageUrlPayload(BaseModel):
     imageUrl: str
 
 
+class CatalogIssueDeleteManyPayload(BaseModel):
+    mode: str
+    items: list[dict[str, Any]] = []
+
+
 @app.get('/api/catalog/issues')
 def catalog_issues():
     data=load_json(CATALOG,{})
     data=sanitize_catalog(data)
-    return {'ok':True,'resourcesVersion':data.get('resourcesVersion',''),'issues':data.get('idIssues') or {'mismatch':[],'unresolved':[],'noImage':[]},'ignoredSkinIds':sorted(_catalog_ignored_ids(data))}
+    ignored=_catalog_ignored_ids(data)
+    # Always calculate from the current catalog so an old/stale idIssues cache can
+    # never make the special page falsely report 0 mismatches.
+    ignored_issue_keys=_catalog_ignored_issue_keys(data)
+    issues=build_catalog_id_issues(data,[],data,ignored,ignored_issue_keys)
+    return {'ok':True,'resourcesVersion':data.get('resourcesVersion',''),'issues':issues,'ignoredSkinIds':sorted(ignored),'ignoredIssueKeys':sorted(ignored_issue_keys),'deletedHeroIds':sorted(_deleted_hero_ids(data)),'deletedHeroKeys':sorted(_deleted_hero_keys(data))}
 
 
 @app.post('/api/catalog/issues/mismatch/delete-many')
@@ -2448,8 +2502,43 @@ def delete_mismatch_skin_ids(payload: CatalogIssueDeletePayload):
     issues['mismatch']=[g | {'items':[i for i in g.get('items',[]) if str(i.get('skinId')) not in wanted]} for g in issues.get('mismatch',[]) if any(str(i.get('skinId')) not in wanted for i in g.get('items',[]))]
     data['idIssues']=issues
     warn=_save_catalog_and_persist(data)
-    return {'ok':True,'deleted':deleted,'cloudWarning':warn,'issues':issues,'ignoredSkinIds':sorted(ignored)}
+    ignored_issue_keys=_catalog_ignored_issue_keys(data)
+    issues=build_catalog_id_issues(data,[],data,ignored,ignored_issue_keys)
+    return {'ok':True,'deleted':deleted,'cloudWarning':warn,'issues':issues,'ignoredSkinIds':sorted(ignored),'ignoredIssueKeys':sorted(ignored_issue_keys),'deletedHeroIds':sorted(_deleted_hero_ids(data)),'deletedHeroKeys':sorted(_deleted_hero_keys(data)),**data}
 
+
+@app.post('/api/catalog/issues/delete-many')
+def delete_catalog_issues(payload: CatalogIssueDeleteManyPayload):
+    mode=str(payload.mode or '').strip()
+    if mode not in {'unresolved','noImage'}:
+        raise HTTPException(400,'Mode phải là unresolved hoặc noImage.')
+    items=payload.items or []
+    if not isinstance(items,list): raise HTTPException(400,'items phải là danh sách.')
+    data=load_json(CATALOG,{})
+    data.setdefault('ignoredIssueKeys',[])
+    ignored=set(map(str,data.get('ignoredIssueKeys',[])))
+    wanted=set()
+    for item in items:
+        if not isinstance(item,dict): continue
+        hid=str(item.get('heroId') or '').strip(); sid=str(item.get('skinId') or '').strip(); hn=str(item.get('heroName') or '').strip(); sn=str(item.get('skinName') or '').strip()
+        if not hid or not sn: continue
+        key=_issue_key(mode,hid,sid,hn,sn); ignored.add(key); wanted.add((hid,sid,hn,sn,key))
+    deleted=0
+    for h in data.get('heroes',[]):
+        before=len(h.get('skins',[])); keep=[]
+        for sk in h.get('skins',[]):
+            hid=str(h.get('heroId') or '').strip(); sid=str(sk.get('skinId') or '').strip(); sn=str(sk.get('skinName') or '').strip(); hn=str(h.get('heroName') or '').strip()
+            key=_issue_key(mode,hid,sid,hn,sn)
+            if key in ignored and any(x[0]==hid and x[1]==sid and x[2]==hn and x[3]==sn and x[4]==key for x in wanted):
+                deleted+=1
+                continue
+            keep.append(sk)
+        h['skins']=keep; h['skinCount']=len(keep)
+    data['ignoredIssueKeys']=sorted(ignored)
+    data['heroCount']=len(data.get('heroes',[])); data['skinCount']=sum(len(h.get('skins',[])) for h in data.get('heroes',[]))
+    data['idIssues']=build_catalog_id_issues({},[],data,_catalog_ignored_ids(data),_catalog_ignored_issue_keys(data))
+    warn=_save_catalog_and_persist(data)
+    return {'ok':True,'deleted':deleted,'mode':mode,'cloudWarning':warn,'issues':data.get('idIssues',{}),'ignoredIssueKeys':data['ignoredIssueKeys'],**data}
 
 @app.post('/api/catalog/hero/{hero_id}/skin/{skin_id}/set-id')
 def set_catalog_skin_id(hero_id: str, skin_id: str, payload: CatalogIdUpdatePayload):
@@ -2501,20 +2590,29 @@ def set_catalog_skin_image(hero_id: str, skin_id: str, payload: CatalogImageUrlP
 
 @app.post("/api/catalog/heroes/delete-many")
 def delete_heroes_many(payload: BulkDeletePayload):
-    wanted = {str(x) for x in payload.ids if str(x).strip()}
-    if not wanted:
-        return {"ok": True, "deleted": 0, **load_json(CATALOG, {})}
+    wanted = {str(x).strip() for x in payload.ids if str(x).strip()}
     data = load_json(CATALOG, {})
+    if not wanted:
+        return {"ok": True, "deleted": 0, **data}
     before = len(data.get("heroes", []))
-    data["heroes"] = [h for h in data.get("heroes", []) if str(h.get("heroId")) not in wanted]
-    deleted = before - len(data["heroes"])
-    if deleted:
-        data["heroCount"] = len(data["heroes"])
-        data["skinCount"] = sum(len(h.get("skins", [])) for h in data["heroes"])
-        warn = _save_catalog_and_persist(data)
-    else:
-        warn = ""
-    return {"ok": True, "deleted": deleted, "cloudWarning": warn, **data}
+    remaining=[]
+    data.setdefault('deletedHeroIds', [])
+    data.setdefault('deletedHeroKeys', [])
+    for h in data.get('heroes',[]):
+        hid=str(h.get('heroId') or '').strip()
+        if hid in wanted:
+            if hid: data['deletedHeroIds'].append(hid)
+            hk=norm(h.get('heroName',''))
+            if hk: data['deletedHeroKeys'].append(hk)
+        else:
+            remaining.append(h)
+    data['heroes']=remaining
+    deleted=before-len(remaining)
+    data['deletedHeroIds']=sorted(set(map(str,data['deletedHeroIds'])))
+    data['deletedHeroKeys']=sorted(set(map(str,data['deletedHeroKeys'])))
+    data['heroCount']=len(remaining); data['skinCount']=sum(len(h.get('skins',[])) for h in remaining)
+    warn=_save_catalog_and_persist(data) if deleted else ''
+    return {"ok":True,"deleted":deleted,"cloudWarning":warn,**data}
 
 
 @app.post("/api/catalog/hero/{hero_id}/skins/delete-many")

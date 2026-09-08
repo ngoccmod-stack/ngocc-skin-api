@@ -139,6 +139,24 @@ def iter_skin_records(hero_skin: bytes) -> Iterable[Tuple[int, int, int]]:
             yield item
 
 
+
+def iter_skin_records_all(hero_skin: bytes) -> Iterable[Tuple[int, int, int]]:
+    """Yield every plausible skin/hero pair, including IDs whose 3-digit prefix
+    does NOT match the hero ID. These mismatches are intentionally excluded from
+    the normal AutoMod catalog but exposed to the admin issue checker."""
+    seen = set()
+    for pos in range(0, len(hero_skin) - 7):
+        skin_id, hero_id = struct.unpack_from('<II', hero_skin, pos)
+        if not (10000 <= skin_id <= 99999):
+            continue
+        if not (100 <= hero_id <= 999):
+            continue
+        key=(skin_id,hero_id)
+        if key in seen:
+            continue
+        seen.add(key)
+        yield skin_id, hero_id, pos
+
 def scan(resources_root: Path, keep_unresolved: bool = False, id_allowlist: Optional[set[str]] = None) -> dict:
     version_dir = find_latest_version(resources_root)
     base = version_dir
@@ -159,6 +177,7 @@ def scan(resources_root: Path, keep_unresolved: bool = False, id_allowlist: Opti
             maps.append((name, load_data_file(p, zstd_dict)))
 
     records = []
+    mismatches = []
     for skin_id, hero_id, pos in iter_skin_records(hero):
         hero_key = hero[pos + 12:pos + 31]
         skin_key = hero[pos + 40:pos + 59]
@@ -185,6 +204,36 @@ def scan(resources_root: Path, keep_unresolved: bool = False, id_allowlist: Opti
         elif keep_unresolved and (id_allowlist is None or item['skinId'] in id_allowlist):
             records.append(item)
 
+    # Keep mismatched raw records separately. They are NOT inserted into the normal
+    # hero catalog because using them for AutoMod would be unsafe/wrong, but the admin
+    # checker needs to surface them (e.g. hero 141 + skin 66107).
+    seen_mismatch=set()
+    for skin_id, hero_id, pos in iter_skin_records_all(hero):
+        if skin_id // 100 == hero_id:
+            continue
+        hero_key = hero[pos + 12:pos + 31]
+        skin_key = hero[pos + 40:pos + 59]
+        hero_name = None
+        skin_name = None
+        source_map = None
+        for map_name, mb in maps:
+            h = lookup_key(mb, hero_key)
+            ss = lookup_key(mb, skin_key)
+            if h and ss:
+                hero_name, skin_name, source_map = h, ss, map_name
+                break
+        key=(hero_id,skin_id)
+        if key in seen_mismatch:
+            continue
+        seen_mismatch.add(key)
+        mismatches.append({
+            'skinId': str(skin_id), 'heroId': str(hero_id),
+            'heroName': hero_name or '', 'skinName': skin_name or '',
+            'resolved': bool(hero_name and skin_name),
+            'resourcesVersion': version_dir.name,
+            'sourceMap': source_map or '',
+        })
+
     # Group by hero while preserving numeric ordering.
     heroes: Dict[str, dict] = {}
     for r in sorted(records, key=lambda x: int(x['skinId'])):
@@ -201,10 +250,12 @@ def scan(resources_root: Path, keep_unresolved: bool = False, id_allowlist: Opti
         })
 
     return {
-        'schemaVersion': 1,
+        'schemaVersion': 2,
         'resourcesVersion': version_dir.name,
         'generatedAt': __import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(),
         'recordCount': len(records),
+        'mismatchCount': len(mismatches),
+        'idMismatches': sorted(mismatches, key=lambda x: (int(x['heroId']), int(x['skinId']))),
         'resolvedCount': sum(1 for r in records if r['resolved']),
         'heroes': list(sorted(heroes.values(), key=lambda h: int(h['heroId']))),
         'records': records,

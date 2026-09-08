@@ -39,10 +39,3 @@ Builder dùng một workspace riêng để không sửa Resources master.
 
 ## Button ZIP upload (V13)
 The web upload button expects one outer ZIP containing many per-skin ZIP files. The browser reads the outer ZIP locally, matches each inner ZIP name to the saved button catalog, and uploads each inner ZIP directly to Cloudinary as an individual `raw` asset. This avoids the Cloudinary Free 10 MB raw-file limit on the outer archive and avoids long uploads through Render. The catalog stores the original inner ZIP filename so downloads keep the exact filename supplied by the uploader.
-
-## v10 skin catalog fixes
-- Uses the supplied `#1Nút Bấm/Skin/skin.txt` to resolve real 5-digit skin IDs when Garena exposes only skin names/slots.
-- Skin cards use a large 16:9 rectangular artwork area.
-- Added `/api/catalog/issues` plus admin endpoints for mismatched IDs, unresolved IDs, and missing images.
-- Manual skin ID assignment is persisted across rescans and marks the skin ready for Auto Mod when that ID exists in the current Resources index.
-- Mismatched IDs can be ignored/deleted from the public catalog so they do not return on later scans.
