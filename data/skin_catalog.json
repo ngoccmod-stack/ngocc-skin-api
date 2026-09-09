@@ -4374,13 +4374,13 @@
         },
         {
           "skinId": "59602",
-          "skinName": "Skin 59602",
-          "skinImage": "https://imagur.org/i/MrQwYI7n",
+          "skinName": "Swampseer",
+          "skinImage": "https://i.ibb.co/HTsVRc5R/1001487924.jpg",
           "supported": true,
           "autoModReady": true,
           "resolved": false,
           "resourcesVersion": "1.63.1",
-          "imageMissing": true,
+          "imageMissing": false,
           "imageManual": true,
           "titleSize": 12.5,
           "titleColor": "#ffffff"
