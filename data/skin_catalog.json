@@ -1,9 +1,9 @@
 {
-  "schemaVersion": 6,
+  "schemaVersion": 7,
   "resourcesVersion": "1.63.1",
-  "generatedAt": "2026-09-09T14:28:42.847761+00:00",
-  "heroCount": 124,
-  "skinCount": 1134,
+  "generatedAt": "2026-09-09T22:59:00.893730+00:00",
+  "heroCount": 125,
+  "skinCount": 1142,
   "heroes": [
     {
       "heroId": "130",
@@ -3380,7 +3380,7 @@
       "skinCount": 6
     },
     {
-      "heroId": "159",
+      "heroId": "garena:dolia",
       "heroName": "Dolia",
       "heroImage": "https://lienquan.garena.vn/wp-content/uploads/2024/07/15900s.jpg",
       "garenaSlug": "dolia",
@@ -4234,6 +4234,30 @@
       "skinCount": 14
     },
     {
+      "heroId": "garena:flowborn-2",
+      "heroName": "Flowborn",
+      "heroImage": "https://lienquan.garena.vn/wp-content/uploads/2026/04/IMG-SQR-0200x0200-080148-2.jpg",
+      "garenaSlug": "flowborn-2",
+      "skins": [
+        {
+          "skinId": "garena:flowborn-2:name:flowborn",
+          "skinName": "Flowborn",
+          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2026/04/IMG-SQR-0150x0150-080149-22.jpg",
+          "supported": false,
+          "autoModReady": false,
+          "resolved": false,
+          "officialGarena": true,
+          "garenaRealSkinId": "",
+          "garenaSlot": "1",
+          "skinIdSource": "",
+          "resourcesVersion": "1.63.1",
+          "imageMissing": false
+        }
+      ],
+      "officialOnly": true,
+      "skinCount": 1
+    },
+    {
       "heroId": "108",
       "heroName": "Gildur",
       "heroImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/10800_B40-1.jpg",
@@ -4374,19 +4398,89 @@
         },
         {
           "skinId": "59602",
-          "skinName": "Swampseer",
+          "skinName": "Skin 59602",
           "skinImage": "https://i.ibb.co/HTsVRc5R/1001487924.jpg",
           "supported": true,
           "autoModReady": true,
           "resolved": false,
           "resourcesVersion": "1.63.1",
-          "imageMissing": false,
+          "imageMissing": true,
           "imageManual": true,
           "titleSize": 12.5,
           "titleColor": "#ffffff"
+        },
+        {
+          "skinId": "59603",
+          "skinName": "Skin 59603",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59604",
+          "skinName": "Skin 59604",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59605",
+          "skinName": "Skin 59605",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59606",
+          "skinName": "Skin 59606",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59607",
+          "skinName": "Skin 59607",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59608",
+          "skinName": "Skin 59608",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59609",
+          "skinName": "Skin 59609",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
         }
       ],
-      "skinCount": 2
+      "skinCount": 9
     },
     {
       "heroId": "175",
@@ -14880,6 +14974,62 @@
     "99938",
     "99939"
   ],
+  "idMismatches": [
+    {
+      "skinId": "12593",
+      "heroId": "256",
+      "heroName": "",
+      "skinName": "",
+      "resolved": false,
+      "resourcesVersion": "1.63.1",
+      "sourceMap": ""
+    },
+    {
+      "skinId": "14135",
+      "heroId": "256",
+      "heroName": "",
+      "skinName": "",
+      "resolved": false,
+      "resourcesVersion": "1.63.1",
+      "sourceMap": ""
+    },
+    {
+      "skinId": "25701",
+      "heroId": "256",
+      "heroName": "",
+      "skinName": "",
+      "resolved": false,
+      "resourcesVersion": "1.63.1",
+      "sourceMap": ""
+    },
+    {
+      "skinId": "26478",
+      "heroId": "256",
+      "heroName": "",
+      "skinName": "",
+      "resolved": false,
+      "resourcesVersion": "1.63.1",
+      "sourceMap": ""
+    },
+    {
+      "skinId": "26478",
+      "heroId": "257",
+      "heroName": "",
+      "skinName": "",
+      "resolved": false,
+      "resourcesVersion": "1.63.1",
+      "sourceMap": ""
+    },
+    {
+      "skinId": "65536",
+      "heroId": "257",
+      "heroName": "",
+      "skinName": "",
+      "resolved": false,
+      "resourcesVersion": "1.63.1",
+      "sourceMap": ""
+    }
+  ],
   "ignoredSkinIds": [],
   "ignoredIssueKeys": [
     "noImage|aleister|thong linh hon mang",
@@ -15234,6 +15384,13 @@
         "skinId": "garena:aoi:name:mikasa-ackermann",
         "skinName": "Mikasa Ackermann",
         "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/53612.jpg"
+      },
+      {
+        "heroId": "garena:flowborn-2",
+        "heroName": "Flowborn",
+        "skinId": "garena:flowborn-2:name:flowborn",
+        "skinName": "Flowborn",
+        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2026/04/IMG-SQR-0150x0150-080149-22.jpg"
       }
     ],
     "noImage": [
@@ -15316,6 +15473,5 @@
         "skinName": "Duyên tơ hồng"
       }
     ]
-  },
-  "idMismatches": []
+  }
 }
