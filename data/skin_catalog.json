@@ -3,7 +3,7 @@
   "resourcesVersion": "1.63.1",
   "generatedAt": "2026-09-10T05:09:51.012348+00:00",
   "heroCount": 125,
-  "skinCount": 1129,
+  "skinCount": 1128,
   "heroes": [
     {
       "heroId": "130",
@@ -2388,17 +2388,6 @@
           "garenaRealSkinId": "11619"
         },
         {
-          "skinId": "11620",
-          "skinName": "Bình minh tận thế",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/11620.jpg",
-          "supported": true,
-          "autoModReady": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false,
-          "garenaRealSkinId": "11620"
-        },
-        {
           "skinId": "11621",
           "skinName": "Ninh Tần",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/11621.jpg",
@@ -2476,7 +2465,7 @@
           "garenaRealSkinId": "11604"
         }
       ],
-      "skinCount": 22
+      "skinCount": 21
     },
     {
       "heroId": "524",
@@ -14901,6 +14890,7 @@
     }
   ],
   "ignoredSkinIds": [
+    "11620",
     "59603",
     "59604",
     "59605",
