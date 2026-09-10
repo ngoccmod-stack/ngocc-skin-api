@@ -819,7 +819,7 @@ def merge_catalog(auto_data: dict[str, Any], garena_heroes: list[dict[str, str]]
         if name: auto_by_name[name]=h
         if hid: auto_by_id[hid]=h
 
-    result={'schemaVersion':7,'resourcesVersion':auto.get('resourcesVersion',''),'generatedAt':auto.get('generatedAt',''),'heroCount':0,'skinCount':0,'heroes':[],
+    result={'schemaVersion':8,'resourcesVersion':auto.get('resourcesVersion',''),'generatedAt':auto.get('generatedAt',''),'heroCount':0,'skinCount':0,'heroes':[],
             'resourceSkinIds':sorted({str(sk.get('skinId')).strip() for hh in auto.get('heroes',[]) for sk in hh.get('skins',[]) if re.fullmatch(r'\d{5}',str(sk.get('skinId','')).strip())}),
             # Persist raw mismatches inside the catalog so /api/catalog/issues can
             # report them even after normal merge filters them out of hero skins.
@@ -2650,9 +2650,23 @@ def delete_skin(hero_id: str, skin_id: str):
     if not hero:
         raise HTTPException(404, "Không tìm thấy tướng trong catalog.")
     before = len(hero.get("skins", []))
+    target = next((s for s in hero.get("skins", []) if str(s.get("skinId")) == str(skin_id)), None)
     hero["skins"] = [s for s in hero.get("skins", []) if str(s.get("skinId")) != str(skin_id)]
     if len(hero["skins"]) == before:
         raise HTTPException(404, "Không tìm thấy skin trong tướng này.")
+
+    # Skin đã xoá phải có tombstone, nếu không lần 'Quét & cập nhật Tướng / Skin'
+    # tiếp theo sẽ lấy nó từ Garena/Resources rồi thêm ngược lại catalog.
+    sid=str((target or {}).get('skinId') or skin_id).strip()
+    nm=str((target or {}).get('skinName') or '').strip()
+    hid=str(hero.get('heroId') or '').strip()
+    hn=str(hero.get('heroName') or '').strip()
+    if re.fullmatch(r'\d{5}',sid):
+        data.setdefault('ignoredSkinIds',[])
+        data['ignoredSkinIds']=sorted(set(map(str,data['ignoredSkinIds'])) | {sid})
+    elif nm:
+        data.setdefault('ignoredIssueKeys',[])
+        data['ignoredIssueKeys']=sorted(set(map(str,data['ignoredIssueKeys'])) | {_issue_key('unresolved',hid,sid,hn,nm),_issue_key('noImage',hid,sid,hn,nm)})
     hero["skinCount"] = len(hero["skins"])
     data["skinCount"] = sum(len(h.get("skins", [])) for h in data.get("heroes", []))
     warn = _save_catalog_and_persist(data)
@@ -2681,31 +2695,39 @@ class CatalogIssueDeleteManyPayload(BaseModel):
 
 
 @app.get('/api/catalog/issues')
-def catalog_issues():
+def catalog_issues(refresh: int = 0):
+    """Kiểm tra *chính catalog đang hiển thị trên web*.
+
+    Endpoint này tuyệt đối không quét Resources/Garena riêng khi người dùng bấm
+    'Làm mới'. Nguồn sự thật là file catalog đã được lưu và đang được /api/catalog
+    trả cho giao diện. Vì vậy 3 nhóm lỗi trên trang quản trị luôn khớp 1:1 với
+    những skin mà web đang quản lý.
+    """
     data=load_json(CATALOG,{})
+    if not data and (cloudinary_ready() or github_ready()):
+        data=restore_catalog_from_cloud()
+    if not data:
+        data={'heroes':[],'idMismatches':[],'resourcesVersion':'','ignoredSkinIds':[],'ignoredIssueKeys':[]}
     data=sanitize_catalog(data)
     ignored=_catalog_ignored_ids(data)
-    # Always calculate from the current catalog so an old/stale idIssues cache can
-    # never make the special page falsely report 0 mismatches.
     ignored_issue_keys=_catalog_ignored_issue_keys(data)
+
+    # `refresh` chỉ là tín hiệu để giao diện bỏ cache HTTP; không được dùng nó
+    # để quét một nguồn dữ liệu khác với catalog web.
     issues=build_catalog_id_issues(data,[],data,ignored,ignored_issue_keys)
-    # Legacy catalogs created before raw idMismatches were persisted may contain
-    # an empty diagnostic cache. Recover legacy mismatch buckets from idIssues and
-    # only then fall back to a fresh Resources parse when absolutely necessary.
-    legacy=(data.get('idIssues') or {}).get('mismatch') if isinstance(data.get('idIssues'),dict) else None
-    if not issues.get('mismatch') and isinstance(legacy,list) and legacy:
-        issues['mismatch']=legacy
-    if not issues.get('mismatch'):
-        try:
-            resources_auto=scan(RESOURCES, keep_unresolved=True)
-            recovered=build_catalog_id_issues(resources_auto,[],data,ignored,ignored_issue_keys)
-            if recovered.get('mismatch'):
-                issues['mismatch']=recovered['mismatch']
-                data['idMismatches']=[dict(x) for x in (resources_auto.get('idMismatches') or []) if str(x.get('skinId') or '').strip() not in ignored]
-                _save_catalog_and_persist(data)
-        except Exception:
-            pass
-    return {'ok':True,'resourcesVersion':data.get('resourcesVersion',''),'issues':issues,'ignoredSkinIds':sorted(ignored),'ignoredIssueKeys':sorted(ignored_issue_keys),'deletedHeroIds':sorted(_deleted_hero_ids(data)),'deletedHeroKeys':sorted(_deleted_hero_keys(data))}
+    data['idIssues']=issues
+
+    # Lưu lại cache chẩn đoán, nhưng nội dung vẫn được tạo từ catalog hiện tại.
+    try:
+        save_json(CATALOG,data)
+    except Exception:
+        pass
+
+    return {'ok':True,'resourcesVersion':data.get('resourcesVersion',''),'issues':issues,
+            'heroCount':int(data.get('heroCount') or len(data.get('heroes',[]))),
+            'skinCount':int(data.get('skinCount') or sum(len(h.get('skins',[])) for h in data.get('heroes',[]))),
+            'ignoredSkinIds':sorted(ignored),'ignoredIssueKeys':sorted(ignored_issue_keys),
+            'deletedHeroIds':sorted(_deleted_hero_ids(data)),'deletedHeroKeys':sorted(_deleted_hero_keys(data))}
 
 
 @app.post('/api/catalog/issues/mismatch/delete-many')
@@ -2849,8 +2871,20 @@ def delete_skins_many(hero_id: str, payload: BulkDeletePayload):
     if not hero:
         raise HTTPException(404, "Không tìm thấy tướng trong catalog.")
     before = len(hero.get("skins", []))
+    removed=[s for s in hero.get("skins", []) if str(s.get("skinId")) in wanted]
     hero["skins"] = [s for s in hero.get("skins", []) if str(s.get("skinId")) not in wanted]
     deleted = before - len(hero["skins"])
+    if deleted:
+        data.setdefault('ignoredSkinIds',[])
+        data['ignoredSkinIds']=sorted(set(map(str,data['ignoredSkinIds'])) | {str(s.get('skinId')).strip() for s in removed if re.fullmatch(r'\d{5}',str(s.get('skinId')).strip())})
+        data.setdefault('ignoredIssueKeys',[])
+        hid=str(hero.get('heroId') or '').strip(); hn=str(hero.get('heroName') or '').strip()
+        newkeys=set(map(str,data['ignoredIssueKeys']))
+        for s in removed:
+            sid=str(s.get('skinId') or '').strip(); nm=str(s.get('skinName') or '').strip()
+            if nm and not re.fullmatch(r'\d{5}',sid):
+                newkeys.add(_issue_key('unresolved',hid,sid,hn,nm)); newkeys.add(_issue_key('noImage',hid,sid,hn,nm))
+        data['ignoredIssueKeys']=sorted(newkeys)
     hero["skinCount"] = len(hero["skins"])
     data["skinCount"] = sum(len(h.get("skins", [])) for h in data.get("heroes", []))
     warn = _save_catalog_and_persist(data) if deleted else ""

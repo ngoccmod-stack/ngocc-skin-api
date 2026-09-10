@@ -222,14 +222,22 @@ def scan(resources_root: Path, keep_unresolved: bool = False, id_allowlist: Opti
             if h and ss:
                 hero_name, skin_name, source_map = h, ss, map_name
                 break
+        # A mismatch is an ADMIN diagnostic for a real hero/skin record, not
+        # every random 8-byte integer pair that happens to occur in the binary.
+        # Require both language-map keys to resolve before surfacing it as
+        # "ID không phù hợp".  If either name cannot be resolved, the record
+        # belongs to the "ID chưa xác định" class instead of becoming a false
+        # mismatch.
+        if not hero_name or not skin_name:
+            continue
         key=(hero_id,skin_id)
         if key in seen_mismatch:
             continue
         seen_mismatch.add(key)
         mismatches.append({
             'skinId': str(skin_id), 'heroId': str(hero_id),
-            'heroName': hero_name or '', 'skinName': skin_name or '',
-            'resolved': bool(hero_name and skin_name),
+            'heroName': hero_name, 'skinName': skin_name,
+            'resolved': True,
             'resourcesVersion': version_dir.name,
             'sourceMap': source_map or '',
         })
