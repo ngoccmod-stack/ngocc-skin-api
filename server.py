@@ -100,6 +100,11 @@ GARNA_EXTRA_HERO_PAGES = [
     {"slug": "edras", "heroName": "Edras"},
 ]
 
+# Current official Garena archive: 129 entries; Flowborn intentionally appears twice.
+GARNA_OFFICIAL_HERO_NAMES = ['Tamyn', 'Flowborn', 'Flowborn', 'Dyadia', 'Edras', 'Goverra', 'Heino', 'Billow', 'Bolt Baron', 'Biron', 'Dolia', 'Charlotte', 'Tachi', 'Dirak', 'Qi', 'Erin', 'Ming', 'Bijan', 'Bonnie', 'Teeri', 'Yue', 'Yan', 'Aya', 'Aoi', 'Iggy', 'Bright', 'Lorion', 'Dextra', 'Sinestrea', 'Thorne', 'Allain', 'Zata', 'Rouie', 'Laville', 'Paine', 'Ata', 'Keera', 'Ishar', 'Eland’orr', 'Krizzix', 'Volkath', 'Celica', 'Zip', 'Enzo', 'Yena', 'Errol', 'Capheny', 'Hayate', 'D’Arcy', 'Veres', 'Florentino', 'Sephera', 'Quillen', 'Wiro', 'Richter', 'Elsu', 'Y’bneth', 'Amily', 'Annette', 'Baldum', 'Roxie', 'Marja', 'Rourke', 'Arum', 'Wisp', 'The Flash', 'Max', 'Liliana', 'Tulen', 'Omen', 'Lindis', 'TeeMee', 'Moren', 'Kil’Groth', 'Xeniel', 'Wonder Woman', 'Superman', 'Tel’Annas', 'Astrid', 'Ryoma', 'Stuart', 'Arduin', 'Zill', 'Murad', 'Ignis', 'Zuka', 'Airi', 'Kaine', 'Lauriel', 'Raz', 'Skud', 'Preyta', 'Ilumia', 'Slimz', 'Arthur', 'Kriknak', 'Ngộ Không', 'Maloch', 'Helen', 'Jinna', 'Cresht', 'Natalya', 'Lumburr', 'Fennik', 'Aleister', 'Grakk', 'Nakroth', 'Taara', 'Toro', 'Yorn', 'Gildur', 'Alice', 'Azzen’Ka', 'Ormarr', 'Butterfly', 'Violet', 'Chaugnar', 'Điêu Thuyền', 'Zephys', 'Kahlii', 'Omega', 'Triệu Vân', 'Mganga', 'Krixi', 'Mina', 'Lữ Bố', 'Veera', 'Thane', 'Valhein']
+GARNA_OFFICIAL_HERO_COUNT = 129
+
+
 
 def norm(s: str) -> str:
     # "đ"/"Đ" không tự chuyển thành "d"/"D" qua NFKD (đây là 1 chữ cái riêng trong
@@ -259,6 +264,33 @@ def _node_text_candidates(node, hero_name: str) -> list[str]:
     return out
 
 
+
+def _garena_slug_guess(name: str) -> str:
+    x=unicodedata.normalize('NFKD', str(name or '')).encode('ascii','ignore').decode('ascii').lower()
+    x=re.sub(r'[^a-z0-9]+','-',x).strip('-')
+    return x
+
+
+def ensure_official_hero_links(items: list[dict[str, str]]) -> list[dict[str, str]]:
+    out=list(items or [])
+    seen_slugs={str(x.get('slug') or '').strip().lower() for x in out}
+    counts={}
+    names_seen=set()
+    for x in out:
+        n=norm(x.get('heroName','')); names_seen.add(n); counts[n]=counts.get(n,0)+1
+    for name in GARNA_OFFICIAL_HERO_NAMES:
+        n=norm(name)
+        if n=='flowborn':
+            slug='flowborn' if counts.get(n,0)==0 else 'flowborn-2'
+            if slug not in seen_slugs and counts.get(n,0)<2:
+                out.append({'slug':slug,'heroName':'Flowborn','heroImage':''}); seen_slugs.add(slug); counts[n]=counts.get(n,0)+1
+        elif n not in names_seen:
+            slug=_garena_slug_guess(name)
+            if slug and slug not in seen_slugs:
+                out.append({'slug':slug,'heroName':name,'heroImage':''}); seen_slugs.add(slug); names_seen.add(n)
+    return out
+
+
 def extract_hero_links(main_html: str) -> list[dict[str, str]]:
     soup=BeautifulSoup(main_html,'html.parser')
     out=[]; seen=set()
@@ -321,7 +353,7 @@ def extract_hero_links(main_html: str) -> list[dict[str, str]]:
         if item['slug'] not in seen:
             add_candidate(item['slug'], None, item['heroName'])
 
-    return out
+    return ensure_official_hero_links(out)
 
 
 def _skin_target_nodes(soup) -> list[tuple[str, object]]:
@@ -2395,8 +2427,9 @@ def scan_catalog():
         # Still save Auto-only catalog so admin can see ID/name support even if Garena is temporarily unavailable.
         safe_auto = filter_auto_catalog(auto_data)
         catalog_data = {
-            "schemaVersion": 3,
+            "schemaVersion": 7,
             "resourcesVersion": safe_auto.get("resourcesVersion", version_dir.name),
+            "officialHeroCount": GARNA_OFFICIAL_HERO_COUNT,
             "generatedAt": safe_auto.get("generatedAt", ""),
             "heroCount": len(safe_auto.get("heroes", [])),
             "skinCount": sum(len(h.get("skins", [])) for h in safe_auto.get("heroes", [])),
@@ -2427,7 +2460,7 @@ def _run_scan_job():
     """Chạy toàn bộ logic quét Garena + Resources trong 1 luồng nền,
     để request HTTP ban đầu trả lời ngay lập tức và không bị Render/trình
     duyệt cắt kết nối giữa chừng khi quét lâu."""
-    _set_scan_state(running=True, progress="Đang kiểm tra Resources...", error="", done=False, result=None)
+    _set_scan_state(running=True, progress="Đang kiểm tra Resources...", error="", done=False, result=None, startedAt=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat())
     try:
         ensure_local_resources_from_cloud()
         version_dir = find_latest_version(RESOURCES)
