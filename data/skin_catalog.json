@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 7,
+  "schemaVersion": 8,
   "resourcesVersion": "1.63.1",
-  "generatedAt": "2026-09-10T05:09:51.012348+00:00",
+  "generatedAt": "2026-09-10T06:15:42.117399+00:00",
   "heroCount": 125,
   "skinCount": 1142,
   "heroes": [
@@ -14974,62 +14974,7 @@
     "99938",
     "99939"
   ],
-  "idMismatches": [
-    {
-      "skinId": "12593",
-      "heroId": "256",
-      "heroName": "",
-      "skinName": "",
-      "resolved": false,
-      "resourcesVersion": "1.63.1",
-      "sourceMap": ""
-    },
-    {
-      "skinId": "14135",
-      "heroId": "256",
-      "heroName": "",
-      "skinName": "",
-      "resolved": false,
-      "resourcesVersion": "1.63.1",
-      "sourceMap": ""
-    },
-    {
-      "skinId": "25701",
-      "heroId": "256",
-      "heroName": "",
-      "skinName": "",
-      "resolved": false,
-      "resourcesVersion": "1.63.1",
-      "sourceMap": ""
-    },
-    {
-      "skinId": "26478",
-      "heroId": "256",
-      "heroName": "",
-      "skinName": "",
-      "resolved": false,
-      "resourcesVersion": "1.63.1",
-      "sourceMap": ""
-    },
-    {
-      "skinId": "26478",
-      "heroId": "257",
-      "heroName": "",
-      "skinName": "",
-      "resolved": false,
-      "resourcesVersion": "1.63.1",
-      "sourceMap": ""
-    },
-    {
-      "skinId": "65536",
-      "heroId": "257",
-      "heroName": "",
-      "skinName": "",
-      "resolved": false,
-      "resourcesVersion": "1.63.1",
-      "sourceMap": ""
-    }
-  ],
+  "idMismatches": [],
   "ignoredSkinIds": [],
   "ignoredIssueKeys": [
     "noImage|aleister|thong linh hon mang",
@@ -15321,62 +15266,7 @@
     "tamyn"
   ],
   "idIssues": {
-    "mismatch": [
-      {
-        "heroId": "256",
-        "heroName": "Không rõ tướng",
-        "items": [
-          {
-            "heroId": "256",
-            "heroName": "Không rõ tướng",
-            "skinName": "Skin 12593",
-            "skinId": "12593",
-            "reason": "ID skin 12593 không thuộc tướng 256"
-          },
-          {
-            "heroId": "256",
-            "heroName": "Không rõ tướng",
-            "skinName": "Skin 14135",
-            "skinId": "14135",
-            "reason": "ID skin 14135 không thuộc tướng 256"
-          },
-          {
-            "heroId": "256",
-            "heroName": "Không rõ tướng",
-            "skinName": "Skin 25701",
-            "skinId": "25701",
-            "reason": "ID skin 25701 không thuộc tướng 256"
-          },
-          {
-            "heroId": "256",
-            "heroName": "Không rõ tướng",
-            "skinName": "Skin 26478",
-            "skinId": "26478",
-            "reason": "ID skin 26478 không thuộc tướng 256"
-          }
-        ]
-      },
-      {
-        "heroId": "257",
-        "heroName": "Không rõ tướng",
-        "items": [
-          {
-            "heroId": "257",
-            "heroName": "Không rõ tướng",
-            "skinName": "Skin 26478",
-            "skinId": "26478",
-            "reason": "ID skin 26478 không thuộc tướng 257"
-          },
-          {
-            "heroId": "257",
-            "heroName": "Không rõ tướng",
-            "skinName": "Skin 65536",
-            "skinId": "65536",
-            "reason": "ID skin 65536 không thuộc tướng 257"
-          }
-        ]
-      }
-    ],
+    "mismatch": [],
     "unresolved": [
       {
         "heroId": "536",
