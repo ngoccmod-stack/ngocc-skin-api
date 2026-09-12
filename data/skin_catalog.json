@@ -3,7 +3,7 @@
   "resourcesVersion": "1.63.1",
   "generatedAt": "2026-09-10T05:09:51.012348+00:00",
   "heroCount": 125,
-  "skinCount": 1131,
+  "skinCount": 1124,
   "heroes": [
     {
       "heroId": "130",
@@ -4703,79 +4703,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "56302"
-        },
-        {
-          "skinId": "56303",
-          "skinName": "Skin 56303",
-          "skinImage": "",
-          "supported": true,
-          "autoModReady": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "56304",
-          "skinName": "Skin 56304",
-          "skinImage": "",
-          "supported": true,
-          "autoModReady": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "56305",
-          "skinName": "Skin 56305",
-          "skinImage": "",
-          "supported": true,
-          "autoModReady": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "56306",
-          "skinName": "Skin 56306",
-          "skinImage": "",
-          "supported": true,
-          "autoModReady": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "56307",
-          "skinName": "Skin 56307",
-          "skinImage": "",
-          "supported": true,
-          "autoModReady": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "56308",
-          "skinName": "Skin 56308",
-          "skinImage": "",
-          "supported": true,
-          "autoModReady": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "56309",
-          "skinName": "Skin 56309",
-          "skinImage": "",
-          "supported": true,
-          "autoModReady": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
         }
       ],
-      "skinCount": 9
+      "skinCount": 2
     },
     {
       "heroId": "184",
@@ -14912,6 +14842,13 @@
   "ignoredSkinIds": [
     "11620",
     "11637",
+    "56303",
+    "56304",
+    "56305",
+    "56306",
+    "56307",
+    "56308",
+    "56309",
     "59603",
     "59604",
     "59605",
