@@ -3,7 +3,7 @@
   "resourcesVersion": "1.63.1",
   "generatedAt": "2026-09-10T05:09:51.012348+00:00",
   "heroCount": 125,
-  "skinCount": 1139,
+  "skinCount": 1134,
   "heroes": [
     {
       "heroId": "130",
@@ -4381,36 +4381,6 @@
           "titleColor": "#ffffff"
         },
         {
-          "skinId": "59603",
-          "skinName": "Skin 59603",
-          "skinImage": "",
-          "supported": true,
-          "autoModReady": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59605",
-          "skinName": "Skin 59605",
-          "skinImage": "",
-          "supported": true,
-          "autoModReady": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59606",
-          "skinName": "Skin 59606",
-          "skinImage": "",
-          "supported": true,
-          "autoModReady": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
           "skinId": "59607",
           "skinName": "Skin 59607",
           "skinImage": "",
@@ -4419,29 +4389,9 @@
           "resolved": false,
           "resourcesVersion": "1.63.1",
           "imageMissing": true
-        },
-        {
-          "skinId": "59608",
-          "skinName": "Skin 59608",
-          "skinImage": "",
-          "supported": true,
-          "autoModReady": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59609",
-          "skinName": "Skin 59609",
-          "skinImage": "",
-          "supported": true,
-          "autoModReady": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
         }
       ],
-      "skinCount": 8
+      "skinCount": 3
     },
     {
       "heroId": "175",
@@ -14992,7 +14942,12 @@
     }
   ],
   "ignoredSkinIds": [
-    "59604"
+    "59603",
+    "59604",
+    "59605",
+    "59606",
+    "59608",
+    "59609"
   ],
   "ignoredIssueKeys": [
     "noImage|aleister|thong linh hon mang",
