@@ -3,7 +3,7 @@
   "resourcesVersion": "1.63.1",
   "generatedAt": "2026-09-10T05:09:51.012348+00:00",
   "heroCount": 125,
-  "skinCount": 1127,
+  "skinCount": 1140,
   "heroes": [
     {
       "heroId": "130",
@@ -985,23 +985,9 @@
           "resolved": false,
           "resourcesVersion": "1.63.1",
           "imageMissing": true
-        },
-        {
-          "skinId": "garena:aoi:name:mikasa-ackermann",
-          "skinName": "Mikasa Ackermann",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/53612.jpg",
-          "supported": false,
-          "autoModReady": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
         }
       ],
-      "skinCount": 12
+      "skinCount": 11
     },
     {
       "heroId": "126",
@@ -1881,9 +1867,69 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "59903"
+        },
+        {
+          "skinId": "59904",
+          "skinName": "Skin 59904",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59905",
+          "skinName": "Skin 59905",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59906",
+          "skinName": "Skin 59906",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59907",
+          "skinName": "Skin 59907",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59908",
+          "skinName": "Skin 59908",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59909",
+          "skinName": "Skin 59909",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
         }
       ],
-      "skinCount": 3
+      "skinCount": 9
     },
     {
       "heroId": "597",
@@ -2388,6 +2434,17 @@
           "garenaRealSkinId": "11619"
         },
         {
+          "skinId": "11620",
+          "skinName": "Bình minh tận thế",
+          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/11620.jpg",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": true,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": false,
+          "garenaRealSkinId": "11620"
+        },
+        {
           "skinId": "11621",
           "skinName": "Ninh Tần",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/11621.jpg",
@@ -2443,6 +2500,17 @@
           "garenaRealSkinId": "11604"
         },
         {
+          "skinId": "11637",
+          "skinName": "Nữ Quái Nổi Loạn",
+          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/2d9ca037a21225003e44e2e40879c034598d7ed0140111.jpg",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": true,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": false,
+          "garenaRealSkinId": "11604"
+        },
+        {
           "skinId": "11638",
           "skinName": "Nữ Quái Nổi Loạn",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/2d9ca037a21225003e44e2e40879c034598d7ed0140111.jpg",
@@ -2454,7 +2522,7 @@
           "garenaRealSkinId": "11604"
         }
       ],
-      "skinCount": 20
+      "skinCount": 22
     },
     {
       "heroId": "524",
@@ -4156,24 +4224,9 @@
       "heroName": "Flowborn",
       "heroImage": "https://lienquan.garena.vn/wp-content/uploads/2026/04/IMG-SQR-0200x0200-080148-2.jpg",
       "garenaSlug": "flowborn-2",
-      "skins": [
-        {
-          "skinId": "garena:flowborn-2:name:flowborn",
-          "skinName": "Flowborn",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2026/04/IMG-SQR-0150x0150-080149-22.jpg",
-          "supported": false,
-          "autoModReady": false,
-          "resolved": false,
-          "officialGarena": true,
-          "garenaRealSkinId": "",
-          "garenaSlot": "1",
-          "skinIdSource": "",
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false
-        }
-      ],
+      "skins": [],
       "officialOnly": true,
-      "skinCount": 1
+      "skinCount": 0
     },
     {
       "heroId": "108",
@@ -4326,9 +4379,79 @@
           "imageManual": true,
           "titleSize": 12.5,
           "titleColor": "#ffffff"
+        },
+        {
+          "skinId": "59603",
+          "skinName": "Skin 59603",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59604",
+          "skinName": "Skin 59604",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59605",
+          "skinName": "Skin 59605",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59606",
+          "skinName": "Skin 59606",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59607",
+          "skinName": "Skin 59607",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59608",
+          "skinName": "Skin 59608",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59609",
+          "skinName": "Skin 59609",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
         }
       ],
-      "skinCount": 2
+      "skinCount": 9
     },
     {
       "heroId": "175",
@@ -14878,23 +15001,7 @@
       "sourceMap": ""
     }
   ],
-  "ignoredSkinIds": [
-    "11620",
-    "11637",
-    "59603",
-    "59604",
-    "59605",
-    "59606",
-    "59607",
-    "59608",
-    "59609",
-    "59904",
-    "59905",
-    "59906",
-    "59907",
-    "59908",
-    "59909"
-  ],
+  "ignoredSkinIds": [],
   "ignoredIssueKeys": [
     "noImage|aleister|thong linh hon mang",
     "noImage|amily|sat thu luu vong",
@@ -15086,6 +15193,7 @@
     "noImage|zuka|zuka",
     "unresolved|alice|butterfly mansion girl",
     "unresolved|allain|kirito hac kiem si",
+    "unresolved|aoi|mikasa ackermann",
     "unresolved|azzenka|azzen ka gheo hay keo",
     "unresolved|azzenka|azzen ka giang sinh",
     "unresolved|azzenka|azzen ka linh hon lu khach",
@@ -15117,6 +15225,7 @@
     "unresolved|elandorr|eland orr uyen uong mong diep",
     "unresolved|elsu|dj",
     "unresolved|enzo|leo nui",
+    "unresolved|flowborn|flowborn",
     "unresolved|kilgroth|kil groth",
     "unresolved|kilgroth|kil groth can nguyen thu ve",
     "unresolved|kilgroth|kil groth canh ve bien",
@@ -15185,127 +15294,9 @@
     "tamyn"
   ],
   "idIssues": {
-    "mismatch": [
-      {
-        "heroId": "256",
-        "heroName": "Không rõ tướng",
-        "items": [
-          {
-            "heroId": "256",
-            "heroName": "Không rõ tướng",
-            "skinName": "Skin 12593",
-            "skinId": "12593",
-            "reason": "ID skin 12593 không thuộc tướng 256"
-          },
-          {
-            "heroId": "256",
-            "heroName": "Không rõ tướng",
-            "skinName": "Skin 14135",
-            "skinId": "14135",
-            "reason": "ID skin 14135 không thuộc tướng 256"
-          },
-          {
-            "heroId": "256",
-            "heroName": "Không rõ tướng",
-            "skinName": "Skin 25701",
-            "skinId": "25701",
-            "reason": "ID skin 25701 không thuộc tướng 256"
-          },
-          {
-            "heroId": "256",
-            "heroName": "Không rõ tướng",
-            "skinName": "Skin 26478",
-            "skinId": "26478",
-            "reason": "ID skin 26478 không thuộc tướng 256"
-          }
-        ]
-      },
-      {
-        "heroId": "257",
-        "heroName": "Không rõ tướng",
-        "items": [
-          {
-            "heroId": "257",
-            "heroName": "Không rõ tướng",
-            "skinName": "Skin 26478",
-            "skinId": "26478",
-            "reason": "ID skin 26478 không thuộc tướng 257"
-          },
-          {
-            "heroId": "257",
-            "heroName": "Không rõ tướng",
-            "skinName": "Skin 65536",
-            "skinId": "65536",
-            "reason": "ID skin 65536 không thuộc tướng 257"
-          }
-        ]
-      }
-    ],
-    "unresolved": [
-      {
-        "heroId": "536",
-        "heroName": "Aoi",
-        "skinId": "garena:aoi:name:mikasa-ackermann",
-        "skinName": "Mikasa Ackermann",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/53612.jpg"
-      },
-      {
-        "heroId": "garena:flowborn-2",
-        "heroName": "Flowborn",
-        "skinId": "garena:flowborn-2:name:flowborn",
-        "skinName": "Flowborn",
-        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2026/04/IMG-SQR-0150x0150-080149-22.jpg"
-      }
-    ],
+    "mismatch": [],
+    "unresolved": [],
     "noImage": [
-      {
-        "heroId": "118",
-        "heroName": "Alice",
-        "skinId": "11810",
-        "skinName": "The Butterfly Mansion Girl"
-      },
-      {
-        "heroId": "537",
-        "heroName": "Allain",
-        "skinId": "53701",
-        "skinName": "Hắc kiếm sĩ Kirito"
-      },
-      {
-        "heroId": "536",
-        "heroName": "Aoi",
-        "skinId": "53612",
-        "skinName": "Mikasa"
-      },
-      {
-        "heroId": "196",
-        "heroName": "Elsu",
-        "skinId": "19613",
-        "skinName": "DJ <Siêu Đẳng>"
-      },
-      {
-        "heroId": "195",
-        "heroName": "Enzo",
-        "skinId": "19504",
-        "skinName": "Nhà leo núi"
-      },
-      {
-        "heroId": "106",
-        "heroName": "Krixi",
-        "skinId": "10611",
-        "skinName": "Lốc xoáy kinh hoàng Tatsumaki"
-      },
-      {
-        "heroId": "177",
-        "heroName": "Lindis",
-        "skinId": "17709",
-        "skinName": "Linh Hoa tiễn"
-      },
-      {
-        "heroId": "128",
-        "heroName": "Lữ Bố",
-        "skinId": "12810",
-        "skinName": "Vũ điệu samba"
-      },
       {
         "heroId": "144",
         "heroName": "Taara",
@@ -15317,24 +15308,6 @@
         "heroName": "Taara",
         "skinId": "14407",
         "skinName": "Nữ chiến binh"
-      },
-      {
-        "heroId": "507",
-        "heroName": "The Flash",
-        "skinId": "50701",
-        "skinName": "Tia chớp tương lai"
-      },
-      {
-        "heroId": "111",
-        "heroName": "Violet",
-        "skinId": "11108",
-        "skinName": "Pháo hoa Neon"
-      },
-      {
-        "heroId": "525",
-        "heroName": "Zip",
-        "skinId": "52507",
-        "skinName": "Duyên tơ hồng"
       }
     ]
   }
