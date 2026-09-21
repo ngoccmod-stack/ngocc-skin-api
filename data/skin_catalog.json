@@ -3,7 +3,7 @@
   "resourcesVersion": "1.63.1",
   "generatedAt": "2026-09-10T05:09:51.012348+00:00",
   "heroCount": 125,
-  "skinCount": 1088,
+  "skinCount": 1142,
   "heroes": [
     {
       "heroId": "130",
@@ -985,9 +985,23 @@
           "resolved": false,
           "resourcesVersion": "1.63.1",
           "imageMissing": true
+        },
+        {
+          "skinId": "garena:aoi:name:mikasa-ackermann",
+          "skinName": "Mikasa Ackermann",
+          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/53612.jpg",
+          "supported": false,
+          "autoModReady": false,
+          "resolved": false,
+          "officialGarena": true,
+          "garenaRealSkinId": "",
+          "garenaSlot": "",
+          "skinIdSource": "",
+          "resourcesVersion": "1.63.1",
+          "imageMissing": false
         }
       ],
-      "skinCount": 11
+      "skinCount": 12
     },
     {
       "heroId": "126",
@@ -1867,9 +1881,69 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "59903"
+        },
+        {
+          "skinId": "59904",
+          "skinName": "Skin 59904",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59905",
+          "skinName": "Skin 59905",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59906",
+          "skinName": "Skin 59906",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59907",
+          "skinName": "Skin 59907",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59908",
+          "skinName": "Skin 59908",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59909",
+          "skinName": "Skin 59909",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
         }
       ],
-      "skinCount": 3
+      "skinCount": 9
     },
     {
       "heroId": "597",
@@ -1989,9 +2063,79 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "59802"
+        },
+        {
+          "skinId": "59803",
+          "skinName": "Skin 59803",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59804",
+          "skinName": "Skin 59804",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59805",
+          "skinName": "Skin 59805",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59806",
+          "skinName": "Skin 59806",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59807",
+          "skinName": "Skin 59807",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59808",
+          "skinName": "Skin 59808",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59809",
+          "skinName": "Skin 59809",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
         }
       ],
-      "skinCount": 2
+      "skinCount": 9
     },
     {
       "heroId": "541",
@@ -2304,6 +2448,17 @@
           "garenaRealSkinId": "11619"
         },
         {
+          "skinId": "11620",
+          "skinName": "Bình minh tận thế",
+          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/11620.jpg",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": true,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": false,
+          "garenaRealSkinId": "11620"
+        },
+        {
           "skinId": "11621",
           "skinName": "Ninh Tần",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/11621.jpg",
@@ -2324,9 +2479,64 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "11622"
+        },
+        {
+          "skinId": "11634",
+          "skinName": "Nữ Quái Nổi Loạn",
+          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/2d9ca037a21225003e44e2e40879c034598d7ed0140111.jpg",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": true,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": false,
+          "garenaRealSkinId": "11604"
+        },
+        {
+          "skinId": "11635",
+          "skinName": "Nữ Quái Nổi Loạn",
+          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/2d9ca037a21225003e44e2e40879c034598d7ed0140111.jpg",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": true,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": false,
+          "garenaRealSkinId": "11604"
+        },
+        {
+          "skinId": "11636",
+          "skinName": "Nữ Quái Nổi Loạn",
+          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/2d9ca037a21225003e44e2e40879c034598d7ed0140111.jpg",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": true,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": false,
+          "garenaRealSkinId": "11604"
+        },
+        {
+          "skinId": "11637",
+          "skinName": "Nữ Quái Nổi Loạn",
+          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/2d9ca037a21225003e44e2e40879c034598d7ed0140111.jpg",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": true,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": false,
+          "garenaRealSkinId": "11604"
+        },
+        {
+          "skinId": "11638",
+          "skinName": "Nữ Quái Nổi Loạn",
+          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/2d9ca037a21225003e44e2e40879c034598d7ed0140111.jpg",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": true,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": false,
+          "garenaRealSkinId": "11604"
         }
       ],
-      "skinCount": 16
+      "skinCount": 22
     },
     {
       "heroId": "524",
@@ -2592,9 +2802,89 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "20601"
+        },
+        {
+          "skinId": "20602",
+          "skinName": "Skin 20602",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "20603",
+          "skinName": "Skin 20603",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "20604",
+          "skinName": "Skin 20604",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "20605",
+          "skinName": "Skin 20605",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "20606",
+          "skinName": "Skin 20606",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "20607",
+          "skinName": "Skin 20607",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "20608",
+          "skinName": "Skin 20608",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "20609",
+          "skinName": "Skin 20609",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
         }
       ],
-      "skinCount": 1
+      "skinCount": 9
     },
     {
       "heroId": "113",
@@ -3125,7 +3415,7 @@
         },
         {
           "skinId": "15905",
-          "skinName": "Mã Khởi Thiên Ca",
+          "skinName": "Mã Khởi Thiên Ca [ ĐANG LỖI, VUI LÒNG KHÔNG TẢI ]",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/07/15905.jpg",
           "supported": true,
           "autoModReady": true,
@@ -3135,7 +3425,10 @@
           "garenaSlot": "",
           "skinIdSource": "skin.txt",
           "resourcesVersion": "1.63.1",
-          "imageMissing": false
+          "imageMissing": false,
+          "imageManual": true,
+          "titleSize": 12.5,
+          "titleColor": "#ffffff"
         },
         {
           "skinId": "15903",
@@ -3460,9 +3753,49 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "56705"
+        },
+        {
+          "skinId": "56706",
+          "skinName": "Skin 56706",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "56707",
+          "skinName": "Skin 56707",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "56708",
+          "skinName": "Skin 56708",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "56709",
+          "skinName": "Skin 56709",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
         }
       ],
-      "skinCount": 4
+      "skinCount": 8
     },
     {
       "heroId": "522",
@@ -3908,9 +4241,24 @@
       "heroName": "Flowborn",
       "heroImage": "https://lienquan.garena.vn/wp-content/uploads/2026/04/IMG-SQR-0200x0200-080148-2.jpg",
       "garenaSlug": "flowborn-2",
-      "skins": [],
+      "skins": [
+        {
+          "skinId": "garena:flowborn-2:name:flowborn",
+          "skinName": "Flowborn",
+          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2026/04/IMG-SQR-0150x0150-080149-22.jpg",
+          "supported": false,
+          "autoModReady": false,
+          "resolved": false,
+          "officialGarena": true,
+          "garenaRealSkinId": "",
+          "garenaSlot": "1",
+          "skinIdSource": "",
+          "resourcesVersion": "1.63.1",
+          "imageMissing": false
+        }
+      ],
       "officialOnly": true,
-      "skinCount": 0
+      "skinCount": 1
     },
     {
       "heroId": "108",
@@ -4063,9 +4411,79 @@
           "imageManual": true,
           "titleSize": 12.5,
           "titleColor": "#ffffff"
+        },
+        {
+          "skinId": "59603",
+          "skinName": "Skin 59603",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59604",
+          "skinName": "Skin 59604",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59605",
+          "skinName": "Skin 59605",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59606",
+          "skinName": "Skin 59606",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59607",
+          "skinName": "Skin 59607",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59608",
+          "skinName": "Skin 59608",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "59609",
+          "skinName": "Skin 59609",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
         }
       ],
-      "skinCount": 2
+      "skinCount": 9
     },
     {
       "heroId": "175",
@@ -4409,9 +4827,79 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "56302"
+        },
+        {
+          "skinId": "56303",
+          "skinName": "Skin 56303",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "56304",
+          "skinName": "Skin 56304",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "56305",
+          "skinName": "Skin 56305",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "56306",
+          "skinName": "Skin 56306",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "56307",
+          "skinName": "Skin 56307",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "56308",
+          "skinName": "Skin 56308",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "56309",
+          "skinName": "Skin 56309",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
         }
       ],
-      "skinCount": 2
+      "skinCount": 9
     },
     {
       "heroId": "184",
@@ -7153,9 +7641,79 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "56801"
+        },
+        {
+          "skinId": "56803",
+          "skinName": "Skin 56803",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "56804",
+          "skinName": "Skin 56804",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "56805",
+          "skinName": "Skin 56805",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "56806",
+          "skinName": "Skin 56806",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "56807",
+          "skinName": "Skin 56807",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "56808",
+          "skinName": "Skin 56808",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
+        },
+        {
+          "skinId": "56809",
+          "skinName": "Skin 56809",
+          "skinImage": "",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": false,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": true
         }
       ],
-      "skinCount": 1
+      "skinCount": 8
     },
     {
       "heroId": "170",
@@ -14475,60 +15033,7 @@
       "sourceMap": ""
     }
   ],
-  "ignoredSkinIds": [
-    "11620",
-    "11634",
-    "11635",
-    "11636",
-    "11637",
-    "11638",
-    "20602",
-    "20603",
-    "20604",
-    "20605",
-    "20606",
-    "20607",
-    "20608",
-    "20609",
-    "56303",
-    "56304",
-    "56305",
-    "56306",
-    "56307",
-    "56308",
-    "56309",
-    "56706",
-    "56707",
-    "56708",
-    "56709",
-    "56803",
-    "56804",
-    "56805",
-    "56806",
-    "56807",
-    "56808",
-    "56809",
-    "59603",
-    "59604",
-    "59605",
-    "59606",
-    "59607",
-    "59608",
-    "59609",
-    "59803",
-    "59804",
-    "59805",
-    "59806",
-    "59807",
-    "59808",
-    "59809",
-    "59904",
-    "59905",
-    "59906",
-    "59907",
-    "59908",
-    "59909"
-  ],
+  "ignoredSkinIds": [],
   "ignoredIssueKeys": [
     "noImage|aleister|thong linh hon mang",
     "noImage|amily|sat thu luu vong",
@@ -14720,7 +15225,6 @@
     "noImage|zuka|zuka",
     "unresolved|alice|butterfly mansion girl",
     "unresolved|allain|kirito hac kiem si",
-    "unresolved|aoi|mikasa ackermann",
     "unresolved|azzenka|azzen ka gheo hay keo",
     "unresolved|azzenka|azzen ka giang sinh",
     "unresolved|azzenka|azzen ka linh hon lu khach",
@@ -14752,7 +15256,6 @@
     "unresolved|elandorr|eland orr uyen uong mong diep",
     "unresolved|elsu|dj",
     "unresolved|enzo|leo nui",
-    "unresolved|flowborn|flowborn",
     "unresolved|kilgroth|kil groth",
     "unresolved|kilgroth|kil groth can nguyen thu ve",
     "unresolved|kilgroth|kil groth canh ve bien",
@@ -14877,8 +15380,71 @@
         ]
       }
     ],
-    "unresolved": [],
+    "unresolved": [
+      {
+        "heroId": "536",
+        "heroName": "Aoi",
+        "skinId": "garena:aoi:name:mikasa-ackermann",
+        "skinName": "Mikasa Ackermann",
+        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2024/05/53612.jpg"
+      },
+      {
+        "heroId": "garena:flowborn-2",
+        "heroName": "Flowborn",
+        "skinId": "garena:flowborn-2:name:flowborn",
+        "skinName": "Flowborn",
+        "imageUrl": "https://lienquan.garena.vn/wp-content/uploads/2026/04/IMG-SQR-0150x0150-080149-22.jpg"
+      }
+    ],
     "noImage": [
+      {
+        "heroId": "118",
+        "heroName": "Alice",
+        "skinId": "11810",
+        "skinName": "The Butterfly Mansion Girl"
+      },
+      {
+        "heroId": "537",
+        "heroName": "Allain",
+        "skinId": "53701",
+        "skinName": "Hắc kiếm sĩ Kirito"
+      },
+      {
+        "heroId": "536",
+        "heroName": "Aoi",
+        "skinId": "53612",
+        "skinName": "Mikasa"
+      },
+      {
+        "heroId": "196",
+        "heroName": "Elsu",
+        "skinId": "19613",
+        "skinName": "DJ <Siêu Đẳng>"
+      },
+      {
+        "heroId": "195",
+        "heroName": "Enzo",
+        "skinId": "19504",
+        "skinName": "Nhà leo núi"
+      },
+      {
+        "heroId": "106",
+        "heroName": "Krixi",
+        "skinId": "10611",
+        "skinName": "Lốc xoáy kinh hoàng Tatsumaki"
+      },
+      {
+        "heroId": "177",
+        "heroName": "Lindis",
+        "skinId": "17709",
+        "skinName": "Linh Hoa tiễn"
+      },
+      {
+        "heroId": "128",
+        "heroName": "Lữ Bố",
+        "skinId": "12810",
+        "skinName": "Vũ điệu samba"
+      },
       {
         "heroId": "144",
         "heroName": "Taara",
@@ -14890,6 +15456,24 @@
         "heroName": "Taara",
         "skinId": "14407",
         "skinName": "Nữ chiến binh"
+      },
+      {
+        "heroId": "507",
+        "heroName": "The Flash",
+        "skinId": "50701",
+        "skinName": "Tia chớp tương lai"
+      },
+      {
+        "heroId": "111",
+        "heroName": "Violet",
+        "skinId": "11108",
+        "skinName": "Pháo hoa Neon"
+      },
+      {
+        "heroId": "525",
+        "heroName": "Zip",
+        "skinId": "52507",
+        "skinName": "Duyên tơ hồng"
       }
     ]
   }
