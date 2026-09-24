@@ -3,7 +3,7 @@
   "resourcesVersion": "1.63.1",
   "generatedAt": "2026-09-10T05:09:51.012348+00:00",
   "heroCount": 125,
-  "skinCount": 1142,
+  "skinCount": 1137,
   "heroes": [
     {
       "heroId": "130",
@@ -3415,7 +3415,7 @@
         },
         {
           "skinId": "15905",
-          "skinName": "Mã Khởi Thiên Ca [ ĐANG LỖI, VUI LÒNG KHÔNG TẢI ]",
+          "skinName": "Mã Khởi Thiên Ca",
           "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/07/15905.jpg",
           "supported": true,
           "autoModReady": true,
@@ -3425,10 +3425,7 @@
           "garenaSlot": "",
           "skinIdSource": "skin.txt",
           "resourcesVersion": "1.63.1",
-          "imageMissing": false,
-          "imageManual": true,
-          "titleSize": 12.5,
-          "titleColor": "#ffffff"
+          "imageMissing": false
         },
         {
           "skinId": "15903",
@@ -8145,64 +8142,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "15016"
-        },
-        {
-          "skinId": "15033",
-          "skinName": "Siêu Việt",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/fa5833ffec89683fe89029070d78806f5a815a03490201.jpg",
-          "supported": true,
-          "autoModReady": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false,
-          "garenaRealSkinId": "15004"
-        },
-        {
-          "skinId": "15034",
-          "skinName": "Siêu Việt",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/fa5833ffec89683fe89029070d78806f5a815a03490201.jpg",
-          "supported": true,
-          "autoModReady": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false,
-          "garenaRealSkinId": "15004"
-        },
-        {
-          "skinId": "15035",
-          "skinName": "Siêu Việt",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/fa5833ffec89683fe89029070d78806f5a815a03490201.jpg",
-          "supported": true,
-          "autoModReady": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false,
-          "garenaRealSkinId": "15004"
-        },
-        {
-          "skinId": "15036",
-          "skinName": "Siêu Việt",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/fa5833ffec89683fe89029070d78806f5a815a03490201.jpg",
-          "supported": true,
-          "autoModReady": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false,
-          "garenaRealSkinId": "15004"
-        },
-        {
-          "skinId": "15037",
-          "skinName": "Siêu Việt",
-          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/fa5833ffec89683fe89029070d78806f5a815a03490201.jpg",
-          "supported": true,
-          "autoModReady": true,
-          "resolved": true,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": false,
-          "garenaRealSkinId": "15004"
         }
       ],
-      "skinCount": 19
+      "skinCount": 14
     },
     {
       "heroId": "142",
@@ -15033,7 +14975,13 @@
       "sourceMap": ""
     }
   ],
-  "ignoredSkinIds": [],
+  "ignoredSkinIds": [
+    "15033",
+    "15034",
+    "15035",
+    "15036",
+    "15037"
+  ],
   "ignoredIssueKeys": [
     "noImage|aleister|thong linh hon mang",
     "noImage|amily|sat thu luu vong",
