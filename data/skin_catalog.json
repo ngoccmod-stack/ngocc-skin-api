@@ -3,7 +3,7 @@
   "resourcesVersion": "1.63.1",
   "generatedAt": "2026-09-10T05:09:51.012348+00:00",
   "heroCount": 125,
-  "skinCount": 1137,
+  "skinCount": 1136,
   "heroes": [
     {
       "heroId": "130",
@@ -1881,69 +1881,9 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "59903"
-        },
-        {
-          "skinId": "59904",
-          "skinName": "Skin 59904",
-          "skinImage": "",
-          "supported": true,
-          "autoModReady": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59905",
-          "skinName": "Skin 59905",
-          "skinImage": "",
-          "supported": true,
-          "autoModReady": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59906",
-          "skinName": "Skin 59906",
-          "skinImage": "",
-          "supported": true,
-          "autoModReady": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59907",
-          "skinName": "Skin 59907",
-          "skinImage": "",
-          "supported": true,
-          "autoModReady": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59908",
-          "skinName": "Skin 59908",
-          "skinImage": "",
-          "supported": true,
-          "autoModReady": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
-        },
-        {
-          "skinId": "59909",
-          "skinName": "Skin 59909",
-          "skinImage": "",
-          "supported": true,
-          "autoModReady": true,
-          "resolved": false,
-          "resourcesVersion": "1.63.1",
-          "imageMissing": true
         }
       ],
-      "skinCount": 9
+      "skinCount": 3
     },
     {
       "heroId": "597",
@@ -8142,9 +8082,64 @@
           "resourcesVersion": "1.63.1",
           "imageMissing": false,
           "garenaRealSkinId": "15016"
+        },
+        {
+          "skinId": "15033",
+          "skinName": "Siêu Việt",
+          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/fa5833ffec89683fe89029070d78806f5a815a03490201.jpg",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": true,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": false,
+          "garenaRealSkinId": "15004"
+        },
+        {
+          "skinId": "15034",
+          "skinName": "Siêu Việt",
+          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/fa5833ffec89683fe89029070d78806f5a815a03490201.jpg",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": true,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": false,
+          "garenaRealSkinId": "15004"
+        },
+        {
+          "skinId": "15035",
+          "skinName": "Siêu Việt",
+          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/fa5833ffec89683fe89029070d78806f5a815a03490201.jpg",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": true,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": false,
+          "garenaRealSkinId": "15004"
+        },
+        {
+          "skinId": "15036",
+          "skinName": "Siêu Việt",
+          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/fa5833ffec89683fe89029070d78806f5a815a03490201.jpg",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": true,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": false,
+          "garenaRealSkinId": "15004"
+        },
+        {
+          "skinId": "15037",
+          "skinName": "Siêu Việt",
+          "skinImage": "https://lienquan.garena.vn/wp-content/uploads/2024/05/fa5833ffec89683fe89029070d78806f5a815a03490201.jpg",
+          "supported": true,
+          "autoModReady": true,
+          "resolved": true,
+          "resourcesVersion": "1.63.1",
+          "imageMissing": false,
+          "garenaRealSkinId": "15004"
         }
       ],
-      "skinCount": 14
+      "skinCount": 19
     },
     {
       "heroId": "142",
@@ -14976,11 +14971,12 @@
     }
   ],
   "ignoredSkinIds": [
-    "15033",
-    "15034",
-    "15035",
-    "15036",
-    "15037"
+    "59904",
+    "59905",
+    "59906",
+    "59907",
+    "59908",
+    "59909"
   ],
   "ignoredIssueKeys": [
     "noImage|aleister|thong linh hon mang",
